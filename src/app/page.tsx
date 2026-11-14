@@ -2,38 +2,20 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col justify-center gap-8 px-6 py-16">
-      <section className="border-2 border-ink bg-paper-2 p-8 shadow-[var(--shadow-stamp)] sm:p-12">
+    <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col items-center justify-center gap-10 px-6 py-16">
+      <section className="w-full border-2 border-ink bg-paper-2 p-10 text-center shadow-[var(--shadow-stamp)] sm:p-14">
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-ink-soft">
           Confraternizações &amp; amigo secreto
         </p>
-        <h1 className="mt-6 font-display text-5xl leading-none sm:text-6xl">confConf</h1>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-soft">
-          Ingressos de convite, sorteio sem auto-sorteio e lista de desejos — tudo enfeitado como
-          uma festa de antigamente, mas com privacidade garantida no banco de dados.
-        </p>
-        <div className="mt-10 flex flex-wrap items-center gap-4 font-mono text-xs uppercase tracking-wider">
-          <span className="border-2 border-ink px-3 py-2">Convite por link</span>
-          <span className="border-2 border-ink px-3 py-2">Sorteio em segredo</span>
-          <span className="border-2 border-ink px-3 py-2">Lista de desejos</span>
-        </div>
-
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Link
-            href="/admin/entrar"
-            className="inline-flex items-center justify-center border-2 border-ink bg-ink px-5 py-2.5 font-mono text-xs uppercase tracking-[0.15em] text-paper transition-colors hover:border-stamp hover:bg-stamp"
-          >
-            Área do organizador
-          </Link>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
-            acesso restrito
-          </span>
-        </div>
+        <h1 className="mt-4 font-display text-6xl leading-none">confConf</h1>
       </section>
 
-      <p className="text-center font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
-        Em construção — acompanhe o plano em implementation_plan.md
-      </p>
+      <Link
+        href="/admin/entrar"
+        className="inline-flex items-center justify-center border-2 border-ink bg-ink px-8 py-3 text-sm font-medium tracking-wide text-paper transition-colors hover:border-stamp hover:bg-stamp"
+      >
+        Área do Administrador
+      </Link>
     </main>
   );
 }

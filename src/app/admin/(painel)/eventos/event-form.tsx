@@ -19,6 +19,7 @@ const emptyValues: EventFormValues = {
   name: "",
   description: "",
   location: "",
+  address: "",
   startsAt: "",
   maxGift: "",
   extraInfo: "",
@@ -74,9 +75,28 @@ export function EventForm({ action, initial = emptyValues, eventId, submitLabel 
             type="text"
             defaultValue={initial.location}
             className={inputClassName}
-            placeholder="Salão de festas"
+            placeholder="Salão de festas do residencial"
           />
         </Field>
+
+        <div className="sm:col-span-2">
+          <Field
+            label="Endereço completo (opcional)"
+            htmlFor="address"
+            hint="Rua, número, bairro e cidade — aparece para os convidados junto com o local."
+            error={fieldError("address")}
+          >
+            <input
+              id="address"
+              name="address"
+              type="text"
+              maxLength={300}
+              defaultValue={initial.address}
+              className={inputClassName}
+              placeholder="Rua das Flores, 123 — Centro, São Paulo/SP"
+            />
+          </Field>
+        </div>
 
         <Field
           label="Valor máximo do presente (R$)"
@@ -102,12 +122,12 @@ export function EventForm({ action, initial = emptyValues, eventId, submitLabel 
           >
             &nbsp;
           </span>
-          <label className="flex h-12 items-center gap-3 border-2 border-ink bg-paper px-3">
+          <label className="flex min-h-12 items-center gap-3 border-2 border-ink bg-paper px-3">
             <input
               type="checkbox"
               name="hasSecretSanta"
               defaultChecked={initial.hasSecretSanta}
-              className="h-5 w-5 accent-[var(--stamp)]"
+              className="h-6 w-6 accent-[var(--stamp)]"
             />
             <span className="text-sm">Terá amigo secreto</span>
           </label>

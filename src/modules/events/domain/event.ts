@@ -12,6 +12,7 @@ export const eventInputSchema = z.object({
     .max(120, "O nome precisa ter entre 3 e 120 caracteres."),
   description: z.string().trim().max(2000, "A descrição aceita no máximo 2000 caracteres."),
   location: z.string().trim().max(200, "O local aceita no máximo 200 caracteres."),
+  address: z.string().trim().max(300, "O endereço aceita no máximo 300 caracteres."),
   startsAt: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "Informe data e horário válidos."),
@@ -26,6 +27,7 @@ export interface EventRow {
   name: string;
   description: string | null;
   location: string | null;
+  address: string | null;
   starts_at: string;
   timezone: string;
   max_gift_cents: number | null;
@@ -108,6 +110,7 @@ export function toEventRow(input: EventInput): EventRow {
     name: input.name,
     description: input.description || null,
     location: input.location || null,
+    address: input.address || null,
     starts_at: toSaoPauloIso(input.startsAt),
     timezone: DEFAULT_TIMEZONE,
     max_gift_cents: maxGiftCents,

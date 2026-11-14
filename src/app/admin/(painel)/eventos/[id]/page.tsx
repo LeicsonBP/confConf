@@ -89,6 +89,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               {formatEventDate(event.starts_at)}
               {event.location ? ` · ${event.location}` : ""}
             </p>
+            {event.address ? (
+              <p className="mt-1 text-sm text-ink-soft">{event.address}</p>
+            ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
             <Stamp tone={event.has_secret_santa ? "stamp" : "ink"}>
@@ -114,6 +117,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               name: event.name,
               description: event.description ?? "",
               location: event.location ?? "",
+              address: event.address ?? "",
               startsAt: fromIsoToLocalDateTime(event.starts_at),
               maxGift: formatCentsToBrl(event.max_gift_cents),
               extraInfo: event.extra_info ?? "",
@@ -147,13 +151,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
         ) : (
           <ul className="mt-5 flex flex-col gap-5">
             {inviteItems.map((invite) => (
-              <li key={invite.id} className="border-2 border-ink bg-paper p-4">
+              <li key={invite.id} className="border-2 border-ink bg-paper p-5 sm:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="font-display text-lg leading-none">
                       {invite.label ?? "Convite sem nome"}
                     </p>
-                    <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-faint">
+                    <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-faint">
                       Válido até {formatEventDate(invite.expiresAt)} ·{" "}
                       {formatInviteUses(invite.usedCount, invite.maxUses)}
                     </p>
@@ -172,7 +176,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                   </div>
                 </div>
 
-                <div className="mt-3">
+                <div className="mt-4 border-t-2 border-dashed border-ink-faint pt-4">
                   {invite.url ? (
                     <InviteLink url={invite.url} />
                   ) : (

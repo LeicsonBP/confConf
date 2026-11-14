@@ -36,6 +36,8 @@ export function Stamp({
   );
 }
 
-export function PerforatedDivider() {
-  return <div aria-hidden="true" className="border-t-2 border-dashed border-ink-faint" />;
+export function PerforatedDivider({ className = "my-6" }: { className?: string }) {
+  return (
+    <div aria-hidden="true" className={`border-t-2 border-dashed border-ink-faint ${className}`} />
+  );
 }

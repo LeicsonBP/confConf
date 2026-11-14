@@ -7,6 +7,7 @@ export interface EventFormValues {
   name: string;
   description: string;
   location: string;
+  address: string;
   startsAt: string;
   maxGift: string;
   extraInfo: string;

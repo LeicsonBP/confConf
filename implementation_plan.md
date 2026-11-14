@@ -63,6 +63,8 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-13 | `service_role` restrita ao endpoint de recuperação de credenciais | Técnica | Contenção da chave mais poderosa do sistema |
 | D-14 | **Ambiente único**: um projeto Supabase (`confConf`) e trabalho direto na branch `main`, sem `develop` | Cliente (2026-11-14) | Revoga D-12; CI valida migrações no Supabase local antes de cada push |
 | D-15 | **Link de convite reutilizável e sempre visível** ao admin (usos ilimitados por padrão); token guardado cifrado | Cliente (2026-11-14) | Revoga o "uso único/uma exibição"; ver ADR-0009 |
+| D-16 | **Usuário do participante = primeiro nome normalizado + 3 dígitos** (ex.: `leicson745`), sem símbolos, acentos ou hífen | Cliente (2026-11-14) | Sub­stitui o identificador baseado no nome completo; identificadores antigos continuam válidos |
+| D-17 | **Endereço completo do evento** como campo opcional, exibido aos convidados junto com o local | Cliente (2026-11-14) | Novo campo em `events.address`, sem alterar o `location` |
 
 ---
 
@@ -198,11 +200,11 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 |---|---|
 | BR-01 | Existe **um único** administrador master, sem cadastro público e sem criação de novas contas administrativas pela interface |
 | BR-02 | A conta do administrador é criada por script de operação, com senha forte e rotação trimestral recomendada |
-| BR-03 | O evento exige nome (3–120 caracteres) e data/hora; descrição, local, valor máximo do presente e informações adicionais são opcionais |
+| BR-03 | O evento exige nome (3–120 caracteres) e data/hora; descrição, local, **endereço completo**, valor máximo do presente e informações adicionais são opcionais |
 | BR-04 | O amigo secreto é **opcional por evento**; o evento existe e funciona sem sorteio |
 | BR-05 | Só é possível cadastrar-se com um convite válido, não expirado e não revogado |
 | BR-06 | O convite tem validade padrão de 30 dias, usos configuráveis (**ilimitado por padrão**, para compartilhar em grupo) e pode ser revogado a qualquer momento; o admin vê o link sempre que quiser |
-| BR-07 | O identificador é o nome normalizado (sem acentos, minúsculas, hífens) seguido de exatamente 3 dígitos aleatórios; é único e imutável |
+| BR-07 | O identificador de usuário é o **primeiro nome** normalizado (sem acentos, minúsculas, sem símbolos) seguido de exatamente 3 dígitos aleatórios; é único e imutável |
 | BR-08 | O PIN tem 4 a 8 dígitos numéricos; é normalizado com zeros à esquerda até 6 caracteres para o Supabase Auth; nunca é exibido ao administrador |
 | BR-09 | Cada participante tem e-mail sintético não entregável derivado do identificador; não há envio de e-mail no sistema |
 | BR-10 | Um participante pode participar de vários eventos com a mesma conta |
@@ -565,7 +567,7 @@ erDiagram
 | Coluna | Tipo | Restrições |
 |---|---|---|
 | `id` | uuid | PK, FK `auth.users(id)` on delete cascade |
-| `username` | citext | not null, unique, check `^[a-z0-9-]{2,40}-[0-9]{3}$` |
+| `username` | text | not null, unique, check `^[a-z0-9-]{4,44}$` (novos usuários: primeiro nome + 3 dígitos) |
 | `full_name` | text | not null, 2 a 120 caracteres |
 | `birth_date` | date | not null, entre 1900-01-01 e hoje |
 | `created_at` / `updated_at` | timestamptz | not null, default now() |
@@ -590,6 +592,7 @@ Sem políticas para `authenticated`; leitura apenas por `private.is_admin()` (se
 | `name` | text | not null, 3 a 120 caracteres |
 | `description` | text | até 2000 caracteres |
 | `location` | text | até 200 caracteres |
+| `address` | text | até 300 caracteres; endereço completo exibido aos convidados |
 | `starts_at` | timestamptz | not null |
 | `timezone` | text | not null, default `America/Sao_Paulo` |
 | `max_gift_cents` | integer | nulo ou 0 a 100.000.000 |
@@ -1587,7 +1590,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-01 | Dado o admin master, quando entra em `/admin/entrar` com senha correta e captcha, então acessa o painel; com senha errada, recebe erro genérico e o contador de tentativas aumenta |
 | AC-09 | Dado um convite expirado/revogado/esgotado, quando aberto, então a página informa invalidez e não permite cadastro |
 | AC-10 | Dado o formulário completo e válido, quando enviado, então cria conta, participação e exibe o cartão; com PIN de 3 dígitos, é rejeitado |
-| AC-11 | Dado um nome que gera identificador existente, quando o cadastro é enviado, então o sistema tenta novos dígitos e conclui com identificador único |
+| AC-11 | Dado um nome que gera usuário existente, quando o cadastro é enviado, então o sistema tenta novos dígitos e conclui com usuário único (primeiro nome + 3 dígitos) |
 | AC-12 | Dado o cadastro concluído, quando o participante volta depois, então entra com identificador + PIN do cartão |
 | AC-22 | Dado identificador inexistente ou PIN errado, quando tenta entrar, então a mensagem é idêntica nos dois casos |
 | AC-23 | Dado identificador + data de nascimento corretos, quando recupera, então define novo PIN e as sessões antigas são derrubadas |
@@ -1597,7 +1600,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 
 | ID | Critério |
 |---|---|
-| AC-02 | Dado o formulário de evento, quando salvo, então todos os campos são persistidos e exibidos; amigo secreto pode ser desligado |
+| AC-02 | Dado o formulário de evento, quando salvo, então todos os campos são persistidos e exibidos (nome, data, local, endereço, valor máximo, descrição, informações); amigo secreto pode ser desligado |
 | AC-03 | Dado um evento com sorteio realizado, quando o admin tenta desligar o amigo secreto, então o sistema bloqueia |
 | AC-04 | Dado o botão "gerar convite", quando acionado, então o link aparece na lista e pode ser copiado quantas vezes quiser, com validade, usos e status (ativo/expirado/revogado/esgotado) |
 | AC-05 | Dado um participante ativo, quando o admin remove, então ele sai da visão consolidada; após o sorteio, a remoção é bloqueada |
@@ -1726,6 +1729,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.0 | 2026-11-14 | Consolidação da Fase 1: 11 entregáveis, D-01 a D-13, ambientes/branches e operação assistida por agente |
 | 1.1 | 2026-11-14 | D-14: ambiente único e trabalho direto na `main`; ajuste das seções 1, 2, 4, 15, 16, 20 e 21 |
 | 1.2 | 2026-11-14 | D-15: link de convite reutilizável e sempre visível (token cifrado); ajuste de BR-06, tabela `invites`, RLS e AC-04 |
+| 1.3 | 2026-11-14 | D-16/D-17: usuário = primeiro nome + 3 dígitos e campo endereço; ajustes de BR-03, BR-07, tabelas e ACs |
 
 ---
 

@@ -18,6 +18,7 @@ function parseEventFormData(formData: FormData): ParseResult {
     name: formData.get("name"),
     description: formData.get("description") ?? "",
     location: formData.get("location") ?? "",
+    address: formData.get("address") ?? "",
     startsAt: formData.get("startsAt") ?? "",
     maxGift: formData.get("maxGift") ?? "",
     extraInfo: formData.get("extraInfo") ?? "",

@@ -28,7 +28,7 @@ const signupSchema = z.object({
 
 interface InvitePreview {
   valid?: boolean;
-  event?: { name?: string };
+  event?: { name?: string; starts_at?: string; address?: string | null };
 }
 
 export async function signUpWithInvite(
@@ -127,6 +127,8 @@ export async function signUpWithInvite(
         username,
         pin: parsed.data.pin,
         eventName: preview.event?.name ?? "",
+        eventDate: preview.event?.starts_at ?? new Date().toISOString(),
+        eventAddress: preview.event?.address ?? null,
       },
     };
   }

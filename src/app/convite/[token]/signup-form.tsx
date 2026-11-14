@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Button } from "@/design-system/button";
 import { Field, inputClassName } from "@/design-system/field";
-import { PerforatedDivider } from "@/design-system/ticket";
+import { CredentialCard } from "./credential-card";
 import { signUpWithInvite } from "./actions";
 import type { SignupState } from "./types";
 
@@ -25,59 +25,17 @@ const RESTRICTIONS = [
 
 export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProps) {
   const [state, formAction, pending] = useActionState(signUpWithInvite, initialState);
+  const [hasOther, setHasOther] = useState(false);
 
   if (state.success && state.credentials) {
-    return (
-      <div className="flex flex-col gap-4">
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">
-          Ingresso emitido
-        </p>
-        <h2 className="font-display text-3xl leading-none">Guarde sua cartela</h2>
-        <p className="text-sm text-ink-soft">
-          Você está participando de <strong>{state.credentials.eventName}</strong>. Estas são as
-          credenciais de acesso à sua área — elas não aparecem de novo.
-        </p>
-
-        <div className="mt-2 border-2 border-dashed border-ink bg-paper p-5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-ink-faint">
-            Credenciais
-          </p>
-          <dl className="mt-3 grid gap-3">
-            <div>
-              <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">
-                Identificador
-              </dt>
-              <dd className="font-mono text-lg">{state.credentials.username}</dd>
-            </div>
-            <div>
-              <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">
-                PIN
-              </dt>
-              <dd className="font-mono text-lg">{state.credentials.pin}</dd>
-            </div>
-          </dl>
-        </div>
-
-        <PerforatedDivider />
-
-        <div className="flex flex-wrap gap-3">
-          <Button type="button" onClick={() => window.print()}>
-            Imprimir cartela
-          </Button>
-        </div>
-        <p className="text-xs text-ink-faint">
-          Dica: guarde em um lugar seguro ou imprima. Sem essas duas informações não é possível
-          entrar na sua área.
-        </p>
-      </div>
-    );
+    return <CredentialCard {...state.credentials} />;
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-6">
+    <form action={formAction} className="flex flex-col gap-8">
       <input type="hidden" name="tokenHash" value={tokenHash} />
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <Field label="Nome completo" htmlFor="fullName" required>
             <input
@@ -92,24 +50,26 @@ export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProp
           </Field>
         </div>
 
-        <Field
-          label="Data de nascimento"
-          htmlFor="birthDate"
-          hint="Usada para confirmar sua identidade se precisar recuperar o acesso."
-          required
-        >
-          <input
-            id="birthDate"
-            name="birthDate"
-            type="date"
+        <div className="sm:col-span-2">
+          <Field
+            label="Data de nascimento"
+            htmlFor="birthDate"
+            hint="Usada para confirmar sua identidade se precisar recuperar o acesso."
             required
-            min="1900-01-01"
-            max={new Date().toISOString().slice(0, 10)}
-            className={inputClassName}
-          />
-        </Field>
+          >
+            <input
+              id="birthDate"
+              name="birthDate"
+              type="date"
+              required
+              min="1900-01-01"
+              max={new Date().toISOString().slice(0, 10)}
+              className={inputClassName}
+            />
+          </Field>
+        </div>
 
-        <Field label="PIN (4 a 8 dígitos)" htmlFor="pin" required>
+        <Field label="Senha (4 a 8 dígitos)" htmlFor="pin" required>
           <input
             id="pin"
             name="pin"
@@ -123,7 +83,7 @@ export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProp
           />
         </Field>
 
-        <Field label="Confirme o PIN" htmlFor="pinConfirm" required>
+        <Field label="Confirme a senha" htmlFor="pinConfirm" required>
           <input
             id="pinConfirm"
             name="pinConfirm"
@@ -138,35 +98,48 @@ export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProp
         </Field>
 
         <div className="sm:col-span-2">
-          <fieldset className="border-2 border-ink bg-paper p-4">
-            <legend className="px-1 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-soft">
+          <fieldset className="border-2 border-ink bg-paper p-5">
+            <legend className="px-2 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-soft">
               Restrições alimentares
             </legend>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            <p className="text-xs text-ink-faint">Opcional — marque o que se aplica a você.</p>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {RESTRICTIONS.map((restriction) => (
-                <label key={restriction.value} className="flex items-center gap-2 text-sm">
+                <label
+                  key={restriction.value}
+                  className="flex items-center gap-3 border border-transparent px-1 py-1 text-sm"
+                >
                   <input
                     type="checkbox"
                     name="restrictions"
                     value={restriction.value}
-                    className="h-4 w-4 accent-[var(--stamp)]"
+                    className="h-5 w-5 accent-[var(--stamp)]"
+                    onChange={
+                      restriction.value === "outra"
+                        ? (event) => setHasOther(event.currentTarget.checked)
+                        : undefined
+                    }
                   />
                   {restriction.label}
                 </label>
               ))}
             </div>
-            <div className="mt-4">
-              <Field label="Detalhe a restrição (opcional)" htmlFor="other">
-                <input
-                  id="other"
-                  name="other"
-                  type="text"
-                  maxLength={300}
-                  className={inputClassName}
-                  placeholder="Ex.: alergia a camarão"
-                />
-              </Field>
-            </div>
+
+            {hasOther ? (
+              <div className="mt-5">
+                <Field label="Qual outra restrição?" htmlFor="other">
+                  <input
+                    id="other"
+                    name="other"
+                    type="text"
+                    maxLength={300}
+                    className={inputClassName}
+                    placeholder="Ex.: alergia a camarão"
+                  />
+                </Field>
+              </div>
+            ) : null}
           </fieldset>
         </div>
 
@@ -194,7 +167,7 @@ export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProp
       <input type="hidden" name="captchaToken" value={captchaToken} />
 
       {state.error ? (
-        <p role="alert" className="border-2 border-stamp px-3 py-2 text-sm text-stamp">
+        <p role="alert" className="border-2 border-stamp px-4 py-3 text-sm text-stamp">
           {state.error}
         </p>
       ) : null}

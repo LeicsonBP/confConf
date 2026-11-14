@@ -81,7 +81,7 @@ export default async function AdminEventsPage() {
           {list.map((event) => (
             <li key={event.id}>
               <Link href={`/admin/eventos/${event.id}`} className="block transition-transform">
-                <TicketCard className="p-6 hover:-translate-y-0.5">
+                <TicketCard className="p-6 hover:-translate-y-0.5 sm:p-8">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
                       <h2 className="font-display text-2xl leading-tight">{event.name}</h2>
@@ -99,8 +99,8 @@ export default async function AdminEventsPage() {
                       </Stamp>
                     </div>
                   </div>
-                  <PerforatedDivider />
-                  <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
+                  <PerforatedDivider className="my-5" />
+                  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
                     Acessar confraternização →
                   </p>
                 </TicketCard>

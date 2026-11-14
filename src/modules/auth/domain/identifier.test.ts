@@ -4,28 +4,31 @@ import { Identifier } from "./identifier";
 
 describe("Identifier", () => {
   describe("normalizeBase", () => {
-    it("remove acentos e colapsa separadores", () => {
-      expect(Identifier.normalizeBase("João D'Ávila")).toBe("joao-d-avila");
+    it("usa apenas o primeiro nome, sem acentos", () => {
+      expect(Identifier.normalizeBase("João D'Ávila")).toBe("joao");
+      expect(Identifier.normalizeBase("Maria Silva")).toBe("maria");
     });
 
-    it("converte espaços e símbolos em hífen único", () => {
-      expect(Identifier.normalizeBase("  Maria   Silva  ")).toBe("maria-silva");
-      expect(Identifier.normalizeBase("Ana & Bia")).toBe("ana-bia");
+    it("remove símbolos, espaços e hífens do primeiro nome", () => {
+      expect(Identifier.normalizeBase("  Ana-Maria  Silva ")).toBe("anamaria");
+      expect(Identifier.normalizeBase("Ana & Bia")).toBe("ana");
     });
 
-    it("trunca nomes muito longos em 40 caracteres", () => {
+    it("trunca nomes muito longos em 20 caracteres", () => {
       const base = Identifier.normalizeBase("a".repeat(60));
-      expect(base).toHaveLength(40);
+      expect(base).toHaveLength(20);
     });
 
     it("usa fallback quando não sobra nada utilizável", () => {
       expect(Identifier.normalizeBase("###")).toBe("participante");
+      expect(Identifier.normalizeBase("")).toBe("participante");
     });
   });
 
   describe("generate", () => {
-    it("acrescenta três dígitos ao nome normalizado", () => {
-      expect(Identifier.generate("Maria Silva", () => 482)).toBe("maria-silva-482");
+    it("acrescenta três dígitos ao primeiro nome, sem separador", () => {
+      expect(Identifier.generate("Leicson Palhano", () => 745)).toBe("leicson745");
+      expect(Identifier.generate("Maria Silva", () => 482)).toBe("maria482");
     });
 
     it("gera identificador válido com o gerador padrão", () => {
@@ -41,17 +44,19 @@ describe("Identifier", () => {
 
   describe("validação", () => {
     it("aceita o formato esperado", () => {
-      expect(Identifier.isValid("maria-silva-482")).toBe(true);
-      expect(Identifier.isValid("ab-100")).toBe(true);
+      expect(Identifier.isValid("maria482")).toBe(true);
+      expect(Identifier.isValid("leicson745")).toBe(true);
+      expect(Identifier.isValid("participante123")).toBe(true);
     });
 
     it("recusa formatos inválidos", () => {
-      expect(Identifier.isValid("Maria-Silva-482")).toBe(false);
-      expect(Identifier.isValid("maria-silva")).toBe(false);
-      expect(Identifier.isValid("maria-silva-12")).toBe(false);
-      expect(Identifier.isValid("maria_silva-482")).toBe(false);
-      expect(Identifier.assertValid("maria-silva-482")).toBe("maria-silva-482");
-      expect(() => Identifier.assertValid("invalido")).toThrow(AppError);
+      expect(Identifier.isValid("Maria482")).toBe(false);
+      expect(Identifier.isValid("maria-482")).toBe(false);
+      expect(Identifier.isValid("maria_482")).toBe(false);
+      expect(Identifier.isValid("ab1")).toBe(false);
+      expect(Identifier.isValid("maria")).toBe(false);
+      expect(Identifier.assertValid("maria482")).toBe("maria482");
+      expect(() => Identifier.assertValid("inválido")).toThrow(AppError);
     });
   });
 });

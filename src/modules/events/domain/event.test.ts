@@ -64,6 +64,7 @@ describe("eventInputSchema", () => {
     name: "Confraternização de fim de ano",
     description: "",
     location: "",
+    address: "",
     startsAt: "2026-12-20T19:30",
     maxGift: "",
     extraInfo: "",
@@ -85,6 +86,7 @@ describe("toEventRow", () => {
     name: "Confraternização de fim de ano",
     description: "",
     location: "Salão",
+    address: "Rua das Flores, 123 - Centro",
     startsAt: "2026-12-20T19:30",
     maxGift: "150,00",
     extraInfo: "",
@@ -97,6 +99,7 @@ describe("toEventRow", () => {
       name: "Confraternização de fim de ano",
       description: null,
       location: "Salão",
+      address: "Rua das Flores, 123 - Centro",
       starts_at: "2026-12-20T22:30:00.000Z",
       timezone: "America/Sao_Paulo",
       max_gift_cents: 15000,
@@ -110,7 +113,9 @@ describe("toEventRow", () => {
   });
 
   it("normaliza local vazio", () => {
-    expect(toEventRow({ ...input, location: "" }).location).toBeNull();
+    const row = toEventRow({ ...input, location: "", address: "" });
+    expect(row.location).toBeNull();
+    expect(row.address).toBeNull();
   });
 
   it("recusa presente acima do limite", () => {
