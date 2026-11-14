@@ -16,6 +16,13 @@ export const eventInputSchema = z.object({
   startsAt: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "Informe data e horário válidos."),
+  drawScheduledAt: z
+    .string()
+    .trim()
+    .regex(
+      /^$|^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/,
+      "Informe uma data e horário válidos para o sorteio.",
+    ),
   maxGift: z.string().trim(),
   extraInfo: z.string().trim().max(2000, "As informações adicionais aceitam até 2000 caracteres."),
   hasSecretSanta: z.boolean(),
@@ -29,6 +36,7 @@ export interface EventRow {
   location: string | null;
   address: string | null;
   starts_at: string;
+  draw_scheduled_at: string | null;
   timezone: string;
   max_gift_cents: number | null;
   extra_info: string | null;
@@ -112,6 +120,10 @@ export function toEventRow(input: EventInput): EventRow {
     location: input.location || null,
     address: input.address || null,
     starts_at: toSaoPauloIso(input.startsAt),
+    draw_scheduled_at:
+      input.hasSecretSanta && input.drawScheduledAt
+        ? toSaoPauloIso(input.drawScheduledAt)
+        : null,
     timezone: DEFAULT_TIMEZONE,
     max_gift_cents: maxGiftCents,
     extra_info: input.extraInfo || null,

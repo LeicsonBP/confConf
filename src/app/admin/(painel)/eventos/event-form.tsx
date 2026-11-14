@@ -21,6 +21,7 @@ const emptyValues: EventFormValues = {
   location: "",
   address: "",
   startsAt: "",
+  drawScheduledAt: "",
   maxGift: "",
   extraInfo: "",
   hasSecretSanta: true,
@@ -65,6 +66,22 @@ export function EventForm({ action, initial = emptyValues, eventId, submitLabel 
             defaultValue={initial.startsAt}
             className={inputClassName}
             aria-invalid={fieldError("startsAt") ? true : undefined}
+          />
+        </Field>
+
+        <Field
+          label="Data prevista do sorteio (opcional)"
+          htmlFor="drawScheduledAt"
+          hint="Só vale quando há amigo secreto; aparece na área do participante."
+          error={fieldError("drawScheduledAt")}
+        >
+          <input
+            id="drawScheduledAt"
+            name="drawScheduledAt"
+            type="datetime-local"
+            defaultValue={initial.drawScheduledAt}
+            className={inputClassName}
+            aria-invalid={fieldError("drawScheduledAt") ? true : undefined}
           />
         </Field>
 

@@ -62,8 +62,8 @@ export async function POST(request: Request) {
 
     const { data: throttle } = await admin.rpc("recovery_throttle", {
       p_key: `usuario|${clientIp(request)}`,
-      p_max: 5,
-      p_window_seconds: 3600,
+      p_max: 10,
+      p_window_seconds: 900,
     });
     const throttleRow = Array.isArray(throttle) ? throttle[0] : throttle;
     if (throttleRow && throttleRow.allowed === false) {
@@ -102,6 +102,14 @@ export async function POST(request: Request) {
         const event = (participation as { events?: EventInfo } | null)?.events ?? null;
 
         await client.auth.signOut().catch(() => undefined);
+
+        try {
+          await admin.rpc("recovery_throttle_reset", {
+            p_key: `usuario|${clientIp(request)}`,
+          });
+        } catch {
+          // reset é best-effort; a janela do throttle expira sozinha
+        }
 
         return NextResponse.json({
           ok: true,

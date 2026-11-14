@@ -175,6 +175,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          draw_scheduled_at: string | null
           extra_info: string | null
           has_secret_santa: boolean
           id: string
@@ -190,6 +191,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          draw_scheduled_at?: string | null
           extra_info?: string | null
           has_secret_santa?: boolean
           id?: string
@@ -205,6 +207,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          draw_scheduled_at?: string | null
           extra_info?: string | null
           has_secret_santa?: boolean
           id?: string

@@ -10,6 +10,7 @@ export interface EventFormValues {
   location: string;
   address: string;
   startsAt: string;
+  drawScheduledAt: string;
   maxGift: string;
   extraInfo: string;
   hasSecretSanta: boolean;

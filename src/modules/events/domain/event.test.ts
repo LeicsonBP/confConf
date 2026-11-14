@@ -66,6 +66,7 @@ describe("eventInputSchema", () => {
     location: "",
     address: "",
     startsAt: "2026-12-20T19:30",
+    drawScheduledAt: "",
     maxGift: "",
     extraInfo: "",
     hasSecretSanta: true,
@@ -88,6 +89,7 @@ describe("toEventRow", () => {
     location: "Salão",
     address: "Rua das Flores, 123 - Centro",
     startsAt: "2026-12-20T19:30",
+    drawScheduledAt: "2026-12-18T20:00",
     maxGift: "150,00",
     extraInfo: "",
     hasSecretSanta: false,
@@ -101,6 +103,7 @@ describe("toEventRow", () => {
       location: "Salão",
       address: "Rua das Flores, 123 - Centro",
       starts_at: "2026-12-20T22:30:00.000Z",
+      draw_scheduled_at: null,
       timezone: "America/Sao_Paulo",
       max_gift_cents: 15000,
       extra_info: null,
@@ -116,6 +119,14 @@ describe("toEventRow", () => {
     const row = toEventRow({ ...input, location: "", address: "" });
     expect(row.location).toBeNull();
     expect(row.address).toBeNull();
+  });
+
+  it("agenda o sorteio apenas quando o amigo secreto está ligado", () => {
+    const comSorteio = toEventRow({ ...input, hasSecretSanta: true });
+    expect(comSorteio.draw_scheduled_at).toBe("2026-12-18T23:00:00.000Z");
+
+    const semSorteio = toEventRow({ ...input, hasSecretSanta: false });
+    expect(semSorteio.draw_scheduled_at).toBeNull();
   });
 
   it("recusa presente acima do limite", () => {

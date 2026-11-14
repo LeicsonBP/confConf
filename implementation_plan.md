@@ -69,6 +69,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-19 | **Nome completo imutável no perfil** do participante; a edição se restringe às restrições alimentares | Cliente (2026-11-14) | Ajuste em BR-31 e na tela de perfil |
 | D-20 | Administrador pode **desfazer o sorteio** e **sortear de novo** (para incluir/remover participantes) | Cliente (2026-11-14) | Ajusta BR-15/BR-33; desfazer apaga pares e confirmações |
 | D-21 | **Recuperação de usuário** com senha + data de nascimento, reexibindo as credenciais e a opção de baixar as informações | Cliente (2026-11-14) | Novo endpoint `/api/recuperacao/usuario`; complementa a recuperação de senha |
+| D-22 | **Data prevista do sorteio** no cadastro da confraternização (opcional, só com amigo secreto), exibida ao participante | Cliente (2026-11-14) | Novo campo `events.draw_scheduled_at` |
 
 ---
 
@@ -231,6 +232,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-27 | Falhas de login não revelam se a conta existe |
 | BR-28 | Recuperação de senha exige usuário e data de nascimento corretos, mais captcha e limite de tentativas |
 | BR-39 | Recuperação de usuário exige senha e data de nascimento corretos; ao confirmar, o sistema exibe o usuário e permite baixar as informações de acesso novamente |
+| BR-40 | O evento com amigo secreto pode ter uma **data prevista do sorteio** (opcional), exibida na área do participante até o sorteio acontecer |
 | BR-29 | Após a recuperação, todas as sessões do participante são revogadas |
 | BR-30 | Todo texto exibido é pt-BR; datas no fuso do evento; valores em BRL |
 | BR-31 | O participante edita apenas as próprias restrições alimentares (nome, usuário e data de nascimento são imutáveis); o admin não edita dados do participante, apenas remove |
@@ -599,6 +601,7 @@ Sem políticas para `authenticated`; leitura apenas por `private.is_admin()` (se
 | `location` | text | até 200 caracteres |
 | `address` | text | até 300 caracteres; endereço completo exibido aos convidados |
 | `starts_at` | timestamptz | not null |
+| `draw_scheduled_at` | timestamptz | nulo; data prevista do sorteio (só com amigo secreto) |
 | `timezone` | text | not null, default `America/Sao_Paulo` |
 | `max_gift_cents` | integer | nulo ou 0 a 100.000.000 |
 | `extra_info` | text | até 2000 caracteres |
@@ -1630,6 +1633,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-27 | Dado o sorteio realizado, quando o participante abre a lista do amigo sorteado, então vê os itens em modo leitura; o admin não vê a lista |
 | AC-43 | Dado um sorteio realizado, quando o admin clica em desfazer e confirma, então pares e confirmações são apagados, o elenco volta a ser editável e um novo sorteio pode ser executado |
 | AC-44 | Dado que a pessoa lembra a senha, quando informa senha + data de nascimento + captcha, então o sistema exibe o usuário e o cartão de acesso com o botão de baixar as informações; senha errada retorna erro genérico |
+| AC-45 | Dado um evento com amigo secreto e data prevista do sorteio, quando o participante entra na área, então vê a previsão; depois do sorteio, vê a data em que ele foi realizado |
 
 ### 19.4 Área do participante
 
@@ -1748,6 +1752,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.7 | 2026-11-14 | M4 concluído: sorteio (derangement), resultado do próprio par, confirmação, relatos e revelação pelo admin; D-19 (nome imutável) |
 | 1.8 | 2026-11-14 | D-20: desfazer e refazer o sorteio para incluir/remover participantes (ajusta BR-15, BR-33 e AC-43) |
 | 1.9 | 2026-11-14 | D-21: recuperação de usuário por senha + data de nascimento, com reexibição e download das credenciais (BR-39, AC-44) |
+| 1.10 | 2026-11-14 | D-22: data prevista do sorteio no evento e exibição ao participante (BR-40, AC-45); throttle da recuperação ajustado (10/15min com reset em sucesso) |
 
 ---
 

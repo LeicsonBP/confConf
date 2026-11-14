@@ -170,6 +170,11 @@ export default async function EventDetailPage({
             {event.max_gift_cents !== null ? (
               <Stamp tone="bottle">Até R$ {formatCentsToBrl(event.max_gift_cents)}</Stamp>
             ) : null}
+            {event.has_secret_santa && event.draw_scheduled_at ? (
+              <Stamp tone="bottle">
+                Sorteio previsto: {formatEventDate(event.draw_scheduled_at)}
+              </Stamp>
+            ) : null}
           </div>
         </div>
       </div>
@@ -189,6 +194,9 @@ export default async function EventDetailPage({
               location: event.location ?? "",
               address: event.address ?? "",
               startsAt: fromIsoToLocalDateTime(event.starts_at),
+              drawScheduledAt: event.draw_scheduled_at
+                ? fromIsoToLocalDateTime(event.draw_scheduled_at)
+                : "",
               maxGift: formatCentsToBrl(event.max_gift_cents),
               extraInfo: event.extra_info ?? "",
               hasSecretSanta: event.has_secret_santa,

@@ -21,6 +21,7 @@ function parseEventFormData(formData: FormData): ParseResult {
     location: formData.get("location") ?? "",
     address: formData.get("address") ?? "",
     startsAt: formData.get("startsAt") ?? "",
+    drawScheduledAt: formData.get("drawScheduledAt") ?? "",
     maxGift: formData.get("maxGift") ?? "",
     extraInfo: formData.get("extraInfo") ?? "",
     hasSecretSanta: formData.get("hasSecretSanta") === "on",

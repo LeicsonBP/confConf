@@ -141,11 +141,21 @@ export default async function ParticipantEventPage({
         {!event.has_secret_santa ? (
           <p className="text-sm text-ink-soft">Esta confraternização está sem amigo secreto.</p>
         ) : !draw ? (
-          <p className="text-sm text-ink-soft">
-            O sorteio ainda não foi realizado por quem organiza.
-          </p>
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-ink-soft">
+              O sorteio ainda não foi realizado por quem organiza.
+            </p>
+            {event.draw_scheduled_at ? (
+              <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+                Previsão do sorteio: {formatEventDate(event.draw_scheduled_at)}
+              </p>
+            ) : null}
+          </div>
         ) : assignment ? (
           <div className="flex flex-col gap-6">
+            <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+              Sorteio realizado em {formatEventDate(draw.executed_at)}
+            </p>
             <div className="flex flex-wrap items-center gap-3">
               <p className="text-lg">
                 Você tirou <strong>{assignment.receiver_name}</strong>.
