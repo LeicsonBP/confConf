@@ -33,12 +33,19 @@ export interface RestrictedEstimate {
   quantity: number;
 }
 
+export interface PackagingOption {
+  label: string;
+  count: number;
+}
+
 export interface FoodEstimate {
   key: string;
   label: string;
   unit: QuantityUnit;
   quantity: number;
   note: string;
+  /** Formas de compra (garrafas, sacos) quando aplicável. */
+  packaging?: PackagingOption[];
   restricted?: RestrictedEstimate;
 }
 
@@ -66,12 +73,23 @@ interface FoodRule {
   note: string;
   /** Multiplicador direto (ex.: descartáveis = 1,2 × pessoas). */
   factor?: number;
+  /** Quando true, não arredonda para múltiplo de 5. */
+  precise?: boolean;
   restricted?: {
     restriction: "sem_lactose" | "sem_gluten";
     label: string;
     note: string;
   };
 }
+
+const BOTTLE_SIZES = [
+  { ml: 500, label: "500 ml" },
+  { ml: 1000, label: "1 L" },
+  { ml: 1500, label: "1,5 L" },
+  { ml: 2000, label: "2 L" },
+] as const;
+
+const ICE_BAG_GRAMS = 5000;
 
 /**
  * Médias por pessoa baseadas em referências de festas (M5, D-25):
@@ -126,7 +144,8 @@ export const FOOD_RULES: FoodRule[] = [
     unit: "jogos",
     perPerson: 0,
     factor: 1.2,
-    note: "Pratos, copos e guardanapos",
+    precise: true,
+    note: "Pratos, copos e guardanapos (1,2 × pessoas, sem arredondamento)",
   },
 ];
 
@@ -180,7 +199,22 @@ export function buildFoodPlan(
   const estimates: FoodEstimate[] = FOOD_RULES.filter((rule) => selected.includes(rule.key)).map(
     (rule) => {
       const base = rule.factor !== undefined ? total * rule.factor : total * rule.perPerson;
-      const quantity = total > 0 ? roundUpToFive(base) : 0;
+      const quantity =
+        total === 0 ? 0 : rule.precise ? Math.ceil(base) : roundUpToFive(base);
+
+      let packaging: PackagingOption[] | undefined;
+      if (quantity > 0) {
+        if (rule.key === "refrigerante" || rule.key === "agua") {
+          packaging = BOTTLE_SIZES.map((size) => ({
+            label: size.label,
+            count: Math.ceil(quantity / size.ml),
+          }));
+        } else if (rule.key === "gelo") {
+          packaging = [
+            { label: "saco(s) de 5 kg", count: Math.ceil(quantity / ICE_BAG_GRAMS) },
+          ];
+        }
+      }
 
       let restricted: RestrictedEstimate | undefined;
       if (rule.restricted) {
@@ -202,6 +236,7 @@ export function buildFoodPlan(
         unit: rule.unit,
         quantity,
         note: rule.note,
+        packaging,
         restricted,
       };
     },

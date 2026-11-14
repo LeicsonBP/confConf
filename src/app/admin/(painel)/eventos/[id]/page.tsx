@@ -361,6 +361,15 @@ export default async function EventDetailPage({
                     {estimate.note ? (
                       <p className="mt-1 text-xs text-ink-faint">{estimate.note}</p>
                     ) : null}
+                    {estimate.packaging ? (
+                      <p className="mt-2 text-xs text-ink-soft">
+                        {estimate.packaging.length === 1
+                          ? `Embalagem: ${estimate.packaging[0]?.count} ${estimate.packaging[0]?.label}`
+                          : `Garrafas: ${estimate.packaging
+                              .map((option) => `${option.label} × ${option.count}`)
+                              .join(" · ")}`}
+                      </p>
+                    ) : null}
                     {estimate.restricted ? (
                       <p className="mt-2 border-t-2 border-dashed border-ink-faint pt-2 text-sm text-ink-soft">
                         {estimate.restricted.label}:{" "}
@@ -376,8 +385,9 @@ export default async function EventDetailPage({
             </ul>
 
             <p className="mt-4 text-xs text-ink-faint">
-              Estimativa, não é ordem de compra. Quantidades arredondadas para cima em múltiplos de
-              5. Premissas por pessoa:{" "}
+              Estimativa, não é ordem de compra. Alimentos e bebidas são arredondados para cima em
+              múltiplos de 5; descartáveis usam 1,2 × pessoas, sem arredondamento. Bebidas aparecem
+              por garrafa e gelo por saco de 5 kg. Premissas por pessoa:{" "}
               {FOOD_RULES.map((rule) =>
                 rule.factor !== undefined
                   ? `${rule.label}: ${rule.factor}× pessoas`
