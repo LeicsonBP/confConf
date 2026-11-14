@@ -28,7 +28,7 @@ Estado em 14/11/2026:
 
 - Auth configurado via Management API (lista abaixo);
 - migrações aplicadas e verificadas: 10 tabelas, RLS em todas, 10 funções em `private`, `am_i_admin` e `bootstrap_admin` em `public`;
-- admin master criado (`admin@confconf.invalid`), credencial em `.ops/admin-credentials.confconf.txt`;
+- admin master criado (login `admin`; e-mail interno `admin@confconf.invalid`; senha somente no GoTrue, com cópia local em `.ops/admin-credentials.confconf.txt`);
 - seed fictício aplicado durante o setup e **removido** em seguida, para não misturar dados de demonstração com os reais;
 - os tipos TypeScript são gerados do banco real (`npm run db:types`).
 

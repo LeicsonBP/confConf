@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col justify-center gap-8 px-6 py-16">
@@ -14,6 +16,18 @@ export default function HomePage() {
           <span className="border-2 border-ink px-3 py-2">Convite por link</span>
           <span className="border-2 border-ink px-3 py-2">Sorteio em segredo</span>
           <span className="border-2 border-ink px-3 py-2">Lista de desejos</span>
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center gap-4">
+          <Link
+            href="/admin/entrar"
+            className="inline-flex items-center justify-center border-2 border-ink bg-ink px-5 py-2.5 font-mono text-xs uppercase tracking-[0.15em] text-paper transition-colors hover:border-stamp hover:bg-stamp"
+          >
+            Área do organizador
+          </Link>
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+            acesso restrito
+          </span>
         </div>
       </section>
 

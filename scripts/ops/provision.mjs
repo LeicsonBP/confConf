@@ -269,7 +269,7 @@ async function ensureAdmin(ref, serviceKey) {
     userId = created.id;
     writeFileSync(
       resolve(OPS_DIR, "admin-credentials.confconf.txt"),
-      `email=${email}\npassword=${password}\nproject=${ref}\n`,
+      `username=admin\nemail=${email}\npassword=${password}\nproject=${ref}\n`,
       "utf8",
     );
     log(`Admin criado: ${email}`);
@@ -277,7 +277,7 @@ async function ensureAdmin(ref, serviceKey) {
     const password = readFileSync(passwordFile, "utf8").trim();
     writeFileSync(
       resolve(OPS_DIR, "admin-credentials.confconf.txt"),
-      `email=${email}\npassword=${password}\nproject=${ref}\n`,
+      `username=admin\nemail=${email}\npassword=${password}\nproject=${ref}\n`,
       "utf8",
     );
     log(`Admin já existe: ${email}`);

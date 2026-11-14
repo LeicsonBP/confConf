@@ -1,0 +1,133 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/modules/auth/server/session";
+import { eventInputSchema, toEventRow } from "@/modules/events/domain/event";
+import type { EventFormState } from "./types";
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+type ParseResult =
+  | { ok: true; row: ReturnType<typeof toEventRow> }
+  | { ok: false; state: EventFormState };
+
+function parseEventFormData(formData: FormData): ParseResult {
+  const parsed = eventInputSchema.safeParse({
+    name: formData.get("name"),
+    description: formData.get("description") ?? "",
+    location: formData.get("location") ?? "",
+    startsAt: formData.get("startsAt") ?? "",
+    maxGift: formData.get("maxGift") ?? "",
+    extraInfo: formData.get("extraInfo") ?? "",
+    hasSecretSanta: formData.get("hasSecretSanta") === "on",
+  });
+
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      const key = String(issue.path[0] ?? "form");
+      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+    }
+    return { ok: false, state: { fieldErrors, error: "Revise os campos destacados." } };
+  }
+
+  try {
+    return { ok: true, row: toEventRow(parsed.data) };
+  } catch (error) {
+    return {
+      ok: false,
+      state: { error: error instanceof Error ? error.message : "Dados inválidos." },
+    };
+  }
+}
+
+export async function createEvent(
+  _previous: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  const session = await requireAdmin();
+  const parsed = parseEventFormData(formData);
+  if (!parsed.ok) return parsed.state;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("events").insert({
+    ...parsed.row,
+    created_by: session.userId,
+  });
+
+  if (error) {
+    return { error: "Não foi possível criar o evento. Tente novamente." };
+  }
+
+  revalidatePath("/admin");
+  redirect("/admin");
+}
+
+export async function updateEvent(
+  _previous: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  await requireAdmin();
+
+  const eventId = String(formData.get("eventId") ?? "");
+  if (!UUID_PATTERN.test(eventId)) {
+    return { error: "Evento inválido." };
+  }
+
+  const parsed = parseEventFormData(formData);
+  if (!parsed.ok) return parsed.state;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("events").update(parsed.row).eq("id", eventId);
+
+  if (error) {
+    if (error.message.includes("amigo secreto")) {
+      return { error: "Não é possível desligar o amigo secreto depois do sorteio." };
+    }
+    return { error: "Não foi possível salvar as alterações." };
+  }
+
+  revalidatePath("/admin");
+  revalidatePath(`/admin/eventos/${eventId}`);
+  redirect(`/admin/eventos/${eventId}`);
+}
+
+export async function deleteEvent(
+  _previous: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  await requireAdmin();
+
+  const eventId = String(formData.get("eventId") ?? "");
+  const confirmation = String(formData.get("confirmation") ?? "").trim();
+
+  if (!UUID_PATTERN.test(eventId)) {
+    return { error: "Evento inválido." };
+  }
+
+  const supabase = await createClient();
+  const { data: event, error: readError } = await supabase
+    .from("events")
+    .select("name")
+    .eq("id", eventId)
+    .maybeSingle();
+
+  if (readError || !event) {
+    return { error: "Evento não encontrado." };
+  }
+
+  if (confirmation !== event.name) {
+    return { error: "Digite o nome exato do evento para confirmar a exclusão." };
+  }
+
+  const { error } = await supabase.from("events").delete().eq("id", eventId);
+
+  if (error) {
+    return { error: "Não foi possível excluir o evento." };
+  }
+
+  revalidatePath("/admin");
+  redirect("/admin");
+}
