@@ -1789,6 +1789,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.29 | 2026-11-14 | Relato de problema em página própria ("Reportar problema") e termos de restrição revisados (intolerante à lactose, celíaco) |
 | 1.30 | 2026-11-14 | Header do participante mostra "Início" na tela de perfil; botão de relato movido para depois do card do amigo secreto, em terracota |
 | 1.31 | 2026-11-14 | Excluir convite vira ícone de lixeira, com a mesma altura do selo de status (Ativo/Inativo) |
+| 1.32 | 2026-11-14 | Lixeira em terracota e selo de status do convite maior, com alturas equivalentes (33 px) |
 
 ---
 

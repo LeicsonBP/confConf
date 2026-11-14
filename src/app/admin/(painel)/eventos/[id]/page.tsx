@@ -397,7 +397,7 @@ export default async function EventDetailPage({
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Stamp tone={invite.status === "ativo" ? "bottle" : "ink"}>
+                    <Stamp tone={invite.status === "ativo" ? "bottle" : "ink"} size="md">
                       {inviteStatusLabel(invite.status)}
                     </Stamp>
                     <DeleteInviteForm

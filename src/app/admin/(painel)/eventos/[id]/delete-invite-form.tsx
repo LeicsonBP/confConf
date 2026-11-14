@@ -24,9 +24,9 @@ export function DeleteInviteForm({ action, eventId, inviteId }: DeleteInviteForm
         aria-label="Excluir convite"
         title="Excluir convite"
         disabled={pending}
-        className="inline-flex h-[27px] w-7 items-center justify-center border-2 border-ink bg-transparent text-ink transition-colors hover:bg-paper-3 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex h-[33px] w-8 items-center justify-center border-2 border-stamp bg-stamp text-paper transition-colors hover:border-ink hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
       >
-        <IconTrash size={14} />
+        <IconTrash size={15} />
       </button>
       {state.error ? (
         <span role="alert" className="text-xs text-stamp">

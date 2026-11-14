@@ -17,9 +17,11 @@ export function TicketCard({
 export function Stamp({
   children,
   tone = "ink",
+  size = "sm",
 }: {
   children: React.ReactNode;
   tone?: "ink" | "stamp" | "bottle";
+  size?: "sm" | "md";
 }) {
   const tones = {
     ink: "border-ink text-ink",
@@ -27,9 +29,14 @@ export function Stamp({
     bottle: "border-bottle text-bottle",
   } as const;
 
+  const sizes = {
+    sm: "px-2 py-1 text-[10px]",
+    md: "px-3 py-1.5 text-[11px]",
+  } as const;
+
   return (
     <span
-      className={`inline-flex items-center border-2 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] ${tones[tone]}`}
+      className={`inline-flex items-center border-2 font-mono uppercase tracking-[0.2em] ${sizes[size]} ${tones[tone]}`}
     >
       {children}
     </span>
