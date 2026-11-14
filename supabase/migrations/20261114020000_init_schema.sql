@@ -49,72 +49,6 @@ as $$
   select encode(sha256(convert_to(coalesce(p_value, ''), 'UTF8')), 'hex');
 $$;
 
-create or replace function private.is_admin()
-returns boolean
-language sql
-stable
-security definer
-set search_path = ''
-as $$
-  select exists (
-    select 1
-    from public.admin_users au
-    where au.user_id = (select auth.uid())
-  );
-$$;
-
-create or replace function private.is_event_participant(p_event uuid)
-returns boolean
-language sql
-stable
-security definer
-set search_path = ''
-as $$
-  select exists (
-    select 1
-    from public.event_participants ep
-    where ep.event_id = p_event
-      and ep.user_id = (select auth.uid())
-      and ep.removed_at is null
-  );
-$$;
-
-create or replace function private.has_draw(p_event uuid)
-returns boolean
-language sql
-stable
-security definer
-set search_path = ''
-as $$
-  select exists (
-    select 1
-    from public.draw_runs dr
-    where dr.event_id = p_event
-  );
-$$;
-
-create or replace function private.drew(p_participant uuid)
-returns boolean
-language sql
-stable
-security definer
-set search_path = ''
-as $$
-  select exists (
-    select 1
-    from public.secret_santa_assignments ssa
-    join public.event_participants giver
-      on giver.id = ssa.giver_participant_id
-    where ssa.receiver_participant_id = p_participant
-      and giver.user_id = (select auth.uid())
-  );
-$$;
-
-grant execute on function private.is_admin() to authenticated;
-grant execute on function private.is_event_participant(uuid) to authenticated;
-grant execute on function private.has_draw(uuid) to authenticated;
-grant execute on function private.drew(uuid) to authenticated;
-
 -- -----------------------------------------------------------------------------
 -- Perfis e administradores
 -- -----------------------------------------------------------------------------
@@ -274,6 +208,75 @@ create table private.auth_throttle (
   locked_until timestamptz,
   updated_at timestamptz not null default now()
 );
+
+-- -----------------------------------------------------------------------------
+-- Helpers de autorização (precisam das tabelas já criadas)
+-- -----------------------------------------------------------------------------
+create or replace function private.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.admin_users au
+    where au.user_id = (select auth.uid())
+  );
+$$;
+
+create or replace function private.is_event_participant(p_event uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.event_participants ep
+    where ep.event_id = p_event
+      and ep.user_id = (select auth.uid())
+      and ep.removed_at is null
+  );
+$$;
+
+create or replace function private.has_draw(p_event uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.draw_runs dr
+    where dr.event_id = p_event
+  );
+$$;
+
+create or replace function private.drew(p_participant uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.secret_santa_assignments ssa
+    join public.event_participants giver
+      on giver.id = ssa.giver_participant_id
+    where ssa.receiver_participant_id = p_participant
+      and giver.user_id = (select auth.uid())
+  );
+$$;
+
+grant execute on function private.is_admin() to authenticated;
+grant execute on function private.is_event_participant(uuid) to authenticated;
+grant execute on function private.has_draw(uuid) to authenticated;
+grant execute on function private.drew(uuid) to authenticated;
 
 -- -----------------------------------------------------------------------------
 -- Triggers de integridade
