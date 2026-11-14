@@ -99,6 +99,11 @@ export async function POST(request: Request) {
           .limit(1)
           .maybeSingle();
 
+        if (!participation) {
+          await client.auth.signOut().catch(() => undefined);
+          continue;
+        }
+
         const event = (participation as { events?: EventInfo } | null)?.events ?? null;
 
         await client.auth.signOut().catch(() => undefined);

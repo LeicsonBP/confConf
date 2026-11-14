@@ -70,6 +70,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-20 | Administrador pode **desfazer o sorteio** e **sortear de novo** (para incluir/remover participantes) | Cliente (2026-11-14) | Ajusta BR-15/BR-33; desfazer apaga pares e confirmações |
 | D-21 | **Recuperação de usuário** com senha + data de nascimento, reexibindo as credenciais e a opção de baixar as informações | Cliente (2026-11-14) | Novo endpoint `/api/recuperacao/usuario`; complementa a recuperação de senha |
 | D-22 | **Data prevista do sorteio** no cadastro da confraternização (opcional, só com amigo secreto), exibida ao participante | Cliente (2026-11-14) | Novo campo `events.draw_scheduled_at` |
+| D-23 | **Excluir participante apaga a conta** (sem acesso algum); **excluir evento apaga as contas dos participantes**; contas órfãs são limpas | Cliente (2026-11-14) | Ajusta BR-25/BR-26; novo `admin_delete_event` |
 
 ---
 
@@ -227,12 +228,13 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-22 | Item da lista de desejos exige título (1–120 caracteres); link é opcional e precisa ser `http(s)` |
 | BR-23 | A lista de desejos é visível ao dono e ao participante sorteado para ele, **depois** do sorteio; nunca ao administrador |
 | BR-24 | Relato de problema é categorizado (`recebi_eu_mesmo`, `nao_recebi`, `outro`), com mensagem de 10 a 2000 caracteres, e pode ser resolvido pelo admin |
-| BR-25 | Após o sorteio, participantes não podem ser removidos nem adicionados; antes do sorteio o administrador pode remover um participante (remoção física, com registro em auditoria) |
-| BR-26 | Excluir um evento remove em cascata participantes, convites, pares, listas e relatos após confirmação digitada |
+| BR-25 | Após o sorteio, participantes não podem ser removidos nem adicionados; antes do sorteio o administrador pode remover um participante, o que **exclui a conta e revoga qualquer acesso** (com auditoria) |
+| BR-26 | Excluir uma confraternização remove em cascata participantes, convites, pares, listas e relatos e **exclui as contas dos participantes** após confirmação digitada |
 | BR-27 | Falhas de login não revelam se a conta existe |
 | BR-28 | Recuperação de senha exige usuário e data de nascimento corretos, mais captcha e limite de tentativas |
 | BR-39 | Recuperação de usuário exige senha e data de nascimento corretos; ao confirmar, o sistema exibe o usuário e permite baixar as informações de acesso novamente |
 | BR-40 | O evento com amigo secreto pode ter uma **data prevista do sorteio** (opcional), exibida na área do participante até o sorteio acontecer |
+| BR-41 | Contas sem nenhuma participação em confraternização não são recuperáveis e devem ser limpas do banco (exceto o administrador) |
 | BR-29 | Após a recuperação, todas as sessões do participante são revogadas |
 | BR-30 | Todo texto exibido é pt-BR; datas no fuso do evento; valores em BRL |
 | BR-31 | O participante edita apenas as próprias restrições alimentares (nome, usuário e data de nascimento são imutáveis); o admin não edita dados do participante, apenas remove |
@@ -1634,6 +1636,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-43 | Dado um sorteio realizado, quando o admin clica em desfazer e confirma, então pares e confirmações são apagados, o elenco volta a ser editável e um novo sorteio pode ser executado |
 | AC-44 | Dado que a pessoa lembra a senha, quando informa senha + data de nascimento + captcha, então o sistema exibe o usuário e o cartão de acesso com o botão de baixar as informações; senha errada retorna erro genérico |
 | AC-45 | Dado um evento com amigo secreto e data prevista do sorteio, quando o participante entra na área, então vê a previsão; depois do sorteio, vê a data em que ele foi realizado |
+| AC-46 | Dado um participante removido pelo admin, quando ele tenta entrar ou recuperar o usuário, então não tem mais conta nem acesso; excluir o evento também apaga as contas dos participantes |
 
 ### 19.4 Área do participante
 
@@ -1688,6 +1691,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | R-10 | Sem e-mail | Sem notificação e sem "esqueci minha senha" por e-mail | Recuperação por dois fatores + cartão de credenciais | Aceito |
 | R-11 | Sem ambiente isolado de teste (D-14) | Código e migração chegam juntos na produção | CI valida migrações no Supabase local; deploy da Vercel só após CI verde; runbook de rollback | **Aceite explícito do cliente (D-14)** |
 | R-12 | Desfazer o sorteio apaga pares e confirmações anteriores | Participantes que já tinham visto/confirmado perdem o resultado | Botão com confirmação em duas etapas e aviso explícito; auditoria registrada | **Aceite explícito do cliente (D-20)** |
+| R-13 | Remover participante exclui a conta definitivamente | A pessoa perde o acesso e a conta não pode ser restaurada | Confirmação explícita na UI e auditoria; recadastro só com novo convite | **Aceite explícito do cliente (D-23)** |
 
 **Aceites que precisam da sua confirmação antes do M4** (podem ser dados no início da Fase 2):
 
@@ -1753,6 +1757,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.8 | 2026-11-14 | D-20: desfazer e refazer o sorteio para incluir/remover participantes (ajusta BR-15, BR-33 e AC-43) |
 | 1.9 | 2026-11-14 | D-21: recuperação de usuário por senha + data de nascimento, com reexibição e download das credenciais (BR-39, AC-44) |
 | 1.10 | 2026-11-14 | D-22: data prevista do sorteio no evento e exibição ao participante (BR-40, AC-45); throttle da recuperação ajustado (10/15min com reset em sucesso) |
+| 1.11 | 2026-11-14 | D-23: remover participante/excluir evento apaga as contas; contas órfãs limpas (BR-25/26/41, AC-46, R-13) |
 
 ---
 

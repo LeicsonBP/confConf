@@ -440,6 +440,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_delete_event: { Args: { p_event: string }; Returns: undefined }
       admin_list_assignments: { Args: { p_event: string }; Returns: Json }
       admin_remove_participant: {
         Args: { p_event: string; p_participant: string }

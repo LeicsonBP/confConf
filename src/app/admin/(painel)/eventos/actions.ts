@@ -247,7 +247,7 @@ export async function deleteEvent(
     return { error: "Digite o nome exato da confraternização para confirmar a exclusão." };
   }
 
-  const { error } = await supabase.from("events").delete().eq("id", eventId);
+  const { error } = await supabase.rpc("admin_delete_event", { p_event: eventId });
 
   if (error) {
     return { error: "Não foi possível excluir a confraternização." };
