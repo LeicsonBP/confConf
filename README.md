@@ -7,7 +7,7 @@ O produto tem identidade visual própria — ingresso/talão retrô, papel kraft
 ## Status
 
 - **Fase 1 (planejamento e arquitetura):** concluída — veja [`implementation_plan.md`](./implementation_plan.md).
-- **Fase 2 (implementação):** em andamento — **M0** (fundação), **M1** (admin e confraternizações), **M2** (convites, cadastro, login e recuperação), **M3** (área do participante, lista de desejos e perfil), **M4** (sorteio, confirmação e relatos), **M5** (planejamento alimentar) e **M6** (hardening) concluídos. Próximo: **M7** (release na Vercel).
+- **Fase 2 (implementação):** em andamento — **M0** a **M6** concluídos (fundação, admin, convites/login, área do participante, sorteio, planejamento alimentar e hardening). **M7** (release na Vercel) em preparação: checklist em [`docs/release-checklist.md`](./docs/release-checklist.md).
 
 ## Stack
 
@@ -88,6 +88,7 @@ Todo push em `main` roda CI (lint, tipos, testes, build) e valida as migrações
 - [`implementation_plan.md`](./implementation_plan.md) — plano da Fase 1, decisões, RLS e critérios de aceite
 - [`docs/environments.md`](./docs/environments.md) — ambientes, variáveis e operação
 - [`docs/deploy-vercel.md`](./docs/deploy-vercel.md) — importação e deploy na Vercel
+- [`docs/release-checklist.md`](./docs/release-checklist.md) — checklist de release, monitoramento e rollback
 - [`docs/lgpd.md`](./docs/lgpd.md) — inventário de dados, retenção e direitos (LGPD)
 
 ## Licença

@@ -47,11 +47,16 @@ export default function RootLayout({
           {children}
         </div>
         <footer className="border-t-2 border-ink bg-paper-2 px-6 py-4 text-center text-xs text-ink-soft print:hidden">
-          <Link href="/privacidade" className="underline decoration-2 underline-offset-4">
-            Privacidade e dados
-          </Link>
-          <span aria-hidden="true"> · </span>
-          confConf
+          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+            <Link href="/privacidade" className="underline decoration-2 underline-offset-4">
+              Privacidade e dados
+            </Link>
+            <span aria-hidden="true">·</span>
+            <span>confConf</span>
+          </p>
+          <p className="mt-1 text-[11px] text-ink-faint">
+            Programado por DeepSeek, sob o julgamento, pressão, chicotadas e supervisão do Leicson.
+          </p>
         </footer>
       </body>
     </html>

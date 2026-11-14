@@ -55,6 +55,9 @@ Em **Settings → Git**:
 - [ ] Cadastro por convite, sorteio e recuperação funcionam (recuperação exige `SUPABASE_SERVICE_ROLE_KEY`)
 - [ ] `/admin` e `/app` não são indexados (`robots.txt` + `noindex`)
 - [ ] Nenhum segredo aparece no bundle público
+- [ ] `E2E_BASE_URL=https://<url> npm run e2e` passa
+
+O passo a passo completo, com monitoramento e rollback, está em [`release-checklist.md`](./release-checklist.md).
 
 ## 6. Problemas comuns
 
