@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ButtonLink } from "@/design-system/button";
+import { IconArrowRight } from "@/design-system/icons";
 import { PerforatedDivider, Stamp, TicketCard } from "@/design-system/ticket";
 import { createClient } from "@/lib/supabase/server";
 import { formatEventDate } from "@/modules/events/domain/event";
@@ -100,8 +101,9 @@ export default async function AdminEventsPage() {
                     </div>
                   </div>
                   <PerforatedDivider className="my-5" />
-                  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
-                    Acessar confraternização →
+                  <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
+                    Acessar confraternização
+                    <IconArrowRight size={14} />
                   </p>
                 </TicketCard>
               </Link>

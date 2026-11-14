@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ButtonLink } from "@/design-system/button";
+import { IconAlert, IconGift, IconInfo } from "@/design-system/icons";
 import { PerforatedDivider, Stamp, TicketCard } from "@/design-system/ticket";
 import { createClient } from "@/lib/supabase/server";
 import { requireParticipant } from "@/modules/auth/server/participant-session";
@@ -85,12 +86,14 @@ export default async function ParticipantEventPage({
 
       <div className="flex flex-wrap gap-3">
         <ButtonLink href={`/app/eventos/${event.id}/desejos`} variant="secondary">
+          <IconGift />
           Minha lista de desejos
         </ButtonLink>
       </div>
 
       <TicketCard className="p-6 sm:p-8">
-        <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+        <h2 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+          <IconInfo size={14} />
           Informações
         </h2>
 
@@ -133,7 +136,8 @@ export default async function ParticipantEventPage({
       </TicketCard>
 
       <TicketCard className="p-6 sm:p-8">
-        <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+        <h2 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+          <IconGift size={14} />
           Amigo secreto
         </h2>
         <PerforatedDivider className="my-8" />
@@ -205,7 +209,8 @@ export default async function ParticipantEventPage({
 
         <PerforatedDivider className="my-8" />
 
-        <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
+        <h3 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
+          <IconAlert size={14} />
           Algum problema?
         </h3>
         <div className="mt-4">

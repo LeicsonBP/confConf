@@ -31,6 +31,14 @@ import { createInvite, revokeInvite } from "../invite-actions";
 import { labelForRestriction } from "@/modules/participants/domain/restrictions";
 import { FOOD_KEYS, FOOD_RULES, buildFoodPlan } from "@/modules/food-planning/rules";
 import { reportCategoryLabel, reportStatusLabel } from "@/modules/reports/domain/report";
+import {
+  IconAlert,
+  IconGift,
+  IconInfo,
+  IconMail,
+  IconUsers,
+  IconUtensils,
+} from "@/design-system/icons";
 import { DrawForm } from "./draw-form";
 import { FoodSelectionForm } from "./food-selection-form";
 import { InviteForm } from "./invite-form";
@@ -195,7 +203,8 @@ export default async function EventDetailPage({
       </div>
 
       <TicketCard className="p-6 sm:p-8">
-        <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+        <h2 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+          <IconInfo size={14} />
           Dados da confraternização
         </h2>
         <div className="mt-5">
@@ -223,7 +232,8 @@ export default async function EventDetailPage({
       <TicketCard className="p-6 sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+            <h2 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+              <IconUsers size={14} />
               Participantes
             </h2>
             <p className="mt-2 text-sm text-ink-soft">
@@ -288,7 +298,8 @@ export default async function EventDetailPage({
       <TicketCard className="p-6 sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+            <h2 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+              <IconUtensils size={14} />
               Planejamento alimentar
             </h2>
             <p className="mt-2 text-sm text-ink-soft">
@@ -393,7 +404,8 @@ export default async function EventDetailPage({
       </TicketCard>
 
       <TicketCard className="p-6 sm:p-8">
-        <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+        <h2 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+          <IconGift size={14} />
           Amigo secreto
         </h2>
         <PerforatedDivider className="my-8" />
@@ -456,7 +468,8 @@ export default async function EventDetailPage({
       <TicketCard className="p-6 sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+            <h2 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+              <IconMail size={14} />
               Convites
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-ink-soft">
@@ -520,7 +533,8 @@ export default async function EventDetailPage({
       <TicketCard className="p-6 sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+            <h2 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+              <IconAlert size={14} />
               Relatos de problema
             </h2>
             <p className="mt-2 text-sm text-ink-soft">
@@ -562,7 +576,8 @@ export default async function EventDetailPage({
       </TicketCard>
 
       <TicketCard className="border-stamp p-6 sm:p-8">
-        <h2 className="font-display text-2xl leading-none text-stamp">
+        <h2 className="flex items-center gap-2 font-display text-2xl leading-none text-stamp">
+          <IconAlert size={22} />
           Excluir confraternização
         </h2>
         <p className="mt-2 text-sm text-ink-soft">

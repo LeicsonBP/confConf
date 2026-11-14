@@ -1,12 +1,13 @@
 import type * as React from "react";
 
-type Variant = "primary" | "secondary" | "danger" | "ghost";
+type Variant = "primary" | "secondary" | "danger" | "ghost" | "outline";
 
 const VARIANTS: Record<Variant, string> = {
   primary: "border-ink bg-ink text-paper hover:bg-stamp hover:border-stamp",
   secondary: "border-ink bg-paper-2 text-ink hover:bg-paper-3",
   danger: "border-stamp bg-stamp text-paper hover:bg-ink hover:border-ink",
   ghost: "border-transparent bg-transparent text-ink hover:border-ink",
+  outline: "border-ink bg-transparent text-ink hover:bg-paper-3",
 };
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
