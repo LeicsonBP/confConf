@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cache } from "react";
 import { PerforatedDivider, TicketCard } from "@/design-system/ticket";
 import { createClient } from "@/lib/supabase/server";
 import { sha256Hex } from "@/lib/crypto";
@@ -8,11 +9,6 @@ import { formatCentsToBrl, formatEventDate } from "@/modules/events/domain/event
 import { SignupForm } from "./signup-form";
 
 export const dynamic = "force-dynamic";
-
-export const metadata: Metadata = {
-  title: "Convite",
-  robots: { index: false, follow: false },
-};
 
 interface InvitePreview {
   valid?: boolean;
@@ -28,6 +24,64 @@ interface InvitePreview {
   };
 }
 
+const loadPreview = cache(async (token: string): Promise<InvitePreview | null> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("invite_preview", {
+    p_token_hash: sha256Hex(token),
+  });
+  if (error) return null;
+  return (data as InvitePreview | null) ?? null;
+});
+
+function shareDescription(preview: InvitePreview | null): string {
+  const event = preview?.event;
+  const parts = [
+    event?.starts_at ? formatEventDate(event.starts_at) : null,
+    event?.location ?? null,
+  ].filter(Boolean);
+
+  return parts.length > 0 ? parts.join(" · ") : "Você foi convidado para uma confraternização.";
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ token: string }>;
+}): Promise<Metadata> {
+  const { token } = await params;
+  const preview = await loadPreview(token);
+
+  if (!preview?.valid || !preview.event) {
+    return {
+      title: "Convite indisponível",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const name = preview.event.name ?? "Confraternização";
+  const description = shareDescription(preview);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+  return {
+    title: name,
+    description,
+    robots: { index: false, follow: false },
+    openGraph: {
+      title: name,
+      description,
+      type: "website",
+      images: appUrl
+        ? [{ url: `${appUrl}/icon-512.png`, width: 512, height: 512, alt: "confConf" }]
+        : undefined,
+    },
+    twitter: {
+      card: "summary",
+      title: name,
+      description,
+    },
+  };
+}
+
 const REASON_TEXT: Record<string, string> = {
   not_found: "Este convite não existe. Confira o link com quem organiza.",
   revoked: "Este convite foi revogado por quem organiza.",
@@ -38,16 +92,13 @@ const REASON_TEXT: Record<string, string> = {
 export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const tokenHash = sha256Hex(token);
+  const preview = await loadPreview(token);
 
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("invite_preview", { p_token_hash: tokenHash });
-  const preview = data as InvitePreview | null;
-
-  if (error || !preview?.valid || !preview.event) {
+  if (!preview?.valid || !preview.event) {
     const message = REASON_TEXT[preview?.reason ?? "not_found"] ?? REASON_TEXT.not_found;
 
     return (
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-6 px-6 py-8 sm:py-12">
+      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-6 px-6 py-6 sm:py-10">
         <TicketCard className="p-8 text-center sm:p-10">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">Convite</p>
           <h1 className="mt-3 font-display text-3xl leading-none">Ingresso inválido</h1>
@@ -61,7 +112,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   const { question, token: captchaToken } = createCaptcha();
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-6 px-6 py-8 sm:py-12">
+    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-6 px-6 py-6 sm:py-10">
       <TicketCard className="p-8 sm:p-10">
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">
           Você foi convidado

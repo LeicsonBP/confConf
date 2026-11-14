@@ -3,7 +3,7 @@ import { IconShield, IconSparkles, IconTicket } from "@/design-system/icons";
 
 export default function HomePage() {
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-6 py-8 sm:py-12">
+    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-6 py-6 sm:py-10">
       <section className="w-full border-2 border-ink bg-paper-2 p-10 text-center shadow-[var(--shadow-stamp)] sm:p-14">
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-ink-soft">
           <span className="flex flex-col items-center gap-2 sm:inline-flex sm:flex-row">

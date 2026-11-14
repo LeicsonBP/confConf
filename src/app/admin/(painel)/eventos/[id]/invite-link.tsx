@@ -22,7 +22,7 @@ export function InviteLink({ url }: { url: string }) {
         readOnly
         value={url}
         onFocus={(event) => event.currentTarget.select()}
-        className="w-full border-2 border-ink bg-paper px-3 py-2 font-mono text-xs text-ink-soft"
+        className="w-full border-2 border-ink bg-paper px-3 py-2.5 font-mono text-xs leading-4 text-ink-soft"
         aria-label="Link do convite"
       />
       <Button type="button" variant="secondary" onClick={copy} className="whitespace-nowrap">

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/modules/auth/server/session";
+import { verifyCaptcha } from "@/modules/auth/server/captcha";
 import { eventInputSchema, toEventRow } from "@/modules/events/domain/event";
 import { FOOD_KEYS } from "@/modules/food-planning/rules";
 import type { EventFormState } from "./types";
@@ -257,27 +258,27 @@ export async function deleteEvent(
   await requireAdmin();
 
   const eventId = String(formData.get("eventId") ?? "");
-  const confirmation = String(formData.get("confirmation") ?? "").trim();
+  const confirmation = String(formData.get("confirmation") ?? "")
+    .trim()
+    .toLowerCase();
+  const captchaAnswer = String(formData.get("captchaAnswer") ?? "");
+  const captchaToken = String(formData.get("captchaToken") ?? "");
 
   if (!UUID_PATTERN.test(eventId)) {
     return { error: "Confraternização inválida." };
   }
 
+  if (confirmation !== "deletar") {
+    return { error: 'Digite "deletar" para confirmar a exclusão.' };
+  }
+
+  if (!verifyCaptcha(captchaToken, captchaAnswer)) {
+    return {
+      error: "Resposta do captcha incorreta. Recarregue a página e tente de novo.",
+    };
+  }
+
   const supabase = await createClient();
-  const { data: event, error: readError } = await supabase
-    .from("events")
-    .select("name")
-    .eq("id", eventId)
-    .maybeSingle();
-
-  if (readError || !event) {
-    return { error: "Confraternização não encontrada." };
-  }
-
-  if (confirmation !== event.name) {
-    return { error: "Digite o nome exato da confraternização para confirmar a exclusão." };
-  }
-
   const { error } = await supabase.rpc("admin_delete_event", { p_event: eventId });
 
   if (error) {

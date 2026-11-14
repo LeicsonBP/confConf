@@ -76,6 +76,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-26 | **Descartáveis sem arredondamento**; **bebidas por garrafa** (500 ml, 1 L, 1,5 L, 2 L) e **gelo por saco de 5 kg** | Cliente (2026-11-14) | Ajusta a apresentação das estimativas |
 | D-27 | Resultado exibido **direto na unidade de compra** (garrafas, sacos de 5 kg, unidades/jogos), sem mostrar o total cru; respeita o mínimo comprável (1 pessoa → 1 garrafa de 500 ml, 1 saco de 5 kg) | Cliente (2026-11-14) | Ajusta AC-07 e §11.7 |
 | D-28 | **MFA (O-01) não entra na v1**: fica documentado como opcional para versão futura, sem bloquear o release | Decisão técnica (2026-11-14) | O-01 permanece "Could" |
+| D-29 | Exclusão do evento confirmada apenas com a palavra **`deletar`** (campo em caixa baixa) + **captcha**, sem exigir o nome da confraternização | Cliente (2026-11-14) | Ajusta BR-26 e o formulário de exclusão |
 
 ---
 
@@ -234,7 +235,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-23 | A lista de desejos é visível ao dono e ao participante sorteado para ele, **depois** do sorteio; nunca ao administrador |
 | BR-24 | Relato de problema é categorizado (`recebi_eu_mesmo`, `nao_recebi`, `outro`), com mensagem de 10 a 2000 caracteres, e pode ser resolvido pelo admin |
 | BR-25 | Após o sorteio, participantes não podem ser removidos nem adicionados; antes do sorteio o administrador pode remover um participante, o que **exclui a conta e revoga qualquer acesso** (com auditoria) |
-| BR-26 | Excluir uma confraternização remove em cascata participantes, convites, pares, listas e relatos e **exclui as contas dos participantes** após confirmação digitada |
+| BR-26 | Excluir uma confraternização remove em cascata participantes, convites, pares, listas e relatos e **exclui as contas dos participantes** após digitar `deletar` e resolver um captcha |
 | BR-27 | Falhas de login não revelam se a conta existe |
 | BR-28 | Recuperação de senha exige usuário e data de nascimento corretos, mais captcha e limite de tentativas |
 | BR-39 | Recuperação de usuário exige senha e data de nascimento corretos; ao confirmar, o sistema exibe o usuário e permite baixar as informações de acesso novamente |
@@ -1779,6 +1780,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.21 | 2026-11-14 | Header e footer com divisórias tracejadas, footer presente em telas curtas (login etc.) e botões Meu perfil/Sair com a mesma altura |
 | 1.22 | 2026-11-14 | Linhas tracejadas até a borda da viewport, caixa da área ao lado do título, ADMIN na base do header e divisória entre créditos e privacidade no footer |
 | 1.23 | 2026-11-14 | Margens maiores no footer; no mobile a caixa da área desce para baixo da linha e a home ganha botões de mesma largura com ícone acima do texto |
+| 1.24 | 2026-11-14 | Footer com borda superior e margem maior; link/copiar do convite alinhados; prévia do convite no WhatsApp com nome e data; planejamento alimentar penúltimo; exclusão por `deletar` + captcha (D-29) |
 
 ---
 
