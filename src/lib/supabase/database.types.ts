@@ -177,6 +177,7 @@ export type Database = {
           description: string | null
           draw_scheduled_at: string | null
           extra_info: string | null
+          food_selection: string[]
           has_secret_santa: boolean
           id: string
           location: string | null
@@ -193,6 +194,7 @@ export type Database = {
           description?: string | null
           draw_scheduled_at?: string | null
           extra_info?: string | null
+          food_selection?: string[]
           has_secret_santa?: boolean
           id?: string
           location?: string | null
@@ -209,6 +211,7 @@ export type Database = {
           description?: string | null
           draw_scheduled_at?: string | null
           extra_info?: string | null
+          food_selection?: string[]
           has_secret_santa?: boolean
           id?: string
           location?: string | null

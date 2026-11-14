@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/modules/auth/server/session";
 import { eventInputSchema, toEventRow } from "@/modules/events/domain/event";
+import { FOOD_KEYS } from "@/modules/food-planning/rules";
 import type { EventFormState } from "./types";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -213,6 +214,36 @@ export async function cancelDraw(
       return { error: "Não há sorteio para desfazer." };
     }
     return { error: "Não foi possível desfazer o sorteio." };
+  }
+
+  revalidatePath(`/admin/eventos/${eventId}`);
+  return { success: true };
+}
+
+export async function saveFoodSelection(
+  _previous: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  await requireAdmin();
+
+  const eventId = String(formData.get("eventId") ?? "");
+  if (!UUID_PATTERN.test(eventId)) {
+    return { error: "Confraternização inválida." };
+  }
+
+  const selected = formData
+    .getAll("foodSelection")
+    .map(String)
+    .filter((value) => FOOD_KEYS.includes(value));
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("events")
+    .update({ food_selection: selected })
+    .eq("id", eventId);
+
+  if (error) {
+    return { error: "Não foi possível salvar a seleção." };
   }
 
   revalidatePath(`/admin/eventos/${eventId}`);

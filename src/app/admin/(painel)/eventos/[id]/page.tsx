@@ -21,6 +21,7 @@ import {
   removeParticipant,
   resolveReport,
   runDraw,
+  saveFoodSelection,
   updateEvent,
 } from "../actions";
 import { CancelDrawForm } from "./cancel-draw-form";
@@ -28,9 +29,10 @@ import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
 import { createInvite, revokeInvite } from "../invite-actions";
 import { labelForRestriction } from "@/modules/participants/domain/restrictions";
-import { FOOD_RULES, buildFoodPlan, formatQuantityRange } from "@/modules/food-planning/rules";
+import { FOOD_KEYS, FOOD_RULES, buildFoodPlan, formatQuantityRange } from "@/modules/food-planning/rules";
 import { reportCategoryLabel, reportStatusLabel } from "@/modules/reports/domain/report";
 import { DrawForm } from "./draw-form";
+import { FoodSelectionForm } from "./food-selection-form";
 import { InviteForm } from "./invite-form";
 import { InviteLink } from "./invite-link";
 import { PrintButton } from "./print-button";
@@ -122,12 +124,15 @@ export default async function EventDetailPage({
     assignments = (data as { giver_name: string; receiver_name: string }[] | null) ?? null;
   }
 
+  const foodSelection = (event.food_selection ?? []).filter((key) => FOOD_KEYS.includes(key));
+
   const foodPlan = buildFoodPlan(
     (participants ?? []).map((participant) => ({
       fullName: profileMap.get(participant.user_id)?.full_name ?? "Participante",
       restrictions: participant.dietary_restrictions ?? [],
       other: participant.dietary_other ?? null,
     })),
+    { selected: foodSelection },
   );
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
@@ -294,6 +299,14 @@ export default async function EventDetailPage({
         </div>
         <PerforatedDivider className="my-8" />
 
+        <FoodSelectionForm
+          action={saveFoodSelection}
+          eventId={event.id}
+          selected={foodSelection}
+        />
+
+        <PerforatedDivider className="my-8" />
+
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
             <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
@@ -332,32 +345,38 @@ export default async function EventDetailPage({
               Estimativas
             </h3>
             <ul className="mt-3 flex flex-col gap-3">
-              {foodPlan.estimates.map((estimate) => (
-                <li key={estimate.key} className="border-2 border-ink bg-paper p-4">
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="font-medium">{estimate.label}</span>
-                    <span className="font-mono text-sm">
-                      {formatQuantityRange(estimate.min, estimate.max, estimate.unit)}
-                    </span>
-                  </div>
-                  {estimate.note ? (
-                    <p className="mt-1 text-xs text-ink-faint">{estimate.note}</p>
-                  ) : null}
-                  {estimate.restricted ? (
-                    <p className="mt-2 border-t-2 border-dashed border-ink-faint pt-2 text-sm text-ink-soft">
-                      {estimate.restricted.label}:{" "}
-                      {formatQuantityRange(
-                        estimate.restricted.min,
-                        estimate.restricted.max,
-                        estimate.unit,
-                      )}{" "}
-                      <span className="text-xs">
-                        (para {estimate.restricted.count} pessoa(s))
-                      </span>
-                    </p>
-                  ) : null}
+              {foodPlan.estimates.length === 0 ? (
+                <li className="border-2 border-dashed border-ink-faint px-4 py-6 text-sm text-ink-faint">
+                  Nenhum item selecionado. Marque o que será comprado e clique em Calcular.
                 </li>
-              ))}
+              ) : (
+                foodPlan.estimates.map((estimate) => (
+                  <li key={estimate.key} className="border-2 border-ink bg-paper p-4">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <span className="font-medium">{estimate.label}</span>
+                      <span className="font-mono text-sm">
+                        {formatQuantityRange(estimate.min, estimate.max, estimate.unit)}
+                      </span>
+                    </div>
+                    {estimate.note ? (
+                      <p className="mt-1 text-xs text-ink-faint">{estimate.note}</p>
+                    ) : null}
+                    {estimate.restricted ? (
+                      <p className="mt-2 border-t-2 border-dashed border-ink-faint pt-2 text-sm text-ink-soft">
+                        {estimate.restricted.label}:{" "}
+                        {formatQuantityRange(
+                          estimate.restricted.min,
+                          estimate.restricted.max,
+                          estimate.unit,
+                        )}{" "}
+                        <span className="text-xs">
+                          (para {estimate.restricted.count} pessoa(s))
+                        </span>
+                      </p>
+                    ) : null}
+                  </li>
+                ))
+              )}
             </ul>
 
             <p className="mt-4 text-xs text-ink-faint">

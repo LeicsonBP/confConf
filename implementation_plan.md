@@ -71,6 +71,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-21 | **Recuperação de usuário** com senha + data de nascimento, reexibindo as credenciais e a opção de baixar as informações | Cliente (2026-11-14) | Novo endpoint `/api/recuperacao/usuario`; complementa a recuperação de senha |
 | D-22 | **Data prevista do sorteio** no cadastro da confraternização (opcional, só com amigo secreto), exibida ao participante | Cliente (2026-11-14) | Novo campo `events.draw_scheduled_at` |
 | D-23 | **Excluir participante apaga a conta** (sem acesso algum); **excluir evento apaga as contas dos participantes**; contas órfãs são limpas | Cliente (2026-11-14) | Ajusta BR-25/BR-26; novo `admin_delete_event` |
+| D-24 | **Seleção dos itens comprados** no planejamento alimentar (checkboxes) com botão **Calcular**; o cálculo usa só os itens marcados | Cliente (2026-11-14) | Novo campo `events.food_selection` |
 
 ---
 
@@ -235,6 +236,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-39 | Recuperação de usuário exige senha e data de nascimento corretos; ao confirmar, o sistema exibe o usuário e permite baixar as informações de acesso novamente |
 | BR-40 | O evento com amigo secreto pode ter uma **data prevista do sorteio** (opcional), exibida na área do participante até o sorteio acontecer |
 | BR-41 | Contas sem nenhuma participação em confraternização não são recuperáveis e devem ser limpas do banco (exceto o administrador) |
+| BR-42 | O admin escolhe quais itens serão comprados e clica em Calcular; o planejamento alimentar calcula apenas os itens selecionados (a seleção fica salva no evento) |
 | BR-29 | Após a recuperação, todas as sessões do participante são revogadas |
 | BR-30 | Todo texto exibido é pt-BR; datas no fuso do evento; valores em BRL |
 | BR-31 | O participante edita apenas as próprias restrições alimentares (nome, usuário e data de nascimento são imutáveis); o admin não edita dados do participante, apenas remove |
@@ -1084,7 +1086,7 @@ Entrada: total de participantes ativos e contagem por restrição (vegano conta 
 
 Cálculo: `quantidade_base = ceil(pessoas × consumo)`; opções restritas usam a proporção de pessoas com a restrição, com piso de 1 porção por pessoa restrita. A tela mostra sempre "estimativa", as premissas e a data do cálculo. Parâmetros em `src/modules/food-planning/rules.ts` (validados no M5, O-11).
 
-**Implementado (M5):** seção "Planejamento alimentar" no evento do admin com restrições consolidadas (vegano conta como vegetariano, sem dupla contagem), textos de "outras" restrições, estimativas em faixas, opções sem lactose (doces) e sem glúten (bolo), premissas e botão de impressão (CSS `print`). Os valores da tabela acima ficam em `FOOD_RULES` e podem ser ajustados em um único lugar.
+**Implementado (M5):** seção "Planejamento alimentar" no evento do admin com **seleção dos itens comprados (checkboxes + Calcular)**, restrições consolidadas (vegano conta como vegetariano, sem dupla contagem), textos de "outras" restrições, estimativas em faixas apenas para os itens marcados, opções sem lactose (doces) e sem glúten (bolo), premissas e botão de impressão (CSS `print`). A seleção fica em `events.food_selection`; os valores da tabela acima ficam em `FOOD_RULES` e podem ser ajustados em um único lugar.
 
 ### 11.8 Gestão de participantes e restrições
 
@@ -1639,6 +1641,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-44 | Dado que a pessoa lembra a senha, quando informa senha + data de nascimento + captcha, então o sistema exibe o usuário e o cartão de acesso com o botão de baixar as informações; senha errada retorna erro genérico |
 | AC-45 | Dado um evento com amigo secreto e data prevista do sorteio, quando o participante entra na área, então vê a previsão; depois do sorteio, vê a data em que ele foi realizado |
 | AC-46 | Dado um participante removido pelo admin, quando ele tenta entrar ou recuperar o usuário, então não tem mais conta nem acesso; excluir o evento também apaga as contas dos participantes |
+| AC-47 | Dado o planejamento alimentar, quando o admin marca itens e clica em Calcular, então as estimativas consideram apenas os itens selecionados e a seleção permanece salva no evento |
 
 ### 19.4 Área do participante
 
@@ -1761,6 +1764,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.10 | 2026-11-14 | D-22: data prevista do sorteio no evento e exibição ao participante (BR-40, AC-45); throttle da recuperação ajustado (10/15min com reset em sucesso) |
 | 1.11 | 2026-11-14 | D-23: remover participante/excluir evento apaga as contas; contas órfãs limpas (BR-25/26/41, AC-46, R-13) |
 | 1.12 | 2026-11-14 | M5 concluído: restrições consolidadas e planejamento alimentar em faixas, com opções restritas, premissas e impressão |
+| 1.13 | 2026-11-14 | D-24: seleção dos itens comprados com botão Calcular; cálculo restrito à seleção salva (BR-42, AC-47) |
 
 ---
 

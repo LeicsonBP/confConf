@@ -53,6 +53,12 @@ export interface FoodPlan {
   hasRestrictedOptions: boolean;
 }
 
+export interface FoodPlanOptions {
+  /** Itens escolhidos para compra; vazio = nenhum cálculo. */
+  selected?: string[];
+  generatedAt?: string;
+}
+
 interface FoodRule {
   key: string;
   label: string;
@@ -134,11 +140,15 @@ function hasRestriction(participant: FoodParticipant, value: string): boolean {
   return participant.restrictions.includes(value);
 }
 
+export const FOOD_KEYS: string[] = FOOD_RULES.map((rule) => rule.key);
+
 export function buildFoodPlan(
   participants: FoodParticipant[],
-  generatedAt: string = new Date().toISOString(),
+  options: FoodPlanOptions = {},
 ): FoodPlan {
   const total = participants.length;
+  const selected = options.selected ?? FOOD_KEYS;
+  const generatedAt = options.generatedAt ?? new Date().toISOString();
   const vegan = participants.filter((participant) => hasRestriction(participant, "vegano")).length;
   const vegetarian = participants.filter(
     (participant) =>
@@ -167,7 +177,8 @@ export function buildFoodPlan(
       detail: (participant.other ?? "").trim(),
     }));
 
-  const estimates: FoodEstimate[] = FOOD_RULES.map((rule) => {
+  const estimates: FoodEstimate[] = FOOD_RULES.filter((rule) => selected.includes(rule.key)).map(
+    (rule) => {
     let min = 0;
     let max = 0;
 
@@ -196,7 +207,8 @@ export function buildFoodPlan(
     }
 
     return { key: rule.key, label: rule.label, unit: rule.unit, min, max, note: rule.note, restricted };
-  });
+    },
+  );
 
   return {
     total,

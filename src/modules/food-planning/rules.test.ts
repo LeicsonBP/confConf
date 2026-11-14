@@ -33,7 +33,7 @@ describe("buildFoodPlan", () => {
   it("calcula faixas por pessoa e o fator dos descartáveis", () => {
     const plan = buildFoodPlan(
       Array.from({ length: 10 }, (_, index) => participant(`Pessoa ${index + 1}`)),
-      "2026-11-14T12:00:00.000Z",
+      { generatedAt: "2026-11-14T12:00:00.000Z" },
     );
 
     const byKey = Object.fromEntries(plan.estimates.map((item) => [item.key, item]));
@@ -75,6 +75,17 @@ describe("buildFoodPlan", () => {
       expect(estimate.min).toBe(0);
       expect(estimate.max).toBe(0);
     }
+  });
+
+  it("calcula apenas os itens selecionados", () => {
+    const participants = [participant("Ana"), participant("Bia")];
+    const plan = buildFoodPlan(participants, { selected: ["doces", "agua"] });
+    expect(plan.estimates.map((item) => item.key)).toEqual(["doces", "agua"]);
+    expect(plan.estimates.every((item) => item.min > 0)).toBe(true);
+
+    const none = buildFoodPlan(participants, { selected: [] });
+    expect(none.estimates).toEqual([]);
+    expect(none.restrictions).toHaveLength(5);
   });
 });
 
