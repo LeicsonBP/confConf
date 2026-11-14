@@ -27,7 +27,6 @@ export function LoginForm({ question, token }: LoginFormProps) {
             autoComplete="username"
             required
             className={inputClassName}
-            placeholder="admin"
           />
         </Field>
 
