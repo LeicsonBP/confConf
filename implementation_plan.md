@@ -1782,6 +1782,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.23 | 2026-11-14 | Margens maiores no footer; no mobile a caixa da área desce para baixo da linha e a home ganha botões de mesma largura com ícone acima do texto |
 | 1.24 | 2026-11-14 | Footer com borda superior e margem maior; link/copiar do convite alinhados; prévia do convite no WhatsApp com nome e data; planejamento alimentar penúltimo; exclusão por `deletar` + captcha (D-29) |
 | 1.25 | 2026-11-14 | Margens do footer aplicadas aos textos (24 px) com folga inferior de 20 px, mantendo o footer visível nas telas curtas |
+| 1.26 | 2026-11-14 | Footer com margens simétricas de 16 px entre borda/texto/linha/texto/fim, centralizando os dois textos |
 
 ---
 
