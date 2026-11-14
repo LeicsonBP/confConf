@@ -14,29 +14,37 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await requireAdmin();
+  const session = await requireAdmin();
+  const adminName = (session.email?.split("@")[0] ?? "admin").toUpperCase();
 
   return (
     <div className="flex flex-1 flex-col">
       <header className="border-b-2 border-ink bg-paper-2 print:hidden">
-        <div className="mx-auto max-w-5xl px-6 py-4">
+        <div className="mx-auto max-w-5xl px-6 pt-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Link href="/admin" className="font-display text-2xl leading-none">
-              confConf
-            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="/admin" className="font-display text-2xl leading-none">
+                confConf
+              </Link>
+              <Stamp tone="stamp">
+                <span className="inline-flex items-center gap-1.5">
+                  <IconShield size={12} />
+                  Área do administrador
+                </span>
+              </Stamp>
+            </div>
             <div className="ml-auto">
               <HeaderNav signOut={signOutAdmin} />
             </div>
           </div>
+        </div>
 
-          <div aria-hidden="true" className="my-3 border-t-2 border-dashed border-ink-faint" />
+        <div aria-hidden="true" className="mt-3 border-t-2 border-dashed border-ink-faint" />
 
-          <Stamp tone="stamp">
-            <span className="inline-flex items-center gap-1.5">
-              <IconShield size={12} />
-              Área do administrador
-            </span>
-          </Stamp>
+        <div className="mx-auto max-w-5xl px-6 pb-4 pt-3">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">
+            {adminName}
+          </p>
         </div>
       </header>
 
