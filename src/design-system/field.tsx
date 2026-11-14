@@ -1,4 +1,4 @@
-import type * as React from "react";
+import { cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
 
 interface FieldProps {
   label: string;
@@ -6,10 +6,22 @@ interface FieldProps {
   hint?: string;
   error?: string;
   required?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function Field({ label, htmlFor, hint, error, required, children }: FieldProps) {
+  const describedBy = [hint ? `${htmlFor}-hint` : null, error ? `${htmlFor}-error` : null]
+    .filter(Boolean)
+    .join(" ");
+
+  const control =
+    isValidElement(children) && typeof children.type === "string"
+      ? cloneElement(children as ReactElement<Record<string, unknown>>, {
+          "aria-describedby": describedBy || undefined,
+          "aria-invalid": error ? true : undefined,
+        })
+      : children;
+
   return (
     <div className="flex flex-col gap-1.5">
       <label
@@ -19,7 +31,7 @@ export function Field({ label, htmlFor, hint, error, required, children }: Field
         {label}
         {required ? <span aria-hidden="true"> *</span> : null}
       </label>
-      {children}
+      {control}
       {hint ? (
         <p id={`${htmlFor}-hint`} className="text-sm text-ink-faint">
           {hint}

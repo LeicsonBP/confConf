@@ -7,7 +7,7 @@ O produto tem identidade visual própria — ingresso/talão retrô, papel kraft
 ## Status
 
 - **Fase 1 (planejamento e arquitetura):** concluída — veja [`implementation_plan.md`](./implementation_plan.md).
-- **Fase 2 (implementação):** em andamento — **M0** (fundação), **M1** (admin e confraternizações), **M2** (convites, cadastro, login e recuperação), **M3** (área do participante, lista de desejos e perfil), **M4** (sorteio, confirmação e relatos) e **M5** (planejamento alimentar) concluídos. Próximo: **M6** (hardening).
+- **Fase 2 (implementação):** em andamento — **M0** (fundação), **M1** (admin e confraternizações), **M2** (convites, cadastro, login e recuperação), **M3** (área do participante, lista de desejos e perfil), **M4** (sorteio, confirmação e relatos), **M5** (planejamento alimentar) e **M6** (hardening) concluídos. Próximo: **M7** (release na Vercel).
 
 ## Stack
 
@@ -88,7 +88,23 @@ Todo push em `main` roda CI (lint, tipos, testes, build) e valida as migrações
 - [`implementation_plan.md`](./implementation_plan.md) — plano da Fase 1, decisões, RLS e critérios de aceite
 - [`docs/environments.md`](./docs/environments.md) — ambientes, variáveis e operação
 - [`docs/deploy-vercel.md`](./docs/deploy-vercel.md) — importação e deploy na Vercel
+- [`docs/lgpd.md`](./docs/lgpd.md) — inventário de dados, retenção e direitos (LGPD)
 
 ## Licença
 
 Projeto privado; todos os direitos reservados.
+
+## Testes E2E (Playwright)
+
+Os testes de fumaça cobrem páginas públicas, redirecionamentos de acesso e acessibilidade básica.
+
+```bash
+npx playwright install chromium   # uma vez
+npm run e2e                       # sobe o dev server se necessário
+```
+
+Eles não rodam no CI por padrão porque dependem de um ambiente Supabase real; o CI mantém lint, tipos, testes unitários, build e pgTAP.
+
+## Privacidade e LGPD
+
+A página pública `/privacidade` resume o tratamento de dados. O documento operacional está em [`docs/lgpd.md`](./docs/lgpd.md).

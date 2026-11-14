@@ -75,6 +75,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-25 | Unificar **"Salgadinhos" e "Salgados"** em "Salgados"; revisar as médias e exibir **um número único múltiplo de 5** (não faixa) | Cliente (2026-11-14) | Ajusta BR-20, AC-07 e §11.7; migração converte a seleção |
 | D-26 | **Descartáveis sem arredondamento**; **bebidas por garrafa** (500 ml, 1 L, 1,5 L, 2 L) e **gelo por saco de 5 kg** | Cliente (2026-11-14) | Ajusta a apresentação das estimativas |
 | D-27 | Resultado exibido **direto na unidade de compra** (garrafas, sacos de 5 kg, unidades/jogos), sem mostrar o total cru; respeita o mínimo comprável (1 pessoa → 1 garrafa de 500 ml, 1 saco de 5 kg) | Cliente (2026-11-14) | Ajusta AC-07 e §11.7 |
+| D-28 | **MFA (O-01) não entra na v1**: fica documentado como opcional para versão futura, sem bloquear o release | Decisão técnica (2026-11-14) | O-01 permanece "Could" |
 
 ---
 
@@ -1595,7 +1596,7 @@ Toda alteração relevante atualiza: código, teste, doc do módulo e, se mudar 
 
 Estimativas relativas (sem compromisso de data): M0 pequeno-médio; M1 e M2 médios; M3 e M5 médios; M4 grande; M6 médio; M7 pequeno.
 
-**Status em 14/11/2026:** M0, M1, M2, M3, M4 e M5 concluídos. Próximo marco: **M6** — hardening (acessibilidade, E2E, performance, observabilidade e LGPD).
+**Status em 14/11/2026:** M0, M1, M2, M3, M4, M5 e M6 concluídos. Próximo marco: **M7** — release (import na Vercel pelo cliente, domínio e monitoramento).
 
 ---
 
@@ -1644,6 +1645,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-45 | Dado um evento com amigo secreto e data prevista do sorteio, quando o participante entra na área, então vê a previsão; depois do sorteio, vê a data em que ele foi realizado |
 | AC-46 | Dado um participante removido pelo admin, quando ele tenta entrar ou recuperar o usuário, então não tem mais conta nem acesso; excluir o evento também apaga as contas dos participantes |
 | AC-47 | Dado o planejamento alimentar, quando o admin marca itens e clica em Calcular, então as estimativas consideram apenas os itens selecionados e a seleção permanece salva no evento |
+| AC-48 | Dado o site, quando a pessoa navega por teclado, então encontra o link "Pular para o conteúdo", os campos têm rótulo e descrição associados, e a página de privacidade está acessível pelo rodapé |
 
 ### 19.4 Área do participante
 
@@ -1770,6 +1772,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.14 | 2026-11-14 | D-25: "Salgados" unificado, médias revisadas (12 salgados, 5 doces, 100 g bolo, 400 ml refrigerante, 500 ml água, 500 g gelo) e resultado em número único múltiplo de 5 |
 | 1.15 | 2026-11-14 | D-26: descartáveis sem arredondamento; bebidas em garrafas (500 ml–2 L) e gelo em sacos de 5 kg |
 | 1.16 | 2026-11-14 | D-27: resultado direto na unidade de compra, sem total cru; mínimo comprável respeitado (1 garrafa de 500 ml, 1 saco de 5 kg) |
+| 1.17 | 2026-11-14 | M6 concluído: acessibilidade (skip link, campos descritos, contraste), página e doc de LGPD, healthcheck com banco, loading states e E2E Playwright; MFA (O-01) adiado por D-28 |
 
 ---
 
