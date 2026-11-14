@@ -1596,7 +1596,7 @@ Toda alteração relevante atualiza: código, teste, doc do módulo e, se mudar 
 
 Estimativas relativas (sem compromisso de data): M0 pequeno-médio; M1 e M2 médios; M3 e M5 médios; M4 grande; M6 médio; M7 pequeno.
 
-**Status em 14/11/2026:** M0 a M6 concluídos. **M7 em preparação** — release na Vercel aguardando a importação do repositório pelo cliente; checklist em `docs/release-checklist.md`.
+**Status em 14/11/2026:** **M7 concluído** — produção em `https://confconf.vercel.app`, Supabase Auth configurado, healthcheck ok, 7 testes E2E de fumaça e fluxos de admin e participante validados em produção; monitoramento por GitHub Actions (a cada 30 min).
 
 ---
 
@@ -1774,6 +1774,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.16 | 2026-11-14 | D-27: resultado direto na unidade de compra, sem total cru; mínimo comprável respeitado (1 garrafa de 500 ml, 1 saco de 5 kg) |
 | 1.17 | 2026-11-14 | M6 concluído: acessibilidade (skip link, campos descritos, contraste), página e doc de LGPD, healthcheck com banco, loading states e E2E Playwright; MFA (O-01) adiado por D-28 |
 | 1.18 | 2026-11-14 | Rodapé com créditos; M7 preparado com checklist de release, monitoramento e rollback, aguardando import do cliente |
+| 1.19 | 2026-11-14 | M7 concluído: deploy em `https://confconf.vercel.app`, Supabase Auth configurado, E2E e fluxos admin/participante validados, senha do admin rotacionada e monitoramento agendado |
 
 ---
 

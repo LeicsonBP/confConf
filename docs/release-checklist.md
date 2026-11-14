@@ -2,6 +2,22 @@
 
 Quem faz o quê: o **cliente** importa o repositório na Vercel e informa a URL; o **agente** opera Supabase/GitHub, aplica migrações, valida o deploy e roda os testes de fumaça.
 
+## Status do release (14/11/2026)
+
+- [x] Deploy em produção: **https://confconf.vercel.app**
+- [x] Build da Vercel e CI verdes
+- [x] `/api/health` com `status: ok` e `database: ok`
+- [x] 7 testes E2E de fumaça contra produção
+- [x] Fluxo do admin validado (login, evento, convite, exclusão)
+- [x] Fluxo do participante validado (cadastro por convite, login e área)
+- [x] `NEXT_PUBLIC_APP_URL` correta (link de convite com o domínio de produção)
+- [x] Supabase Auth: Site URL e Redirect URLs configurados
+- [x] Senha do admin rotacionada (nova senha em `.ops/admin-credentials.confconf.txt`)
+- [x] Monitoramento agendado: GitHub Actions `uptime` a cada 30 minutos
+- [x] Dados de teste removidos; evento real do cliente preservado
+- [ ] PAT do Supabase rotacionado (ação do cliente no painel)
+- [ ] Domínio próprio (opcional)
+
 ## 1. Antes de importar
 
 - [ ] CI verde em `main` (workflows `ci` e `db-test`)
@@ -49,7 +65,8 @@ Guia detalhado: [`deploy-vercel.md`](./deploy-vercel.md).
 
 ## 5. Monitoramento
 
-- Uptime gratuito (ex.: UptimeRobot) apontando para `/api/health` a cada 5 minutos; alerta por e-mail.
+- **GitHub Actions `uptime`**: verifica `/api/health` a cada 30 minutos e falha (notificando os admins do repositório) se o status não for `ok` ou o banco não responder.
+- Opcional: UptimeRobot ou similar apontando para `/api/health` a cada 5 minutos.
 - Health responde **503** quando o banco falha.
 - Acompanhar logs da Vercel e do Supabase; revisar `audit_log` em caso de incidente.
 - Free tier: sem SLA; acompanhar limites de Auth/DB.

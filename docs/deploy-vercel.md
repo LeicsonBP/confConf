@@ -1,5 +1,7 @@
 # Deploy na Vercel
 
+Produção: **https://confconf.vercel.app** (Projeto Vercel importado do repositório `LeicsonBP/confConf`, branch `main`).
+
 Guia para importar o repositório e publicar a aplicação. O deploy é feito pela integração GitHub ↔ Vercel; o CI do repositório cuida dos testes e o Supabase cuida do banco.
 
 > **Ambiente único (D-14):** não há banco de teste separado. A `main` é a única branch de trabalho e de deploy; toda validação de banco roda no Supabase local dentro do CI.

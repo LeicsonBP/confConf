@@ -1,0 +1,22 @@
+name: uptime
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    name: healthcheck de producao
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar /api/health
+        run: |
+          set -euo pipefail
+          body="$(curl -fsS --max-time 20 https://confconf.vercel.app/api/health)"
+          echo "$body"
+          echo "$body" | grep -q '"status":"ok"'
+          echo "$body" | grep -q '"database":"ok"'

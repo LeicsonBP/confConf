@@ -7,7 +7,7 @@ O produto tem identidade visual própria — ingresso/talão retrô, papel kraft
 ## Status
 
 - **Fase 1 (planejamento e arquitetura):** concluída — veja [`implementation_plan.md`](./implementation_plan.md).
-- **Fase 2 (implementação):** em andamento — **M0** a **M6** concluídos (fundação, admin, convites/login, área do participante, sorteio, planejamento alimentar e hardening). **M7** (release na Vercel) em preparação: checklist em [`docs/release-checklist.md`](./docs/release-checklist.md).
+- **Fase 2 (implementação):** concluída — **M0 a M7**. Produção em **https://confconf.vercel.app**; healthcheck em `/api/health` e monitoramento agendado pelo GitHub Actions.
 
 ## Stack
 
