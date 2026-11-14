@@ -97,14 +97,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
 
         <PerforatedDivider className="my-8" />
 
-        <h2 className="font-display text-2xl leading-none">Seus dados</h2>
-        <p className="mt-2 text-sm text-ink-soft">
-          No fim você recebe seu usuário e senha para acessar a área do participante.
-        </p>
-
-        <div className="mt-6">
-          <SignupForm tokenHash={tokenHash} question={question} captchaToken={captchaToken} />
-        </div>
+        <SignupForm tokenHash={tokenHash} question={question} captchaToken={captchaToken} />
       </TicketCard>
     </main>
   );

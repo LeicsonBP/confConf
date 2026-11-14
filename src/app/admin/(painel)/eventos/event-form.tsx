@@ -122,7 +122,7 @@ export function EventForm({ action, initial = emptyValues, eventId, submitLabel 
           >
             &nbsp;
           </span>
-          <label className="flex min-h-12 items-center gap-3 border-2 border-ink bg-paper px-3">
+          <label className="flex h-12 items-center gap-3 border-2 border-ink bg-paper px-3">
             <input
               type="checkbox"
               name="hasSecretSanta"

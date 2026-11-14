@@ -144,7 +144,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           <InviteForm action={createInvite} eventId={event.id} />
         </div>
 
-        <PerforatedDivider />
+        <PerforatedDivider className="my-8" />
 
         {inviteItems.length === 0 ? (
           <p className="mt-5 text-sm text-ink-faint">Nenhum link gerado ainda.</p>
@@ -199,7 +199,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           Ação irreversível. Participantes, convites, listas de desejos e relatos desta
           confraternização serão apagados junto.
         </p>
-        <PerforatedDivider />
+        <PerforatedDivider className="my-8" />
         <div className="mt-5">
           <DeleteEventForm action={deleteEvent} eventId={event.id} eventName={event.name} />
         </div>

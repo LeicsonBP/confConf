@@ -32,6 +32,8 @@ npm run dev
 
 Aplicação em `http://localhost:3000`. Healthcheck em `GET /api/health`.
 
+> Se uma classe de estilo nova não aparecer, apague `.next` e reinicie o `npm run dev`: o cache do Turbopack às vezes serve o CSS antigo.
+
 ### Variáveis de ambiente
 
 | Variável | Onde usar | Observação |

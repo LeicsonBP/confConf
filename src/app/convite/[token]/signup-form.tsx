@@ -33,6 +33,13 @@ export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProp
 
   return (
     <form action={formAction} className="flex flex-col gap-8">
+      <div>
+        <h2 className="font-display text-2xl leading-none">Seus dados</h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          No fim você recebe seu usuário e senha para acessar a área do participante.
+        </p>
+      </div>
+
       <input type="hidden" name="tokenHash" value={tokenHash} />
 
       <div className="grid gap-6 sm:grid-cols-2">
@@ -102,13 +109,13 @@ export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProp
             <legend className="px-2 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-soft">
               Restrições alimentares
             </legend>
-            <p className="text-xs text-ink-faint">Opcional — marque o que se aplica a você.</p>
+            <p className="mt-2 text-xs text-ink-faint">Opcional — marque o que se aplica a você.</p>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
               {RESTRICTIONS.map((restriction) => (
                 <label
                   key={restriction.value}
-                  className="flex items-center gap-3 border border-transparent px-1 py-1 text-sm"
+                  className="flex items-center gap-3 px-2 py-2 text-sm"
                 >
                   <input
                     type="checkbox"
