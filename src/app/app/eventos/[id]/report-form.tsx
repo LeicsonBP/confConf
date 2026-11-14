@@ -3,7 +3,6 @@
 import { useActionState } from "react";
 import { Button } from "@/design-system/button";
 import { Field, inputClassName } from "@/design-system/field";
-import { IconAlert } from "@/design-system/icons";
 import { REPORT_CATEGORIES } from "@/modules/reports/domain/report";
 import type { ParticipantActionState } from "./types";
 
@@ -62,7 +61,6 @@ export function ReportForm({ eventId, action }: ReportFormProps) {
 
       <div>
         <Button type="submit" variant="secondary" disabled={pending}>
-          <IconAlert />
           {pending ? "Enviando..." : "Enviar relato"}
         </Button>
       </div>

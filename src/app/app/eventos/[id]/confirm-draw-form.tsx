@@ -2,7 +2,6 @@
 
 import { useActionState } from "react";
 import { Button } from "@/design-system/button";
-import { IconCheck } from "@/design-system/icons";
 import type { ParticipantActionState } from "./types";
 
 const initialState: ParticipantActionState = {};
@@ -20,7 +19,6 @@ export function ConfirmDrawForm({ eventId, action }: ConfirmDrawFormProps) {
       <input type="hidden" name="eventId" value={eventId} />
       <div>
         <Button type="submit" disabled={pending}>
-          <IconCheck />
           {pending ? "Confirmando..." : "Confirmar que vi meu amigo secreto"}
         </Button>
       </div>

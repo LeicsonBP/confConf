@@ -84,11 +84,17 @@ export default async function ParticipantEventPage({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <ButtonLink href={`/app/eventos/${event.id}/desejos`} variant="secondary">
-          <IconGift />
+      <div className="flex flex-col gap-2">
+        <ButtonLink
+          href={`/app/eventos/${event.id}/desejos`}
+          variant="secondary"
+          className="self-start"
+        >
           Minha lista de desejos
         </ButtonLink>
+        <p className="max-w-md text-xs text-ink-faint">
+          Ao clicar, você vai para a página de cadastro dos seus presentes.
+        </p>
       </div>
 
       <TicketCard className="p-6 sm:p-8">

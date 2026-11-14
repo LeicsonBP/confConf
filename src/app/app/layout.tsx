@@ -32,7 +32,7 @@ export default async function ParticipantLayout({ children }: { children: React.
                 </span>
               </Stamp>
             </div>
-            <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">
+            <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">
               {session.fullName} · {session.username}
             </p>
           </div>

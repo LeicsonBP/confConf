@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "./button";
-import { IconClose, IconLogout, IconMenu, IconUser } from "./icons";
+import { IconClose, IconMenu } from "./icons";
 
 interface HeaderNavProps {
   profileHref?: string;
@@ -21,13 +21,11 @@ export function HeaderNav({ profileHref, signOut }: HeaderNavProps) {
       <nav className="hidden items-center gap-2 sm:flex" aria-label="Conta">
         {profileHref ? (
           <Link href={profileHref} className={linkClass}>
-            <IconUser />
             Meu perfil
           </Link>
         ) : null}
         <form action={signOut}>
           <Button type="submit" variant="outline" className="px-4 py-2 text-[11px]">
-            <IconLogout />
             Sair
           </Button>
         </form>
@@ -52,13 +50,11 @@ export function HeaderNav({ profileHref, signOut }: HeaderNavProps) {
           >
             {profileHref ? (
               <Link href={profileHref} className={linkClass} onClick={() => setOpen(false)}>
-                <IconUser />
                 Meu perfil
               </Link>
             ) : null}
             <form action={signOut}>
               <Button type="submit" variant="outline" className="w-full justify-start px-4 py-2 text-[11px]">
-                <IconLogout />
                 Sair
               </Button>
             </form>

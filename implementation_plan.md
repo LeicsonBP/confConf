@@ -1775,6 +1775,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.17 | 2026-11-14 | M6 concluído: acessibilidade (skip link, campos descritos, contraste), página e doc de LGPD, healthcheck com banco, loading states e E2E Playwright; MFA (O-01) adiado por D-28 |
 | 1.18 | 2026-11-14 | Rodapé com créditos; M7 preparado com checklist de release, monitoramento e rollback, aguardando import do cliente |
 | 1.19 | 2026-11-14 | M7 concluído: deploy em `https://confconf.vercel.app`, Supabase Auth configurado, E2E e fluxos admin/participante validados, senha do admin rotacionada e monitoramento agendado |
+| 1.20 | 2026-11-14 | Ajustes visuais: rodapé no viewport, mensagem e créditos em negrito, cabeçalhos com menu mobile e ícones, favicon de brinde preto, ícones PWA off-white e botões sem ícones (exceto home) |
 
 ---
 

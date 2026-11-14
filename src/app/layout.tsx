@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Alfa_Slab_One, IBM_Plex_Mono, Spline_Sans } from "next/font/google";
 import { IconTicket } from "@/design-system/icons";
@@ -30,6 +30,16 @@ export const metadata: Metadata = {
     template: "%s · confConf",
   },
   description: "Organize confraternizações e amigos secretos sem dor de cabeça.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "confConf",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f4ecdc",
 };
 
 export default function RootLayout({
