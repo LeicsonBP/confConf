@@ -8,9 +8,20 @@ import {
   formatEventDate,
   fromIsoToLocalDateTime,
 } from "@/modules/events/domain/event";
+import {
+  buildInviteUrl,
+  formatInviteUses,
+  inviteStatus,
+  inviteStatusLabel,
+} from "@/modules/invites/domain/invite";
+import { decryptInviteToken } from "@/modules/invites/server/token";
 import { deleteEvent, updateEvent } from "../actions";
 import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
+import { createInvite, revokeInvite } from "../invite-actions";
+import { InviteForm } from "./invite-form";
+import { InviteLink } from "./invite-link";
+import { RevokeInviteForm } from "./revoke-form";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +43,35 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
   if (error || !event) {
     notFound();
   }
+
+  const { data: invites } = await supabase
+    .from("invites")
+    .select("id,label,expires_at,used_count,max_uses,revoked_at,token_ciphertext")
+    .eq("event_id", id)
+    .order("created_at", { ascending: false });
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
+  const now = new Date();
+  const inviteItems = (invites ?? []).map((invite) => {
+    const token = invite.token_ciphertext ? decryptInviteToken(invite.token_ciphertext) : null;
+    return {
+      id: invite.id,
+      label: invite.label,
+      expiresAt: invite.expires_at,
+      usedCount: invite.used_count,
+      maxUses: invite.max_uses,
+      status: inviteStatus(
+        {
+          expiresAt: invite.expires_at,
+          revokedAt: invite.revoked_at,
+          usedCount: invite.used_count,
+          maxUses: invite.max_uses,
+        },
+        now,
+      ),
+      url: token ? (appUrl ? buildInviteUrl(appUrl, token) : `/convite/${token}`) : null,
+    };
+  });
 
   return (
     <div className="flex flex-col gap-8">
@@ -81,6 +121,70 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             }}
           />
         </div>
+      </TicketCard>
+
+      <TicketCard className="p-6 sm:p-8">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+              Convites
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm text-ink-soft">
+              O link é <strong>reutilizável</strong> e fica sempre visível aqui: mande no grupo da
+              família, no WhatsApp ou onde quiser. Cada pessoa que abrir se cadastra sozinha.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <InviteForm action={createInvite} eventId={event.id} />
+        </div>
+
+        <PerforatedDivider />
+
+        {inviteItems.length === 0 ? (
+          <p className="mt-5 text-sm text-ink-faint">Nenhum link gerado ainda.</p>
+        ) : (
+          <ul className="mt-5 flex flex-col gap-5">
+            {inviteItems.map((invite) => (
+              <li key={invite.id} className="border-2 border-ink bg-paper p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="font-display text-lg leading-none">
+                      {invite.label ?? "Convite sem nome"}
+                    </p>
+                    <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-faint">
+                      Válido até {formatEventDate(invite.expiresAt)} ·{" "}
+                      {formatInviteUses(invite.usedCount, invite.maxUses)}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Stamp tone={invite.status === "ativo" ? "bottle" : "ink"}>
+                      {inviteStatusLabel(invite.status)}
+                    </Stamp>
+                    {invite.status === "ativo" ? (
+                      <RevokeInviteForm
+                        action={revokeInvite}
+                        eventId={event.id}
+                        inviteId={invite.id}
+                      />
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  {invite.url ? (
+                    <InviteLink url={invite.url} />
+                  ) : (
+                    <p className="text-sm text-stamp">
+                      Link indisponível — APP_SECRET diferente do usado na geração.
+                    </p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </TicketCard>
 
       <TicketCard className="border-stamp p-6 sm:p-8">

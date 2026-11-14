@@ -223,8 +223,9 @@ export type Database = {
           id: string
           label: string | null
           last_used_at: string | null
-          max_uses: number
+          max_uses: number | null
           revoked_at: string | null
+          token_ciphertext: string | null
           token_hash: string
           used_count: number
         }
@@ -236,8 +237,9 @@ export type Database = {
           id?: string
           label?: string | null
           last_used_at?: string | null
-          max_uses?: number
+          max_uses?: number | null
           revoked_at?: string | null
+          token_ciphertext?: string | null
           token_hash: string
           used_count?: number
         }
@@ -249,8 +251,9 @@ export type Database = {
           id?: string
           label?: string | null
           last_used_at?: string | null
-          max_uses?: number
+          max_uses?: number | null
           revoked_at?: string | null
+          token_ciphertext?: string | null
           token_hash?: string
           used_count?: number
         }
@@ -435,6 +438,18 @@ export type Database = {
       bootstrap_admin: {
         Args: { p_note?: string; p_user_id: string }
         Returns: undefined
+      }
+      invite_preview: { Args: { p_token_hash: string }; Returns: Json }
+      redeem_invite: {
+        Args: {
+          p_birth_date: string
+          p_full_name: string
+          p_other: string
+          p_restrictions: string[]
+          p_token_hash: string
+          p_username: string
+        }
+        Returns: string
       }
     }
     Enums: {

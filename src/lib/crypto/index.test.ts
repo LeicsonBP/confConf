@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { hmacSha256, fromBase64Url, safeEqual, sha256Hex, toBase64Url } from "./index";
+import {
+  decryptSecret,
+  encryptSecret,
+  fromBase64Url,
+  hmacSha256,
+  safeEqual,
+  sha256Hex,
+  toBase64Url,
+} from "./index";
+
+const SECRET = "segredo-de-teste-com-32-caracteres-ok";
 
 describe("crypto", () => {
   it("gera sha256 estável", () => {
@@ -9,9 +19,9 @@ describe("crypto", () => {
   });
 
   it("assina e valida com HMAC", () => {
-    const signature = hmacSha256("payload", "segredo-bem-longo-123");
-    expect(safeEqual(signature, hmacSha256("payload", "segredo-bem-longo-123"))).toBe(true);
-    expect(safeEqual(signature, hmacSha256("payload2", "segredo-bem-longo-123"))).toBe(false);
+    const signature = hmacSha256("payload", SECRET);
+    expect(safeEqual(signature, hmacSha256("payload", SECRET))).toBe(true);
+    expect(safeEqual(signature, hmacSha256("payload2", SECRET))).toBe(false);
     expect(safeEqual(signature, hmacSha256("payload", "outro-segredo-456"))).toBe(false);
   });
 
@@ -21,5 +31,20 @@ describe("crypto", () => {
     expect(encoded).not.toContain("+");
     expect(encoded).not.toContain("/");
     expect(fromBase64Url(encoded).toString("utf8")).toBe("confConf-íntegro");
+  });
+
+  it("cifra e decifra um segredo", () => {
+    const encrypted = encryptSecret("token-do-convite", SECRET);
+    expect(encrypted.split(".")).toHaveLength(3);
+    expect(encrypted).not.toContain("token-do-convite");
+    expect(decryptSecret(encrypted, SECRET)).toBe("token-do-convite");
+  });
+
+  it("recusa payload adulterado ou com outro segredo", () => {
+    const encrypted = encryptSecret("token-do-convite", SECRET);
+    expect(decryptSecret(`${encrypted}x`, SECRET)).toBeNull();
+    expect(decryptSecret(encrypted, "outro-segredo-diferente-123")).toBeNull();
+    expect(decryptSecret("lixo", SECRET)).toBeNull();
+    expect(decryptSecret("a.b", SECRET)).toBeNull();
   });
 });

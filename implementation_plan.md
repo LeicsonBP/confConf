@@ -62,6 +62,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-12 | Fluxo Git com `main` (produção) e `develop` (teste), merges só após CI verde | Cliente | Nenhum deploy de produção sem passar pelo ambiente de teste |
 | D-13 | `service_role` restrita ao endpoint de recuperação de credenciais | Técnica | Contenção da chave mais poderosa do sistema |
 | D-14 | **Ambiente único**: um projeto Supabase (`confConf`) e trabalho direto na branch `main`, sem `develop` | Cliente (2026-11-14) | Revoga D-12; CI valida migrações no Supabase local antes de cada push |
+| D-15 | **Link de convite reutilizável e sempre visível** ao admin (usos ilimitados por padrão); token guardado cifrado | Cliente (2026-11-14) | Revoga o "uso único/uma exibição"; ver ADR-0009 |
 
 ---
 
@@ -200,7 +201,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-03 | O evento exige nome (3–120 caracteres) e data/hora; descrição, local, valor máximo do presente e informações adicionais são opcionais |
 | BR-04 | O amigo secreto é **opcional por evento**; o evento existe e funciona sem sorteio |
 | BR-05 | Só é possível cadastrar-se com um convite válido, não expirado e não revogado |
-| BR-06 | Convite tem validade padrão de 30 dias, número de usos configurável (padrão 1) e pode ser revogado a qualquer momento |
+| BR-06 | O convite tem validade padrão de 30 dias, usos configuráveis (**ilimitado por padrão**, para compartilhar em grupo) e pode ser revogado a qualquer momento; o admin vê o link sempre que quiser |
 | BR-07 | O identificador é o nome normalizado (sem acentos, minúsculas, hífens) seguido de exatamente 3 dígitos aleatórios; é único e imutável |
 | BR-08 | O PIN tem 4 a 8 dígitos numéricos; é normalizado com zeros à esquerda até 6 caracteres para o Supabase Auth; nunca é exibido ao administrador |
 | BR-09 | Cada participante tem e-mail sintético não entregável derivado do identificador; não há envio de e-mail no sistema |
@@ -621,16 +622,17 @@ Sem políticas para `authenticated`; leitura apenas por `private.is_admin()` (se
 |---|---|---|
 | `id` | uuid | PK |
 | `event_id` | uuid | FK `events(id)` on delete cascade |
-| `token_hash` | bytea | not null, unique (SHA-256 do token) |
+| `token_hash` | text | not null, unique (SHA-256 hexadecimal do token) |
+| `token_ciphertext` | text | nulo; token cifrado (AES-256-GCM) para o admin reexibir o link |
 | `label` | text | até 80 caracteres |
 | `expires_at` | timestamptz | not null, default now() + 30 dias |
-| `max_uses` | integer | not null, default 1, entre 1 e 500 |
+| `max_uses` | integer | nulo = ilimitado; 1 a 5000 quando definido |
 | `used_count` | integer | not null, default 0, >= 0 e <= `max_uses` |
 | `revoked_at` | timestamptz | nulo |
 | `created_by` | uuid | FK `auth.users(id)` |
 | `created_at` / `last_used_at` | timestamptz | — |
 
-O token em claro só existe no momento da criação: a aplicação grava o hash e mostra o link uma única vez.
+O token em claro fica cifrado (AES-256-GCM com `APP_SECRET`) para o admin reexibir o link; a validação usa o hash SHA-256.
 
 **`public.secret_santa_assignments`** — o resultado do sorteio.
 
@@ -935,7 +937,7 @@ Escrita em `secret_santa_assignments` e `draw_runs` ocorre apenas por funções 
 - **`profiles`**: `id = auth.uid()` para leitura; `full_name` editável pelo dono; `username`/`birth_date` protegidos por trigger; admin lê tudo, não escreve.
 - **`events`**: admin tem CRUD completo; participante lê eventos em que tem linha ativa (`private.is_event_participant`).
 - **`event_participants`**: participante lê a própria linha e atualiza apenas `dietary_restrictions`/`dietary_other`; admin lê todas e escreve apenas `removed_at`.
-- **`invites`**: somente admin; o `token_hash` nunca é devolvido pela API.
+- **`invites`**: somente admin; o `token_hash` nunca é devolvido e o `token_ciphertext` só é decifrado no servidor para reexibir o link.
 - **`secret_santa_assignments`**: leitura própria, leitura ampla para admin.
 - **`wishlist_items`**: dono tem CRUD; o amigo sorteado tem leitura após o sorteio (`private.drew(participant_id)`).
 - **`problem_reports`**: autor insere e lê; admin lê tudo e atualiza status.
@@ -1000,7 +1002,7 @@ sequenceDiagram
   participant GT as GoTrue
   A->>APP: gera convite do evento
   APP->>DB: INSERT invites (token_hash, validade)
-  APP-->>A: link exibido uma única vez
+  APP-->>A: link disponível na lista (reutilizável)
   A->>P: compartilha o link
   P->>APP: GET /convite/token
   APP->>DB: invite_preview(token)
@@ -1597,7 +1599,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 |---|---|
 | AC-02 | Dado o formulário de evento, quando salvo, então todos os campos são persistidos e exibidos; amigo secreto pode ser desligado |
 | AC-03 | Dado um evento com sorteio realizado, quando o admin tenta desligar o amigo secreto, então o sistema bloqueia |
-| AC-04 | Dado o botão "gerar convite", quando acionado, então o link é exibido uma vez, pode ser copiado e a lista mostra validade e usos |
+| AC-04 | Dado o botão "gerar convite", quando acionado, então o link aparece na lista e pode ser copiado quantas vezes quiser, com validade, usos e status (ativo/expirado/revogado/esgotado) |
 | AC-05 | Dado um participante ativo, quando o admin remove, então ele sai da visão consolidada; após o sorteio, a remoção é bloqueada |
 | AC-06 | Dado um evento com restrições variadas, quando o admin abre a visão consolidada, então vê contagens por tipo e o texto de "outras" |
 | AC-07 | Dado um evento com N participantes e restrições, quando abre as estimativas, então vê faixas por item, as premissas e o aviso de estimativa |
@@ -1723,6 +1725,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 |---|---|---|
 | 1.0 | 2026-11-14 | Consolidação da Fase 1: 11 entregáveis, D-01 a D-13, ambientes/branches e operação assistida por agente |
 | 1.1 | 2026-11-14 | D-14: ambiente único e trabalho direto na `main`; ajuste das seções 1, 2, 4, 15, 16, 20 e 21 |
+| 1.2 | 2026-11-14 | D-15: link de convite reutilizável e sempre visível (token cifrado); ajuste de BR-06, tabela `invites`, RLS e AC-04 |
 
 ---
 
