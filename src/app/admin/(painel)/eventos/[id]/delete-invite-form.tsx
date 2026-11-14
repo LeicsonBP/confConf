@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button } from "@/design-system/button";
+import { IconTrash } from "@/design-system/icons";
 import type { InviteFormState } from "../invite-types";
 
 const initialState: InviteFormState = {};
@@ -19,9 +19,15 @@ export function DeleteInviteForm({ action, eventId, inviteId }: DeleteInviteForm
     <form action={formAction} className="flex items-center gap-3">
       <input type="hidden" name="eventId" value={eventId} />
       <input type="hidden" name="inviteId" value={inviteId} />
-      <Button type="submit" variant="danger" disabled={pending}>
-        {pending ? "Excluindo..." : "Excluir convite"}
-      </Button>
+      <button
+        type="submit"
+        aria-label="Excluir convite"
+        title="Excluir convite"
+        disabled={pending}
+        className="inline-flex h-[27px] w-7 items-center justify-center border-2 border-ink bg-transparent text-ink transition-colors hover:bg-paper-3 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        <IconTrash size={14} />
+      </button>
       {state.error ? (
         <span role="alert" className="text-xs text-stamp">
           {state.error}

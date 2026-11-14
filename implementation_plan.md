@@ -1788,6 +1788,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.28 | 2026-11-14 | Footer com "gente maluca"; botões do cartão de cadastro com mesma largura/altura no mobile; aviso sobre lista de desejos e sorteio; botão da lista de desejos preto |
 | 1.29 | 2026-11-14 | Relato de problema em página própria ("Reportar problema") e termos de restrição revisados (intolerante à lactose, celíaco) |
 | 1.30 | 2026-11-14 | Header do participante mostra "Início" na tela de perfil; botão de relato movido para depois do card do amigo secreto, em terracota |
+| 1.31 | 2026-11-14 | Excluir convite vira ícone de lixeira, com a mesma altura do selo de status (Ativo/Inativo) |
 
 ---
 
