@@ -4,7 +4,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/design-system/button";
 import { formatEventDate } from "@/modules/events/domain/event";
-import type { SignupCredentials } from "./types";
+
+export interface CredentialData {
+  username: string;
+  pin: string;
+  eventName: string;
+  eventDate: string;
+  eventAddress: string | null;
+}
 
 function drawWrappedText(
   context: CanvasRenderingContext2D,
@@ -32,9 +39,23 @@ function drawWrappedText(
   return currentY;
 }
 
-export function CredentialCard(credentials: SignupCredentials) {
+interface CredentialCardProps extends CredentialData {
+  heading?: string;
+  subtitle?: string;
+  intro?: string;
+}
+
+export function CredentialCard({
+  heading = "Cadastro concluído",
+  subtitle = "Tudo certo!",
+  intro = "Você já está participando. Estes são seus dados de acesso:",
+  username,
+  pin,
+  eventName,
+  eventDate,
+  eventAddress,
+}: CredentialCardProps) {
   const [saved, setSaved] = useState(false);
-  const { username, pin, eventName, eventDate, eventAddress } = credentials;
 
   function saveImage() {
     const canvas = document.createElement("canvas");
@@ -117,13 +138,9 @@ export function CredentialCard(credentials: SignupCredentials) {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-bottle">
-          Cadastro concluído
-        </p>
-        <h2 className="mt-2 font-display text-3xl leading-none">Tudo certo!</h2>
-        <p className="mt-3 text-sm text-ink-soft">
-          Você já está participando. Estes são seus dados de acesso:
-        </p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-bottle">{heading}</p>
+        <h2 className="mt-2 font-display text-3xl leading-none">{subtitle}</h2>
+        <p className="mt-3 text-sm text-ink-soft">{intro}</p>
       </div>
 
       <div className="border-2 border-ink bg-paper p-6">
@@ -142,13 +159,17 @@ export function CredentialCard(credentials: SignupCredentials) {
           </div>
         </dl>
 
-        <div className="mt-6 border-t-2 border-dashed border-ink-faint pt-5">
-          <p className="font-display text-lg leading-tight">{eventName}</p>
-          <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
-            {formatEventDate(eventDate)}
-          </p>
-          {eventAddress ? <p className="mt-1 text-sm text-ink-soft">{eventAddress}</p> : null}
-        </div>
+        {eventName ? (
+          <div className="mt-6 border-t-2 border-dashed border-ink-faint pt-5">
+            <p className="font-display text-lg leading-tight">{eventName}</p>
+            {eventDate ? (
+              <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+                {formatEventDate(eventDate)}
+              </p>
+            ) : null}
+            {eventAddress ? <p className="mt-1 text-sm text-ink-soft">{eventAddress}</p> : null}
+          </div>
+        ) : null}
       </div>
 
       <div className="flex flex-wrap items-center gap-3">

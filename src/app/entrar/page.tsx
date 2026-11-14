@@ -42,7 +42,12 @@ export default async function ParticipantLoginPage() {
           Esqueceu o acesso?{" "}
           <Link href="/recuperar" className="underline decoration-2 underline-offset-4">
             Recuperar senha
+          </Link>{" "}
+          ou{" "}
+          <Link href="/recuperar/usuario" className="underline decoration-2 underline-offset-4">
+            recuperar usuário
           </Link>
+          .
         </p>
       </TicketCard>
     </main>

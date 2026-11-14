@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { Button } from "@/design-system/button";
 import { Field, inputClassName } from "@/design-system/field";
 import { DIETARY_OPTIONS } from "@/modules/participants/domain/restrictions";
-import { CredentialCard } from "./credential-card";
+import { CredentialCard } from "@/design-system/credential-card";
 import { signUpWithInvite } from "./actions";
 import type { SignupState } from "./types";
 

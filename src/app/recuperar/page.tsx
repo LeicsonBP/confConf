@@ -35,6 +35,13 @@ export default function RecoveryPage() {
             tokenTwo={second.token}
           />
         </div>
+
+        <p className="mt-8 text-sm text-ink-soft">
+          Lembra a senha mas esqueceu o usuário?{" "}
+          <Link href="/recuperar/usuario" className="underline decoration-2 underline-offset-4">
+            Recuperar usuário
+          </Link>
+        </p>
       </TicketCard>
     </main>
   );

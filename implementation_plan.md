@@ -68,6 +68,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-18 | **Participante pertence a uma única confraternização**; a área do participante abre direto o evento, sem tela de seleção | Cliente (2026-11-14) | `/app` redireciona para o evento do participante |
 | D-19 | **Nome completo imutável no perfil** do participante; a edição se restringe às restrições alimentares | Cliente (2026-11-14) | Ajuste em BR-31 e na tela de perfil |
 | D-20 | Administrador pode **desfazer o sorteio** e **sortear de novo** (para incluir/remover participantes) | Cliente (2026-11-14) | Ajusta BR-15/BR-33; desfazer apaga pares e confirmações |
+| D-21 | **Recuperação de usuário** com senha + data de nascimento, reexibindo as credenciais e a opção de baixar as informações | Cliente (2026-11-14) | Novo endpoint `/api/recuperacao/usuario`; complementa a recuperação de senha |
 
 ---
 
@@ -228,7 +229,8 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-25 | Após o sorteio, participantes não podem ser removidos nem adicionados; antes do sorteio o administrador pode remover um participante (remoção física, com registro em auditoria) |
 | BR-26 | Excluir um evento remove em cascata participantes, convites, pares, listas e relatos após confirmação digitada |
 | BR-27 | Falhas de login não revelam se a conta existe |
-| BR-28 | Recuperação exige identificador e data de nascimento corretos, mais captcha e limite de tentativas |
+| BR-28 | Recuperação de senha exige usuário e data de nascimento corretos, mais captcha e limite de tentativas |
+| BR-39 | Recuperação de usuário exige senha e data de nascimento corretos; ao confirmar, o sistema exibe o usuário e permite baixar as informações de acesso novamente |
 | BR-29 | Após a recuperação, todas as sessões do participante são revogadas |
 | BR-30 | Todo texto exibido é pt-BR; datas no fuso do evento; valores em BRL |
 | BR-31 | O participante edita apenas as próprias restrições alimentares (nome, usuário e data de nascimento são imutáveis); o admin não edita dados do participante, apenas remove |
@@ -852,6 +854,8 @@ Implementado em `private.throttle()`, com contadores no banco (necessário porqu
 6. Falha em qualquer etapa → mensagem genérica ("não foi possível confirmar os dados") e auditoria da tentativa.
 
 **Risco residual (R-02):** a data de nascimento é informação semi-pública em ambiente de trabalho. Mitigações: limite rígido de tentativas, auditoria, revogação de sessões, resposta genérica, e o fato de que o acesso indevido exige acertar o identificador (que também é público, mas combinado aos dois fatores). Aceite explícito na seção 20.
+
+**Recuperação de usuário (D-21):** quem lembra a senha informa **senha + data de nascimento**; o sistema localiza os perfis pela data, valida a senha no GoTrue e exibe o usuário, com a opção de **baixar as informações de acesso** novamente. Protegida por captcha, throttle (5/h por IP) e resposta genérica em caso de falha. O endpoint roda no servidor com `service_role` apenas para a busca por data — a senha é validada no GoTrue com a chave anônima.
 
 ### 9.9 Matriz de capacidades
 
@@ -1625,6 +1629,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-26 | Dado o sorteio realizado, quando o participante clica em confirmar, então a confirmação é registrada uma vez e o admin vê a contagem |
 | AC-27 | Dado o sorteio realizado, quando o participante abre a lista do amigo sorteado, então vê os itens em modo leitura; o admin não vê a lista |
 | AC-43 | Dado um sorteio realizado, quando o admin clica em desfazer e confirma, então pares e confirmações são apagados, o elenco volta a ser editável e um novo sorteio pode ser executado |
+| AC-44 | Dado que a pessoa lembra a senha, quando informa senha + data de nascimento + captcha, então o sistema exibe o usuário e o cartão de acesso com o botão de baixar as informações; senha errada retorna erro genérico |
 
 ### 19.4 Área do participante
 
@@ -1742,6 +1747,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.6 | 2026-11-14 | M3 concluído: lista de desejos (CRUD), perfil e restrições do participante, captcha com resultados de 0 a 10 e revisão de textos |
 | 1.7 | 2026-11-14 | M4 concluído: sorteio (derangement), resultado do próprio par, confirmação, relatos e revelação pelo admin; D-19 (nome imutável) |
 | 1.8 | 2026-11-14 | D-20: desfazer e refazer o sorteio para incluir/remover participantes (ajusta BR-15, BR-33 e AC-43) |
+| 1.9 | 2026-11-14 | D-21: recuperação de usuário por senha + data de nascimento, com reexibição e download das credenciais (BR-39, AC-44) |
 
 ---
 
