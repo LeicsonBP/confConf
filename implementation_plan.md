@@ -72,6 +72,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-22 | **Data prevista do sorteio** no cadastro da confraternização (opcional, só com amigo secreto), exibida ao participante | Cliente (2026-11-14) | Novo campo `events.draw_scheduled_at` |
 | D-23 | **Excluir participante apaga a conta** (sem acesso algum); **excluir evento apaga as contas dos participantes**; contas órfãs são limpas | Cliente (2026-11-14) | Ajusta BR-25/BR-26; novo `admin_delete_event` |
 | D-24 | **Seleção dos itens comprados** no planejamento alimentar (checkboxes) com botão **Calcular**; o cálculo usa só os itens marcados | Cliente (2026-11-14) | Novo campo `events.food_selection` |
+| D-25 | Unificar **"Salgadinhos" e "Salgados"** em "Salgados"; revisar as médias e exibir **um número único múltiplo de 5** (não faixa) | Cliente (2026-11-14) | Ajusta BR-20, AC-07 e §11.7; migração converte a seleção |
 
 ---
 
@@ -224,7 +225,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-17 | A confirmação do sorteio é opcional, idempotente e visível ao administrador como contagem |
 | BR-18 | Restrições alimentares: vegetariano, vegano, sem lactose, sem glúten e outra (com descrição livre de até 300 caracteres) |
 | BR-19 | Vegano implica vegetariano; nas contagens, o vegano é contado uma única vez |
-| BR-20 | Planejamento alimentar é apresentado como estimativa em faixas, com premissas explícitas |
+| BR-20 | Planejamento alimentar é apresentado como estimativa com **quantidade única arredondada para cima em múltiplos de 5**, premissas explícitas e aviso de que não é ordem de compra |
 | BR-21 | O valor máximo do presente é informativo e aparece como orientação na lista de desejos |
 | BR-22 | Item da lista de desejos exige título (1–120 caracteres); link é opcional e precisa ser `http(s)` |
 | BR-23 | A lista de desejos é visível ao dono e ao participante sorteado para ele, **depois** do sorteio; nunca ao administrador |
@@ -1073,20 +1074,19 @@ Descrito em 9.8. Etapas: identificador + nascimento + captcha → cookie de 5 mi
 
 Entrada: total de participantes ativos e contagem por restrição (vegano conta como vegetariano, sem dupla contagem).
 
-| Item | Consumo por pessoa (mín.–máx.) | Observação |
+| Item | Consumo por pessoa | Observação |
 |---|---|---|
-| Salgadinhos | 8–12 unidades | Base do cardápio |
-| Salgados assados/fritos | 6–10 unidades | Alternar tipos |
-| Doces | 4–6 unidades | Incluir opção sem lactose |
-| Bolo | 100–150 g | Opção sem glúten |
-| Refrigerante | 300–400 ml | Incluir zero |
-| Água | 300 ml | — |
-| Gelo | 300–500 g | — |
+| Salgados | 12 unidades | Base do cardápio, assados e fritos (referências: 12–15/pessoa) |
+| Doces | 5 unidades | Incluir opção sem lactose (referências: 5–6/pessoa) |
+| Bolo | 100 g | Opção sem glúten |
+| Refrigerante | 400 ml | Incluir zero |
+| Água | 500 ml | — |
+| Gelo | 500 g | — |
 | Descartáveis | 1,2 × participantes | Pratos, copos, guardanapos |
 
-Cálculo: `quantidade_base = ceil(pessoas × consumo)`; opções restritas usam a proporção de pessoas com a restrição, com piso de 1 porção por pessoa restrita. A tela mostra sempre "estimativa", as premissas e a data do cálculo. Parâmetros em `src/modules/food-planning/rules.ts` (validados no M5, O-11).
+Cálculo: `quantidade = arredonda_para_cima(pessoas × consumo, múltiplo de 5)`; opções restritas usam a proporção de pessoas com a restrição, com piso de 1 porção por pessoa restrita. A tela mostra sempre "estimativa", as premissas e a data do cálculo. Parâmetros em `src/modules/food-planning/rules.ts` (validados no M5, O-11).
 
-**Implementado (M5):** seção "Planejamento alimentar" no evento do admin com **seleção dos itens comprados (checkboxes + Calcular)**, restrições consolidadas (vegano conta como vegetariano, sem dupla contagem), textos de "outras" restrições, estimativas em faixas apenas para os itens marcados, opções sem lactose (doces) e sem glúten (bolo), premissas e botão de impressão (CSS `print`). A seleção fica em `events.food_selection`; os valores da tabela acima ficam em `FOOD_RULES` e podem ser ajustados em um único lugar.
+**Implementado (M5):** seção "Planejamento alimentar" no evento do admin com **seleção dos itens comprados (checkboxes + Calcular)**, restrições consolidadas (vegano conta como vegetariano, sem dupla contagem), textos de "outras" restrições, **quantidade única múltipla de 5** apenas para os itens marcados, opções sem lactose (doces) e sem glúten (bolo), premissas e botão de impressão (CSS `print`). A seleção fica em `events.food_selection`; os valores da tabela acima ficam em `FOOD_RULES` e podem ser ajustados em um único lugar. As médias foram revisadas em 14/11/2026 com referências públicas de festas (UOL, iFood, Festeiros e Guia Festa Brasil).
 
 ### 11.8 Gestão de participantes e restrições
 
@@ -1623,7 +1623,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-04 | Dado o botão "gerar convite", quando acionado, então o link aparece na lista e pode ser copiado quantas vezes quiser, com validade, usos e status (ativo/expirado/revogado/esgotado) |
 | AC-05 | Dado um participante ativo, quando o admin remove, então ele sai da visão consolidada; após o sorteio, a remoção é bloqueada |
 | AC-06 | Dado um evento com restrições variadas, quando o admin abre a visão consolidada, então vê contagens por tipo e o texto de "outras" |
-| AC-07 | Dado um evento com N participantes e restrições, quando abre as estimativas, então vê faixas por item, as premissas e o aviso de estimativa |
+| AC-07 | Dado um evento com N participantes e restrições, quando abre as estimativas, então vê **quantidades únicas múltiplas de 5** por item selecionado, as premissas e o aviso de estimativa |
 | AC-08 | Dada a conta de admin, quando ele se cadastra por convite com outra conta, então participa normalmente e o painel continua restrito ao papel admin |
 
 ### 19.3 Sorteio
@@ -1765,6 +1765,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.11 | 2026-11-14 | D-23: remover participante/excluir evento apaga as contas; contas órfãs limpas (BR-25/26/41, AC-46, R-13) |
 | 1.12 | 2026-11-14 | M5 concluído: restrições consolidadas e planejamento alimentar em faixas, com opções restritas, premissas e impressão |
 | 1.13 | 2026-11-14 | D-24: seleção dos itens comprados com botão Calcular; cálculo restrito à seleção salva (BR-42, AC-47) |
+| 1.14 | 2026-11-14 | D-25: "Salgados" unificado, médias revisadas (12 salgados, 5 doces, 100 g bolo, 400 ml refrigerante, 500 ml água, 500 g gelo) e resultado em número único múltiplo de 5 |
 
 ---
 

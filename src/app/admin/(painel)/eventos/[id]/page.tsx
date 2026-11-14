@@ -29,7 +29,7 @@ import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
 import { createInvite, revokeInvite } from "../invite-actions";
 import { labelForRestriction } from "@/modules/participants/domain/restrictions";
-import { FOOD_KEYS, FOOD_RULES, buildFoodPlan, formatQuantityRange } from "@/modules/food-planning/rules";
+import { FOOD_KEYS, FOOD_RULES, buildFoodPlan, formatQuantity } from "@/modules/food-planning/rules";
 import { reportCategoryLabel, reportStatusLabel } from "@/modules/reports/domain/report";
 import { DrawForm } from "./draw-form";
 import { FoodSelectionForm } from "./food-selection-form";
@@ -355,7 +355,7 @@ export default async function EventDetailPage({
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <span className="font-medium">{estimate.label}</span>
                       <span className="font-mono text-sm">
-                        {formatQuantityRange(estimate.min, estimate.max, estimate.unit)}
+                        {formatQuantity(estimate.quantity, estimate.unit)}
                       </span>
                     </div>
                     {estimate.note ? (
@@ -364,11 +364,7 @@ export default async function EventDetailPage({
                     {estimate.restricted ? (
                       <p className="mt-2 border-t-2 border-dashed border-ink-faint pt-2 text-sm text-ink-soft">
                         {estimate.restricted.label}:{" "}
-                        {formatQuantityRange(
-                          estimate.restricted.min,
-                          estimate.restricted.max,
-                          estimate.unit,
-                        )}{" "}
+                        {formatQuantity(estimate.restricted.quantity, estimate.unit)}{" "}
                         <span className="text-xs">
                           (para {estimate.restricted.count} pessoa(s))
                         </span>
@@ -380,11 +376,12 @@ export default async function EventDetailPage({
             </ul>
 
             <p className="mt-4 text-xs text-ink-faint">
-              Estimativa, não é ordem de compra. Premissas por pessoa:{" "}
+              Estimativa, não é ordem de compra. Quantidades arredondadas para cima em múltiplos de
+              5. Premissas por pessoa:{" "}
               {FOOD_RULES.map((rule) =>
                 rule.factor !== undefined
                   ? `${rule.label}: ${rule.factor}× pessoas`
-                  : `${rule.label}: ${rule.min}–${rule.max} ${rule.unit}`,
+                  : `${rule.label}: ${rule.perPerson} ${rule.unit}`,
               ).join(" · ")}
               .
             </p>
