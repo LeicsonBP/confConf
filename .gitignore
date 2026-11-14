@@ -1,0 +1,29 @@
+# Dependências e artefatos de build
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Testes
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# Ambientes e segredos (nunca versionar)
+.env
+.env.*
+.env.local
+.ops/
+!.env.example
+
+# Supabase local
+supabase/.temp/
+supabase/.branches/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log

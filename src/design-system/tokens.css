@@ -1,0 +1,49 @@
+:root {
+  /* Papel e tinta */
+  --paper: #f4ecdc;
+  --paper-2: #eadfc8;
+  --paper-3: #d9c9aa;
+  --ink: #1b1814;
+  --ink-soft: #4a4237;
+  --ink-faint: #8a7d69;
+
+  /* Cores de carimbo */
+  --stamp: #b5372a;
+  --bottle: #1f4739;
+  --gold: #a9832b;
+
+  /* Tipografia (sobrescrita pelo next/font no html) */
+  --font-display: "Alfa Slab One", ui-serif, Georgia, serif;
+  --font-body: "Spline Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Traços */
+  --line: 2px solid var(--ink);
+  --radius-sm: 2px;
+  --radius: 6px;
+  --shadow-stamp: 3px 3px 0 var(--ink);
+
+  /* Movimento */
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-paper-3: var(--paper-3);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-stamp: var(--stamp);
+  --color-bottle: var(--bottle);
+  --color-gold: var(--gold);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  --radius-card: var(--radius);
+  --shadow-stamp: var(--shadow-stamp);
+}
