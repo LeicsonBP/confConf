@@ -1785,6 +1785,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.25 | 2026-11-14 | Margens do footer aplicadas aos textos (24 px) com folga inferior de 20 px, mantendo o footer visível nas telas curtas |
 | 1.26 | 2026-11-14 | Footer com margens simétricas de 16 px entre borda/texto/linha/texto/fim, centralizando os dois textos |
 | 1.27 | 2026-11-14 | Convites agora são excluídos (não revogados) e a prévia no WhatsApp usa "Cadastre-se para: (nome)" |
+| 1.28 | 2026-11-14 | Footer com "gente maluca"; botões do cartão de cadastro com mesma largura/altura no mobile; aviso sobre lista de desejos e sorteio; botão da lista de desejos preto |
 
 ---
 

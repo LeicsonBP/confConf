@@ -67,7 +67,7 @@ export default function RootLayout({
                 confConf
               </span>
               <span aria-hidden="true">·</span>
-              <span>Feito para reunir gente querida.</span>
+              <span>Feito para reunir gente maluca.</span>
               <span aria-hidden="true">·</span>
               <Link href="/privacidade" className="underline decoration-2 underline-offset-4">
                 Privacidade e dados

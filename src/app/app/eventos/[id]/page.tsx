@@ -87,7 +87,7 @@ export default async function ParticipantEventPage({
       <div className="flex flex-col gap-2">
         <ButtonLink
           href={`/app/eventos/${event.id}/desejos`}
-          variant="secondary"
+          variant="primary"
           className="self-start"
         >
           Minha lista de desejos

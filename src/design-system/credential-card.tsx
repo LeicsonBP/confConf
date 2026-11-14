@@ -172,14 +172,19 @@ export function CredentialCard({
         ) : null}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         <Link
           href="/app"
-          className="inline-flex items-center justify-center border-2 border-ink bg-ink px-6 py-2.5 font-mono text-xs uppercase tracking-[0.15em] text-paper transition-colors hover:border-stamp hover:bg-stamp"
+          className="inline-flex h-12 w-full items-center justify-center border-2 border-ink bg-ink px-6 py-2.5 font-mono text-xs uppercase tracking-[0.15em] text-paper transition-colors hover:border-stamp hover:bg-stamp sm:w-auto"
         >
           Acessar minha área
         </Link>
-        <Button type="button" variant="secondary" onClick={saveImage}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={saveImage}
+          className="h-12 w-full sm:w-auto"
+        >
           Baixar informações de acesso
         </Button>
         {saved ? (
@@ -188,6 +193,11 @@ export function CredentialCard({
           </span>
         ) : null}
       </div>
+
+      <p className="border-2 border-dashed border-ink-faint px-4 py-3 text-sm text-ink-soft">
+        <strong className="text-ink">Acessar minha área</strong> é necessário para cadastrar sua
+        lista de desejos e, depois do sorteio, ver quem você tirou.
+      </p>
 
       <p className="text-xs text-ink-faint">
         Guarde o arquivo: é com esse usuário e senha que você entra na sua área. Se perder, ainda dá
