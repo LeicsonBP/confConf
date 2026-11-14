@@ -71,6 +71,19 @@ O deploy da aplicação é feito pela integração GitHub ↔ Vercel (guia em `d
 
 Nunca editar migração já aplicada.
 
+## Provisionamento assistido
+
+O provisionamento dos dois projetos é feito por `scripts/ops/provision.mjs` (`npm run ops:provision`), que:
+
+1. cria (ou reaproveita) `confconf-dev` e `confconf-prod` em `sa-east-1`;
+2. aplica a configuração de Auth;
+3. aplica as migrações versionadas;
+4. cria o administrador master e grava a credencial em `.ops/admin-credentials.<ambiente>.txt`;
+5. verifica tabelas, RLS e funções;
+6. grava `.ops/dev.env`, `.ops/prod.env` e `.env.local`.
+
+Entrada: `.ops/secrets.env` com `SUPABASE_ACCESS_TOKEN` (e, opcionalmente, `SUPABASE_ORG_ID`, `ADMIN_EMAIL`). Tudo em `.ops/` é ignorado pelo git.
+
 ## Limites do plano gratuito
 
 | Limite | Impacto | Mitigação |
@@ -86,9 +99,11 @@ Nunca editar migração já aplicada.
 - [x] App Next.js 16 compilando, com lint e testes
 - [x] Migração inicial com RLS e helpers
 - [x] Workflows de CI e de banco
+- [x] Proteções de branch e labels configurados
+- [x] Primeira execução verde do CI (lint, tipos, testes, build e pgTAP)
 - [ ] Projetos `confconf-dev` e `confconf-prod` criados
 - [ ] Auth configurado nos dois projetos
 - [ ] Migrações aplicadas nos dois projetos
 - [ ] Admin master criado
 - [ ] Secrets do GitHub cadastrados
-- [ ] Primeira execução verde do CI
+
