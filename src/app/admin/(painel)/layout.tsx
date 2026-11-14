@@ -26,12 +26,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link href="/admin" className="font-display text-2xl leading-none">
                 confConf
               </Link>
-              <Stamp tone="stamp">
-                <span className="inline-flex items-center gap-1.5">
-                  <IconShield size={12} />
-                  Área do administrador
-                </span>
-              </Stamp>
+              <div className="hidden sm:block">
+                <Stamp tone="stamp">
+                  <span className="inline-flex items-center gap-1.5">
+                    <IconShield size={12} />
+                    Área do administrador
+                  </span>
+                </Stamp>
+              </div>
             </div>
             <div className="ml-auto">
               <HeaderNav signOut={signOutAdmin} />
@@ -41,8 +43,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
         <div aria-hidden="true" className="mt-3 border-t-2 border-dashed border-ink-faint" />
 
-        <div className="mx-auto max-w-5xl px-6 pb-4 pt-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">
+        <div className="mx-auto max-w-5xl px-6 pb-4 pt-4 sm:pt-3">
+          <div className="sm:hidden">
+            <Stamp tone="stamp">
+              <span className="inline-flex items-center gap-1.5">
+                <IconShield size={12} />
+                Área do administrador
+              </span>
+            </Stamp>
+          </div>
+          <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft sm:mt-0">
             {adminName}
           </p>
         </div>

@@ -1778,6 +1778,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.20 | 2026-11-14 | Ajustes visuais: rodapé no viewport, mensagem e créditos em negrito, cabeçalhos com menu mobile e ícones, favicon de brinde preto, ícones PWA off-white e botões sem ícones (exceto home) |
 | 1.21 | 2026-11-14 | Header e footer com divisórias tracejadas, footer presente em telas curtas (login etc.) e botões Meu perfil/Sair com a mesma altura |
 | 1.22 | 2026-11-14 | Linhas tracejadas até a borda da viewport, caixa da área ao lado do título, ADMIN na base do header e divisória entre créditos e privacidade no footer |
+| 1.23 | 2026-11-14 | Margens maiores no footer; no mobile a caixa da área desce para baixo da linha e a home ganha botões de mesma largura com ícone acima do texto |
 
 ---
 

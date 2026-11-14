@@ -59,7 +59,7 @@ export default function RootLayout({
         <div id="conteudo" className="flex flex-1 flex-col" tabIndex={-1}>
           {children}
         </div>
-        <footer className="bg-paper-2 pb-4 print:hidden">
+        <footer className="bg-paper-2 pb-3 print:hidden">
           <div className="mx-auto max-w-5xl px-6 pt-3 text-center">
             <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm">
               <span className="inline-flex items-center gap-1.5 font-display text-ink">
@@ -75,7 +75,7 @@ export default function RootLayout({
             </p>
           </div>
 
-          <div aria-hidden="true" className="my-2 border-t-2 border-dashed border-ink-faint" />
+          <div aria-hidden="true" className="my-4 border-t-2 border-dashed border-ink-faint" />
 
           <div className="mx-auto max-w-5xl px-6 text-center">
             <p className="text-sm font-bold text-ink">
