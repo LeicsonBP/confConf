@@ -20,7 +20,7 @@ export default async function AdminLoginPage() {
   const { question, token } = createCaptcha();
 
   return (
-    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-6 px-6 py-6">
+    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-6 px-6 py-5">
       <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-faint">
         ← confConf
       </Link>

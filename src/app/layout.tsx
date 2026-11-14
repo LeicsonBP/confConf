@@ -59,8 +59,8 @@ export default function RootLayout({
         <div id="conteudo" className="flex flex-1 flex-col" tabIndex={-1}>
           {children}
         </div>
-        <footer className="border-t-2 border-ink bg-paper-2 pb-3 print:hidden">
-          <div className="mx-auto max-w-5xl px-6 pt-2 text-center">
+        <footer className="border-t-2 border-ink bg-paper-2 pb-5 print:hidden">
+          <div className="mx-auto max-w-5xl px-6 pt-3 pb-6 text-center">
             <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm">
               <span className="inline-flex items-center gap-1.5 font-display text-ink">
                 <IconTicket size={15} />
@@ -75,9 +75,9 @@ export default function RootLayout({
             </p>
           </div>
 
-          <div aria-hidden="true" className="my-6 border-t-2 border-dashed border-ink-faint" />
+          <div aria-hidden="true" className="border-t-2 border-dashed border-ink-faint" />
 
-          <div className="mx-auto max-w-5xl px-6 text-center">
+          <div className="mx-auto max-w-5xl px-6 pt-6 text-center">
             <p className="text-sm font-bold text-ink">
               Programado por DeepSeek, sob o julgamento, pressão, chicotadas e supervisão do
               Leicson.

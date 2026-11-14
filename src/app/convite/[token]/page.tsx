@@ -98,7 +98,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
     const message = REASON_TEXT[preview?.reason ?? "not_found"] ?? REASON_TEXT.not_found;
 
     return (
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-6 px-6 py-6 sm:py-10">
+      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-6 px-6 py-4 sm:py-10">
         <TicketCard className="p-8 text-center sm:p-10">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">Convite</p>
           <h1 className="mt-3 font-display text-3xl leading-none">Ingresso inválido</h1>
@@ -112,7 +112,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   const { question, token: captchaToken } = createCaptcha();
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-6 px-6 py-6 sm:py-10">
+    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-6 px-6 py-4 sm:py-10">
       <TicketCard className="p-8 sm:p-10">
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">
           Você foi convidado
