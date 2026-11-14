@@ -28,10 +28,12 @@ import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
 import { createInvite, revokeInvite } from "../invite-actions";
 import { labelForRestriction } from "@/modules/participants/domain/restrictions";
+import { FOOD_RULES, buildFoodPlan, formatQuantityRange } from "@/modules/food-planning/rules";
 import { reportCategoryLabel, reportStatusLabel } from "@/modules/reports/domain/report";
 import { DrawForm } from "./draw-form";
 import { InviteForm } from "./invite-form";
 import { InviteLink } from "./invite-link";
+import { PrintButton } from "./print-button";
 import { RemoveParticipantForm } from "./remove-participant-form";
 import { ResolveReportForm } from "./resolve-report-form";
 import { RevokeInviteForm } from "./revoke-form";
@@ -119,6 +121,14 @@ export default async function EventDetailPage({
     const { data } = await supabase.rpc("admin_list_assignments", { p_event: id });
     assignments = (data as { giver_name: string; receiver_name: string }[] | null) ?? null;
   }
+
+  const foodPlan = buildFoodPlan(
+    (participants ?? []).map((participant) => ({
+      fullName: profileMap.get(participant.user_id)?.full_name ?? "Participante",
+      restrictions: participant.dietary_restrictions ?? [],
+      other: participant.dietary_other ?? null,
+    })),
+  );
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const now = new Date();
@@ -268,6 +278,103 @@ export default async function EventDetailPage({
             })}
           </ul>
         )}
+      </TicketCard>
+
+      <TicketCard className="p-6 sm:p-8">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+              Planejamento alimentar
+            </h2>
+            <p className="mt-2 text-sm text-ink-soft">
+              Estimativa a partir de {foodPlan.total} participante(s) ativo(s).
+            </p>
+          </div>
+          <PrintButton />
+        </div>
+        <PerforatedDivider className="my-8" />
+
+        <div className="grid gap-8 lg:grid-cols-2">
+          <div>
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
+              Restrições consolidadas
+            </h3>
+            <ul className="mt-3 flex flex-col divide-y-2 divide-dashed divide-ink-faint border-2 border-ink bg-paper">
+              {foodPlan.restrictions.map((restriction) => (
+                <li
+                  key={restriction.key}
+                  className="flex items-center justify-between gap-3 px-4 py-3 text-sm"
+                >
+                  <span>{restriction.label}</span>
+                  <span className="font-mono text-base">{restriction.count}</span>
+                </li>
+              ))}
+            </ul>
+
+            {foodPlan.others.length > 0 ? (
+              <div className="mt-4 border-2 border-ink bg-paper p-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                  Outras restrições
+                </p>
+                <ul className="mt-2 flex flex-col gap-1 text-sm">
+                  {foodPlan.others.map((item) => (
+                    <li key={`${item.name}-${item.detail}`}>
+                      <span className="font-medium">{item.name}:</span> {item.detail}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+
+          <div>
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
+              Estimativas
+            </h3>
+            <ul className="mt-3 flex flex-col gap-3">
+              {foodPlan.estimates.map((estimate) => (
+                <li key={estimate.key} className="border-2 border-ink bg-paper p-4">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="font-medium">{estimate.label}</span>
+                    <span className="font-mono text-sm">
+                      {formatQuantityRange(estimate.min, estimate.max, estimate.unit)}
+                    </span>
+                  </div>
+                  {estimate.note ? (
+                    <p className="mt-1 text-xs text-ink-faint">{estimate.note}</p>
+                  ) : null}
+                  {estimate.restricted ? (
+                    <p className="mt-2 border-t-2 border-dashed border-ink-faint pt-2 text-sm text-ink-soft">
+                      {estimate.restricted.label}:{" "}
+                      {formatQuantityRange(
+                        estimate.restricted.min,
+                        estimate.restricted.max,
+                        estimate.unit,
+                      )}{" "}
+                      <span className="text-xs">
+                        (para {estimate.restricted.count} pessoa(s))
+                      </span>
+                    </p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-4 text-xs text-ink-faint">
+              Estimativa, não é ordem de compra. Premissas por pessoa:{" "}
+              {FOOD_RULES.map((rule) =>
+                rule.factor !== undefined
+                  ? `${rule.label}: ${rule.factor}× pessoas`
+                  : `${rule.label}: ${rule.min}–${rule.max} ${rule.unit}`,
+              ).join(" · ")}
+              .
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+          Cálculo em {formatEventDate(foodPlan.generatedAt)}
+        </p>
       </TicketCard>
 
       <TicketCard className="p-6 sm:p-8">

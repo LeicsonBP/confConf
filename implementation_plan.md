@@ -1084,6 +1084,8 @@ Entrada: total de participantes ativos e contagem por restrição (vegano conta 
 
 Cálculo: `quantidade_base = ceil(pessoas × consumo)`; opções restritas usam a proporção de pessoas com a restrição, com piso de 1 porção por pessoa restrita. A tela mostra sempre "estimativa", as premissas e a data do cálculo. Parâmetros em `src/modules/food-planning/rules.ts` (validados no M5, O-11).
 
+**Implementado (M5):** seção "Planejamento alimentar" no evento do admin com restrições consolidadas (vegano conta como vegetariano, sem dupla contagem), textos de "outras" restrições, estimativas em faixas, opções sem lactose (doces) e sem glúten (bolo), premissas e botão de impressão (CSS `print`). Os valores da tabela acima ficam em `FOOD_RULES` e podem ser ajustados em um único lugar.
+
 ### 11.8 Gestão de participantes e restrições
 
 - Admin lista participantes ativos e removidos, com nome, identificador, data de nascimento e restrições.
@@ -1589,7 +1591,7 @@ Toda alteração relevante atualiza: código, teste, doc do módulo e, se mudar 
 
 Estimativas relativas (sem compromisso de data): M0 pequeno-médio; M1 e M2 médios; M3 e M5 médios; M4 grande; M6 médio; M7 pequeno.
 
-**Status em 14/11/2026:** M0, M1, M2, M3 e M4 concluídos. Próximo marco: **M5** — planejamento alimentar com estimativas e visão consolidada de restrições.
+**Status em 14/11/2026:** M0, M1, M2, M3, M4 e M5 concluídos. Próximo marco: **M6** — hardening (acessibilidade, E2E, performance, observabilidade e LGPD).
 
 ---
 
@@ -1758,6 +1760,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.9 | 2026-11-14 | D-21: recuperação de usuário por senha + data de nascimento, com reexibição e download das credenciais (BR-39, AC-44) |
 | 1.10 | 2026-11-14 | D-22: data prevista do sorteio no evento e exibição ao participante (BR-40, AC-45); throttle da recuperação ajustado (10/15min com reset em sucesso) |
 | 1.11 | 2026-11-14 | D-23: remover participante/excluir evento apaga as contas; contas órfãs limpas (BR-25/26/41, AC-46, R-13) |
+| 1.12 | 2026-11-14 | M5 concluído: restrições consolidadas e planejamento alimentar em faixas, com opções restritas, premissas e impressão |
 
 ---
 
