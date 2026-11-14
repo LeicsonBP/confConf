@@ -6,18 +6,26 @@
 |---|---|---|---|---|
 | Local | `next dev` (porta 3000) | projeto `confconf-dev` (ou Supabase local, com Docker) | manual | fictícios |
 | Teste | Vercel Preview | projeto `confconf-dev` | merge em `develop` | fictícios; reset permitido |
-| Produção | Vercel Production | projeto `confconf-prod` | merge em `main` + migração | reais |
-
-Região padrão dos projetos: `sa-east-1` (São Paulo).
+| Produção | Vercel Production | projeto `confconf-prod` (a criar no M7) | merge em `main` + migração | reais |
 
 ## Projetos Supabase
 
-| Nome | Uso | Observação |
-|---|---|---|
-| `confconf-dev` | desenvolvimento e testes | pode ser resetado; seed fictício |
-| `confconf-prod` | produção | nunca resetar; backup conforme plano |
+| Nome | Ref | Região | Uso | Observação |
+|---|---|---|---|---|
+| `confconf-dev` | `spfciwfphtvkadyrhkiu` | `us-east-1` | desenvolvimento e testes | projeto reaproveitado (criado vazio pelo cliente); pode ser resetado |
+| `confconf-prod` | — | `sa-east-1` (previsto) | produção | criado no release (M7); nunca resetar |
 
-Configuração de Auth aplicada em ambos (via Management API no M0):
+> **Por que o ambiente de teste está em `us-east-1`:** o projeto existente foi reaproveitado a pedido do cliente (`confConf`, criado vazio, sem tabelas). A produção será criada em `sa-east-1`, onde a latência importa.
+
+Estado do `confconf-dev` em 14/11/2026:
+
+- migrações aplicadas via **Management API**, porque a senha do banco foi definida no painel na criação do projeto e não é conhecida pelo agente;
+- para voltar a usar o CLI (`npx supabase db push --remote`), redefina a senha em *Project Settings → Database* e configure `SUPABASE_DB_PASSWORD`;
+- Auth configurado via Management API (lista abaixo);
+- admin master criado (`admin@confconf.invalid`), credencial em `.ops/admin-credentials.dev.txt`;
+- smoke test local validado: `GET /api/health` 200 e home renderizada com o banco real.
+
+Configuração de Auth aplicada:
 
 - confirmação de e-mail desligada;
 - cadastro aberto (o fluxo de convite controla a entrada de dados);
@@ -84,6 +92,8 @@ O provisionamento dos dois projetos é feito por `scripts/ops/provision.mjs` (`n
 
 Entrada: `.ops/secrets.env` com `SUPABASE_ACCESS_TOKEN` (e, opcionalmente, `SUPABASE_ORG_ID`, `ADMIN_EMAIL`). Tudo em `.ops/` é ignorado pelo git.
 
+> **Nota do M0:** o provisionamento foi executado com `--only=dev` sobre o projeto existente. A criação de projetos via API falhou porque o token usado é **escopado** (sem permissão de organização). Para criar `confconf-prod` no M7 será necessário um token com `Projects: write` na organização (ou criar o projeto pelo painel). Como a senha do banco não é conhecida, as migrações do ambiente de teste foram aplicadas pela Management API; o CI continua validando tudo no Supabase local.
+
 ## Limites do plano gratuito
 
 | Limite | Impacto | Mitigação |
@@ -101,9 +111,10 @@ Entrada: `.ops/secrets.env` com `SUPABASE_ACCESS_TOKEN` (e, opcionalmente, `SUPA
 - [x] Workflows de CI e de banco
 - [x] Proteções de branch e labels configurados
 - [x] Primeira execução verde do CI (lint, tipos, testes, build e pgTAP)
-- [ ] Projetos `confconf-dev` e `confconf-prod` criados
-- [ ] Auth configurado nos dois projetos
-- [ ] Migrações aplicadas nos dois projetos
-- [ ] Admin master criado
-- [ ] Secrets do GitHub cadastrados
+- [x] Ambiente de teste `confconf-dev` criado/reaproveitado e configurado
+- [x] Auth configurado no ambiente de teste
+- [x] Migrações aplicadas e verificadas no ambiente de teste (pgTAP verde em CI; RLS conferida na nuvem)
+- [x] Admin master criado e login validado
+- [x] Secrets do GitHub cadastrados (`SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF_DEV`)
+- [ ] Projeto de produção `confconf-prod` (M7, no release)
 

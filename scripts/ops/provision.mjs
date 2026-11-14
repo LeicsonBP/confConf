@@ -88,13 +88,26 @@ async function api(path, init = {}) {
 
 async function resolveOrganizationId() {
   if (process.env.SUPABASE_ORG_ID) return process.env.SUPABASE_ORG_ID;
-  const organizations = await api("/organizations");
-  if (!organizations?.length) throw new Error("Nenhuma organização encontrada no token.");
-  if (organizations.length > 1) {
-    log(`Organizações: ${organizations.map((o) => `${o.name} (${o.id})`).join(", ")}`);
-    log("Mais de uma organização; usando a primeira. Defina SUPABASE_ORG_ID para escolher.");
+  try {
+    const organizations = await api("/organizations");
+    if (!organizations?.length) throw new Error("Nenhuma organização encontrada no token.");
+    if (organizations.length > 1) {
+      log(`Organizações: ${organizations.map((o) => `${o.name} (${o.id})`).join(", ")}`);
+      log("Mais de uma organização; usando a primeira. Defina SUPABASE_ORG_ID para escolher.");
+    }
+    return organizations[0].id;
+  } catch (error) {
+    log(`Listagem de organizações indisponível (${error.message}).`);
+    const projects = await api("/projects");
+    const organizationId = projects?.find((project) => project.organization_id)?.organization_id;
+    if (!organizationId) {
+      throw new Error(
+        "Não foi possível descobrir a organização. Defina SUPABASE_ORG_ID em .ops/secrets.env.",
+      );
+    }
+    log(`Organização derivada do projeto existente: ${organizationId}.`);
+    return organizationId;
   }
-  return organizations[0].id;
 }
 
 async function ensureProject(organizationId, project) {
