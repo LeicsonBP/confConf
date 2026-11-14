@@ -1,8 +1,8 @@
 export const DIETARY_OPTIONS = [
-  { value: "vegetariano", label: "Vegetariano" },
-  { value: "vegano", label: "Vegano" },
-  { value: "sem_lactose", label: "Sem lactose" },
-  { value: "sem_gluten", label: "Sem glúten" },
+  { value: "vegetariano", label: "Vegetariano(a)" },
+  { value: "vegano", label: "Vegano(a)" },
+  { value: "sem_lactose", label: "Intolerante à lactose" },
+  { value: "sem_gluten", label: "Celíaco(a)" },
   { value: "outra", label: "Outra restrição" },
 ] as const;
 

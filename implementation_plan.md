@@ -228,7 +228,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-15 | O sorteio pode ser **desfeito e refeito** pelo administrador; desfazer apaga pares e confirmações e reabre o elenco |
 | BR-16 | Após o sorteio, o elenco fica congelado e o amigo secreto não pode ser desativado |
 | BR-17 | A confirmação do sorteio é opcional, idempotente e visível ao administrador como contagem |
-| BR-18 | Restrições alimentares: vegetariano, vegano, sem lactose, sem glúten e outra (com descrição livre de até 300 caracteres) |
+| BR-18 | Restrições alimentares: vegetariano, vegano, intolerante à lactose, celíaco e outra (com descrição livre de até 300 caracteres) |
 | BR-19 | Vegano implica vegetariano; nas contagens, o vegano é contado uma única vez |
 | BR-20 | Planejamento alimentar é apresentado como estimativa com **quantidade única arredondada para cima em múltiplos de 5**, premissas explícitas e aviso de que não é ordem de compra |
 | BR-21 | O valor máximo do presente é informativo e aparece como orientação na lista de desejos |
@@ -1786,6 +1786,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.26 | 2026-11-14 | Footer com margens simétricas de 16 px entre borda/texto/linha/texto/fim, centralizando os dois textos |
 | 1.27 | 2026-11-14 | Convites agora são excluídos (não revogados) e a prévia no WhatsApp usa "Cadastre-se para: (nome)" |
 | 1.28 | 2026-11-14 | Footer com "gente maluca"; botões do cartão de cadastro com mesma largura/altura no mobile; aviso sobre lista de desejos e sorteio; botão da lista de desejos preto |
+| 1.29 | 2026-11-14 | Relato de problema em página própria ("Reportar problema") e termos de restrição revisados (intolerante à lactose, celíaco) |
 
 ---
 

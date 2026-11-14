@@ -16,11 +16,12 @@ describe("restrições alimentares", () => {
       "sem_gluten",
       "outra",
     ]);
-    expect(DIETARY_LABELS.vegano).toBe("Vegano");
+    expect(DIETARY_LABELS.vegano).toBe("Vegano(a)");
   });
 
   it("rotula valores conhecidos e desconhecidos", () => {
-    expect(labelForRestriction("sem_gluten")).toBe("Sem glúten");
+    expect(labelForRestriction("sem_gluten")).toBe("Celíaco(a)");
+    expect(labelForRestriction("sem_lactose")).toBe("Intolerante à lactose");
     expect(labelForRestriction("outra_coisa")).toBe("outra_coisa");
   });
 });

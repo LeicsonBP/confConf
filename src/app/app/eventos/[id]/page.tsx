@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ButtonLink } from "@/design-system/button";
-import { IconAlert, IconGift, IconInfo } from "@/design-system/icons";
+import { IconGift, IconInfo } from "@/design-system/icons";
 import { PerforatedDivider, Stamp, TicketCard } from "@/design-system/ticket";
 import { createClient } from "@/lib/supabase/server";
 import { requireParticipant } from "@/modules/auth/server/participant-session";
 import { formatCentsToBrl, formatEventDate } from "@/modules/events/domain/event";
-import { confirmDrawAction, submitReportAction } from "./actions";
+import { confirmDrawAction } from "./actions";
 import { ConfirmDrawForm } from "./confirm-draw-form";
-import { ReportForm } from "./report-form";
 
 export const dynamic = "force-dynamic";
 
@@ -84,17 +83,26 @@ export default async function ParticipantEventPage({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-2">
+          <ButtonLink
+            href={`/app/eventos/${event.id}/desejos`}
+            variant="primary"
+            className="self-start"
+          >
+            Minha lista de desejos
+          </ButtonLink>
+          <p className="max-w-md text-xs text-ink-faint">
+            Ao clicar, você vai para a página de cadastro dos seus presentes.
+          </p>
+        </div>
         <ButtonLink
-          href={`/app/eventos/${event.id}/desejos`}
-          variant="primary"
+          href={`/app/eventos/${event.id}/relatar`}
+          variant="secondary"
           className="self-start"
         >
-          Minha lista de desejos
+          Reportar problema
         </ButtonLink>
-        <p className="max-w-md text-xs text-ink-faint">
-          Ao clicar, você vai para a página de cadastro dos seus presentes.
-        </p>
       </div>
 
       <TicketCard className="p-6 sm:p-8">
@@ -212,20 +220,10 @@ export default async function ParticipantEventPage({
         ) : (
           <p className="text-sm text-ink-soft">Resultado indisponível.</p>
         )}
-
-        <PerforatedDivider className="my-8" />
-
-        <h3 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-          <IconAlert size={14} />
-          Algum problema?
-        </h3>
-        <div className="mt-4">
-          <ReportForm eventId={event.id} action={submitReportAction} />
-        </div>
       </TicketCard>
 
       <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
-        Fale com quem organiza se precisar de ajuda.
+        Precisa de ajuda? Use o botão “Reportar problema”.
       </p>
     </div>
   );

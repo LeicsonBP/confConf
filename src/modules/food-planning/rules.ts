@@ -235,10 +235,18 @@ export function buildFoodPlan(
   const other = participants.filter((participant) => hasRestriction(participant, "outra")).length;
 
   const restrictions: RestrictionSummary[] = [
-    { key: "vegetariano", label: DIETARY_LABELS.vegetariano ?? "Vegetariano", count: vegetarian },
-    { key: "vegano", label: DIETARY_LABELS.vegano ?? "Vegano", count: vegan },
-    { key: "sem_lactose", label: DIETARY_LABELS.sem_lactose ?? "Sem lactose", count: lactoseFree },
-    { key: "sem_gluten", label: DIETARY_LABELS.sem_gluten ?? "Sem glúten", count: glutenFree },
+    { key: "vegetariano", label: DIETARY_LABELS.vegetariano ?? "Vegetariano(a)", count: vegetarian },
+    { key: "vegano", label: DIETARY_LABELS.vegano ?? "Vegano(a)", count: vegan },
+    {
+      key: "sem_lactose",
+      label: DIETARY_LABELS.sem_lactose ?? "Intolerante à lactose",
+      count: lactoseFree,
+    },
+    {
+      key: "sem_gluten",
+      label: DIETARY_LABELS.sem_gluten ?? "Celíaco(a)",
+      count: glutenFree,
+    },
     { key: "outra", label: DIETARY_LABELS.outra ?? "Outra restrição", count: other },
   ];
 
