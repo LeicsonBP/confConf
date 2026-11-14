@@ -35,7 +35,11 @@ export default async function ParticipantLayout({ children }: { children: React.
               </div>
             </div>
             <div className="ml-auto">
-              <HeaderNav profileHref="/app/perfil" signOut={signOutParticipant} />
+              <HeaderNav
+                profileHref="/app/perfil"
+                homeHref="/app"
+                signOut={signOutParticipant}
+              />
             </div>
           </div>
         </div>

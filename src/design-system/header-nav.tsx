@@ -1,27 +1,36 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "./button";
 import { IconClose, IconMenu } from "./icons";
 
 interface HeaderNavProps {
   profileHref?: string;
+  homeHref?: string;
   signOut: () => Promise<void>;
 }
 
 const linkClass =
   "inline-flex items-center gap-2 border-2 border-ink bg-transparent px-4 py-2.5 font-mono text-[11px] leading-4 uppercase tracking-[0.15em] text-ink transition-colors hover:bg-paper-3";
 
-export function HeaderNav({ profileHref, signOut }: HeaderNavProps) {
+export function HeaderNav({ profileHref, homeHref, signOut }: HeaderNavProps) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const accountLink = profileHref
+    ? pathname === "/app/perfil" && homeHref
+      ? { href: homeHref, label: "Início" }
+      : { href: profileHref, label: "Meu perfil" }
+    : null;
 
   return (
     <>
       <nav className="hidden items-center gap-2 sm:flex" aria-label="Conta">
-        {profileHref ? (
-          <Link href={profileHref} className={linkClass}>
-            Meu perfil
+        {accountLink ? (
+          <Link href={accountLink.href} className={linkClass}>
+            {accountLink.label}
           </Link>
         ) : null}
         <form action={signOut}>
@@ -52,9 +61,9 @@ export function HeaderNav({ profileHref, signOut }: HeaderNavProps) {
             id="menu-conta"
             className="absolute right-0 z-50 mt-2 flex w-56 flex-col gap-2 border-2 border-ink bg-paper p-3 shadow-[var(--shadow-stamp)]"
           >
-            {profileHref ? (
-              <Link href={profileHref} className={linkClass} onClick={() => setOpen(false)}>
-                Meu perfil
+            {accountLink ? (
+              <Link href={accountLink.href} className={linkClass} onClick={() => setOpen(false)}>
+                {accountLink.label}
               </Link>
             ) : null}
             <form action={signOut}>

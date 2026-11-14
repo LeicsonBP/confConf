@@ -83,26 +83,17 @@ export default async function ParticipantEventPage({
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <ButtonLink
-            href={`/app/eventos/${event.id}/desejos`}
-            variant="primary"
-            className="self-start"
-          >
-            Minha lista de desejos
-          </ButtonLink>
-          <p className="max-w-md text-xs text-ink-faint">
-            Ao clicar, você vai para a página de cadastro dos seus presentes.
-          </p>
-        </div>
+      <div className="flex flex-col gap-2">
         <ButtonLink
-          href={`/app/eventos/${event.id}/relatar`}
-          variant="secondary"
+          href={`/app/eventos/${event.id}/desejos`}
+          variant="primary"
           className="self-start"
         >
-          Reportar problema
+          Minha lista de desejos
         </ButtonLink>
+        <p className="max-w-md text-xs text-ink-faint">
+          Ao clicar, você vai para a página de cadastro dos seus presentes.
+        </p>
       </div>
 
       <TicketCard className="p-6 sm:p-8">
@@ -222,9 +213,18 @@ export default async function ParticipantEventPage({
         )}
       </TicketCard>
 
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
-        Precisa de ajuda? Use o botão “Reportar problema”.
-      </p>
+      <div className="flex flex-col gap-2">
+        <ButtonLink
+          href={`/app/eventos/${event.id}/relatar`}
+          variant="terracotta"
+          className="self-start"
+        >
+          Reportar problema
+        </ButtonLink>
+        <p className="max-w-md text-xs text-ink-faint">
+          Ao clicar, você vai para a página de envio do relato.
+        </p>
+      </div>
     </div>
   );
 }
