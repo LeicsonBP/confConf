@@ -447,6 +447,7 @@ export type Database = {
         Args: { p_note?: string; p_user_id: string }
         Returns: undefined
       }
+      cancel_draw: { Args: { p_event: string }; Returns: undefined }
       confirm_draw: { Args: { p_event: string }; Returns: undefined }
       get_my_assignment: { Args: { p_event: string }; Returns: Json }
       invite_preview: { Args: { p_token_hash: string }; Returns: Json }

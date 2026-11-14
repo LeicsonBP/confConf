@@ -15,7 +15,15 @@ import {
   inviteStatusLabel,
 } from "@/modules/invites/domain/invite";
 import { decryptInviteToken } from "@/modules/invites/server/token";
-import { deleteEvent, removeParticipant, resolveReport, runDraw, updateEvent } from "../actions";
+import {
+  cancelDraw,
+  deleteEvent,
+  removeParticipant,
+  resolveReport,
+  runDraw,
+  updateEvent,
+} from "../actions";
+import { CancelDrawForm } from "./cancel-draw-form";
 import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
 import { createInvite, revokeInvite } from "../invite-actions";
@@ -305,6 +313,10 @@ export default async function EventDetailPage({
                 <p className="text-sm text-ink-faint">Nenhum resultado para exibir.</p>
               )
             ) : null}
+
+            <div className="border-t-2 border-dashed border-ink-faint pt-5">
+              <CancelDrawForm action={cancelDraw} eventId={event.id} />
+            </div>
           </div>
         ) : (
           <DrawForm action={runDraw} eventId={event.id} total={(participants ?? []).length} />

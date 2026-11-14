@@ -193,6 +193,31 @@ export async function resolveReport(
   return { success: true };
 }
 
+export async function cancelDraw(
+  _previous: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  await requireAdmin();
+
+  const eventId = String(formData.get("eventId") ?? "");
+  if (!UUID_PATTERN.test(eventId)) {
+    return { error: "Confraternização inválida." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("cancel_draw", { p_event: eventId });
+
+  if (error) {
+    if (error.message.includes("Não há sorteio")) {
+      return { error: "Não há sorteio para desfazer." };
+    }
+    return { error: "Não foi possível desfazer o sorteio." };
+  }
+
+  revalidatePath(`/admin/eventos/${eventId}`);
+  return { success: true };
+}
+
 export async function deleteEvent(
   _previous: EventFormState,
   formData: FormData,

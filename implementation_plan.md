@@ -67,6 +67,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-17 | **Endereço completo do evento** como campo opcional, exibido aos convidados junto com o local | Cliente (2026-11-14) | Novo campo em `events.address`, sem alterar o `location` |
 | D-18 | **Participante pertence a uma única confraternização**; a área do participante abre direto o evento, sem tela de seleção | Cliente (2026-11-14) | `/app` redireciona para o evento do participante |
 | D-19 | **Nome completo imutável no perfil** do participante; a edição se restringe às restrições alimentares | Cliente (2026-11-14) | Ajuste em BR-31 e na tela de perfil |
+| D-20 | Administrador pode **desfazer o sorteio** e **sortear de novo** (para incluir/remover participantes) | Cliente (2026-11-14) | Ajusta BR-15/BR-33; desfazer apaga pares e confirmações |
 
 ---
 
@@ -214,7 +215,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-12 | O administrador vê o resultado do sorteio somente sob ação explícita (olho), carregado sob demanda |
 | BR-13 | O sorteio exige ao menos 2 participantes ativos |
 | BR-14 | É impossível um participante sortear a si mesmo |
-| BR-15 | O sorteio é executado **uma única vez** por evento |
+| BR-15 | O sorteio pode ser **desfeito e refeito** pelo administrador; desfazer apaga pares e confirmações e reabre o elenco |
 | BR-16 | Após o sorteio, o elenco fica congelado e o amigo secreto não pode ser desativado |
 | BR-17 | A confirmação do sorteio é opcional, idempotente e visível ao administrador como contagem |
 | BR-18 | Restrições alimentares: vegetariano, vegano, sem lactose, sem glúten e outra (com descrição livre de até 300 caracteres) |
@@ -232,7 +233,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-30 | Todo texto exibido é pt-BR; datas no fuso do evento; valores em BRL |
 | BR-31 | O participante edita apenas as próprias restrições alimentares (nome, usuário e data de nascimento são imutáveis); o admin não edita dados do participante, apenas remove |
 | BR-32 | O sorteio usa gerador criptográfico e algoritmo documentado e versionado |
-| BR-33 | Não existe "refazer sorteio": um novo sorteio exige novo evento |
+| BR-33 | Refazer o sorteio só é possível após **desfazer**; não existe histórico de sorteios anteriores (cada execução substitui a anterior) |
 | BR-34 | Um participante removido antes do sorteio pode ser convidado novamente por novo link |
 | BR-35 | O identificador é imutável após o cadastro; a data de nascimento também |
 | BR-36 | Login, cadastro, recuperação e prévia de convite têm limite de tentativas por identificador e por IP |
@@ -1623,6 +1624,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-25 | Dado um evento já sorteado, quando o admin tenta sortear de novo, então a ação é bloqueada |
 | AC-26 | Dado o sorteio realizado, quando o participante clica em confirmar, então a confirmação é registrada uma vez e o admin vê a contagem |
 | AC-27 | Dado o sorteio realizado, quando o participante abre a lista do amigo sorteado, então vê os itens em modo leitura; o admin não vê a lista |
+| AC-43 | Dado um sorteio realizado, quando o admin clica em desfazer e confirma, então pares e confirmações são apagados, o elenco volta a ser editável e um novo sorteio pode ser executado |
 
 ### 19.4 Área do participante
 
@@ -1676,6 +1678,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | R-09 | `service_role` no servidor | Chave poderosa no ambiente da aplicação | Um único endpoint, `server-only`, auditoria, varredura | Aceito |
 | R-10 | Sem e-mail | Sem notificação e sem "esqueci minha senha" por e-mail | Recuperação por dois fatores + cartão de credenciais | Aceito |
 | R-11 | Sem ambiente isolado de teste (D-14) | Código e migração chegam juntos na produção | CI valida migrações no Supabase local; deploy da Vercel só após CI verde; runbook de rollback | **Aceite explícito do cliente (D-14)** |
+| R-12 | Desfazer o sorteio apaga pares e confirmações anteriores | Participantes que já tinham visto/confirmado perdem o resultado | Botão com confirmação em duas etapas e aviso explícito; auditoria registrada | **Aceite explícito do cliente (D-20)** |
 
 **Aceites que precisam da sua confirmação antes do M4** (podem ser dados no início da Fase 2):
 
@@ -1738,6 +1741,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.5 | 2026-11-14 | D-18: área do participante com evento único; lista de participantes no admin com remoção (BR-25) |
 | 1.6 | 2026-11-14 | M3 concluído: lista de desejos (CRUD), perfil e restrições do participante, captcha com resultados de 0 a 10 e revisão de textos |
 | 1.7 | 2026-11-14 | M4 concluído: sorteio (derangement), resultado do próprio par, confirmação, relatos e revelação pelo admin; D-19 (nome imutável) |
+| 1.8 | 2026-11-14 | D-20: desfazer e refazer o sorteio para incluir/remover participantes (ajusta BR-15, BR-33 e AC-43) |
 
 ---
 
