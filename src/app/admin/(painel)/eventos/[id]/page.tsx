@@ -15,14 +15,17 @@ import {
   inviteStatusLabel,
 } from "@/modules/invites/domain/invite";
 import { decryptInviteToken } from "@/modules/invites/server/token";
-import { deleteEvent, removeParticipant, updateEvent } from "../actions";
+import { deleteEvent, removeParticipant, resolveReport, runDraw, updateEvent } from "../actions";
 import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
 import { createInvite, revokeInvite } from "../invite-actions";
 import { labelForRestriction } from "@/modules/participants/domain/restrictions";
+import { reportCategoryLabel, reportStatusLabel } from "@/modules/reports/domain/report";
+import { DrawForm } from "./draw-form";
 import { InviteForm } from "./invite-form";
 import { InviteLink } from "./invite-link";
 import { RemoveParticipantForm } from "./remove-participant-form";
+import { ResolveReportForm } from "./resolve-report-form";
 import { RevokeInviteForm } from "./revoke-form";
 
 function formatBirthDate(value: string): string {
@@ -38,8 +41,16 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EventDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { id } = await params;
+  const resolvedSearchParams = await searchParams;
+  const reveal = resolvedSearchParams.revelar === "1";
 
   const supabase = await createClient();
   const { data: event, error } = await supabase
@@ -75,6 +86,31 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
     profiles = data ?? [];
   }
   const profileMap = new Map(profiles.map((profile) => [profile.id, profile]));
+
+  const { data: draw } = await supabase
+    .from("draw_runs")
+    .select("executed_at,participant_count")
+    .eq("event_id", id)
+    .maybeSingle();
+
+  const { data: confirmedRows } = await supabase
+    .from("event_participants")
+    .select("id")
+    .eq("event_id", id)
+    .not("confirmed_draw_at", "is", null);
+  const confirmedCount = (confirmedRows ?? []).length;
+
+  const { data: reports } = await supabase
+    .from("problem_reports")
+    .select("id,category,message,status,created_at")
+    .eq("event_id", id)
+    .order("created_at", { ascending: true });
+
+  let assignments: { giver_name: string; receiver_name: string }[] | null = null;
+  if (reveal && draw) {
+    const { data } = await supabase.rpc("admin_list_assignments", { p_event: id });
+    assignments = (data as { giver_name: string; receiver_name: string }[] | null) ?? null;
+  }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const now = new Date();
@@ -219,6 +255,63 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       </TicketCard>
 
       <TicketCard className="p-6 sm:p-8">
+        <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+          Amigo secreto
+        </h2>
+        <PerforatedDivider className="my-8" />
+
+        {!event.has_secret_santa ? (
+          <p className="text-sm text-ink-soft">
+            Esta confraternização está sem amigo secreto.
+          </p>
+        ) : draw ? (
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-wrap gap-2">
+              <Stamp tone="bottle">Sorteio realizado</Stamp>
+              <Stamp>
+                {confirmedCount} de {(participants ?? []).length} confirmaram
+              </Stamp>
+            </div>
+            <p className="text-sm text-ink-soft">
+              Realizado em {formatEventDate(draw.executed_at)} com {draw.participant_count}{" "}
+              participantes.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={
+                  reveal ? `/admin/eventos/${event.id}` : `/admin/eventos/${event.id}?revelar=1`
+                }
+                className="inline-flex items-center justify-center border-2 border-ink bg-paper-2 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.15em] text-ink"
+              >
+                {reveal ? "Ocultar resultados" : "Revelar resultados"}
+              </Link>
+            </div>
+
+            {reveal ? (
+              assignments && assignments.length > 0 ? (
+                <ul className="flex flex-col gap-2 border-2 border-ink bg-paper p-5">
+                  {assignments.map((assignment) => (
+                    <li
+                      key={`${assignment.giver_name}-${assignment.receiver_name}`}
+                      className="flex flex-wrap items-center justify-between gap-2 text-sm"
+                    >
+                      <span>{assignment.giver_name}</span>
+                      <span className="text-ink-faint">→</span>
+                      <span className="font-medium">{assignment.receiver_name}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-ink-faint">Nenhum resultado para exibir.</p>
+              )
+            ) : null}
+          </div>
+        ) : (
+          <DrawForm action={runDraw} eventId={event.id} total={(participants ?? []).length} />
+        )}
+      </TicketCard>
+
+      <TicketCard className="p-6 sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
@@ -275,6 +368,50 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                       Link indisponível — APP_SECRET diferente do usado na geração.
                     </p>
                   )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </TicketCard>
+
+      <TicketCard className="p-6 sm:p-8">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+              Relatos de problema
+            </h2>
+            <p className="mt-2 text-sm text-ink-soft">
+              {(reports ?? []).length === 0
+                ? "Nenhum relato recebido."
+                : `${(reports ?? []).length} relato(s).`}
+            </p>
+          </div>
+        </div>
+        <PerforatedDivider className="my-8" />
+
+        {(reports ?? []).length === 0 ? (
+          <p className="text-sm text-ink-faint">Tudo tranquilo por aqui.</p>
+        ) : (
+          <ul className="flex flex-col gap-4">
+            {(reports ?? []).map((report) => (
+              <li key={report.id} className="border-2 border-ink bg-paper p-5 sm:p-6">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                      {reportCategoryLabel(report.category)} · {reportStatusLabel(report.status)}
+                    </p>
+                    <p className="mt-2 whitespace-pre-line text-sm text-ink-soft">
+                      {report.message}
+                    </p>
+                  </div>
+                  {report.status !== "resolvido" ? (
+                    <ResolveReportForm
+                      action={resolveReport}
+                      eventId={event.id}
+                      reportId={report.id}
+                    />
+                  ) : null}
                 </div>
               </li>
             ))}

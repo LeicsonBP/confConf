@@ -437,6 +437,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_assignments: { Args: { p_event: string }; Returns: Json }
       admin_remove_participant: {
         Args: { p_event: string; p_participant: string }
         Returns: undefined
@@ -446,6 +447,8 @@ export type Database = {
         Args: { p_note?: string; p_user_id: string }
         Returns: undefined
       }
+      confirm_draw: { Args: { p_event: string }; Returns: undefined }
+      get_my_assignment: { Args: { p_event: string }; Returns: Json }
       invite_preview: { Args: { p_token_hash: string }; Returns: Json }
       recovery_throttle: {
         Args: { p_key: string; p_max: number; p_window_seconds: number }
@@ -466,6 +469,7 @@ export type Database = {
         }
         Returns: string
       }
+      run_draw: { Args: { p_event: string }; Returns: undefined }
     }
     Enums: {
       dietary_restriction:

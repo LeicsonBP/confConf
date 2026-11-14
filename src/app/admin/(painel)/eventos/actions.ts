@@ -130,6 +130,69 @@ export async function removeParticipant(
   return { success: true };
 }
 
+export async function runDraw(
+  _previous: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  await requireAdmin();
+
+  const eventId = String(formData.get("eventId") ?? "");
+  if (!UUID_PATTERN.test(eventId)) {
+    return { error: "Confraternização inválida." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("run_draw", { p_event: eventId });
+
+  if (error) {
+    if (error.message.includes("já foi realizado")) {
+      return { error: "O sorteio já foi realizado." };
+    }
+    if (error.message.includes("ao menos 2")) {
+      return { error: "São necessários ao menos 2 participantes." };
+    }
+    if (error.message.includes("não tem amigo secreto")) {
+      return { error: "Esta confraternização está sem amigo secreto." };
+    }
+    return { error: "Não foi possível realizar o sorteio." };
+  }
+
+  revalidatePath(`/admin/eventos/${eventId}`);
+  return { success: true };
+}
+
+export async function resolveReport(
+  _previous: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  await requireAdmin();
+
+  const parsed = z
+    .object({ eventId: z.string().regex(UUID_PATTERN), reportId: z.string().regex(UUID_PATTERN) })
+    .safeParse({
+      eventId: formData.get("eventId"),
+      reportId: formData.get("reportId"),
+    });
+
+  if (!parsed.success) {
+    return { error: "Relato inválido." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("problem_reports")
+    .update({ status: "resolvido", resolved_at: new Date().toISOString() })
+    .eq("id", parsed.data.reportId)
+    .eq("event_id", parsed.data.eventId);
+
+  if (error) {
+    return { error: "Não foi possível resolver o relato." };
+  }
+
+  revalidatePath(`/admin/eventos/${parsed.data.eventId}`);
+  return { success: true };
+}
+
 export async function deleteEvent(
   _previous: EventFormState,
   formData: FormData,

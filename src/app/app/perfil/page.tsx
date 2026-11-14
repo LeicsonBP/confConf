@@ -48,6 +48,12 @@ export default async function ProfilePage() {
         </h2>
         <dl className="mt-5 grid gap-5 sm:grid-cols-2">
           <div>
+            <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">
+              Nome completo
+            </dt>
+            <dd className="mt-1 text-base">{profile?.full_name ?? "—"}</dd>
+          </div>
+          <div>
             <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">Usuário</dt>
             <dd className="mt-1 font-mono text-base break-all">{profile?.username ?? "—"}</dd>
           </div>
@@ -59,7 +65,7 @@ export default async function ProfilePage() {
           </div>
         </dl>
         <p className="mt-4 text-xs text-ink-faint">
-          Usuário e data de nascimento não podem ser alterados. A senha é redefinida pela
+          Nome, usuário e data de nascimento não podem ser alterados. A senha é redefinida pela
           recuperação de acesso.
         </p>
       </TicketCard>
@@ -70,7 +76,6 @@ export default async function ProfilePage() {
         </h2>
         <PerforatedDivider className="my-8" />
         <ProfileForm
-          fullName={profile?.full_name ?? ""}
           restrictions={participant?.dietary_restrictions ?? []}
           other={participant?.dietary_other ?? ""}
         />

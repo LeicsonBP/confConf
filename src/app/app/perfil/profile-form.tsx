@@ -10,29 +10,16 @@ import type { ProfileFormState } from "./types";
 const initialState: ProfileFormState = {};
 
 interface ProfileFormProps {
-  fullName: string;
   restrictions: string[];
   other: string;
 }
 
-export function ProfileForm({ fullName, restrictions, other }: ProfileFormProps) {
+export function ProfileForm({ restrictions, other }: ProfileFormProps) {
   const [state, formAction, pending] = useActionState(updateProfile, initialState);
   const [hasOther, setHasOther] = useState(restrictions.includes("outra"));
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
-      <Field label="Nome completo" htmlFor="fullName" required>
-        <input
-          id="fullName"
-          name="fullName"
-          type="text"
-          maxLength={120}
-          defaultValue={fullName}
-          required
-          className={inputClassName}
-        />
-      </Field>
-
       <fieldset className="border-2 border-ink bg-paper p-5">
         <legend className="px-2 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-soft">
           Restrições alimentares

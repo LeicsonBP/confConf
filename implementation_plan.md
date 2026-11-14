@@ -66,6 +66,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-16 | **Usuário do participante = primeiro nome normalizado + 3 dígitos** (ex.: `leicson745`), sem símbolos, acentos ou hífen | Cliente (2026-11-14) | Sub­stitui o identificador baseado no nome completo; identificadores antigos continuam válidos |
 | D-17 | **Endereço completo do evento** como campo opcional, exibido aos convidados junto com o local | Cliente (2026-11-14) | Novo campo em `events.address`, sem alterar o `location` |
 | D-18 | **Participante pertence a uma única confraternização**; a área do participante abre direto o evento, sem tela de seleção | Cliente (2026-11-14) | `/app` redireciona para o evento do participante |
+| D-19 | **Nome completo imutável no perfil** do participante; a edição se restringe às restrições alimentares | Cliente (2026-11-14) | Ajuste em BR-31 e na tela de perfil |
 
 ---
 
@@ -229,7 +230,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-28 | Recuperação exige identificador e data de nascimento corretos, mais captcha e limite de tentativas |
 | BR-29 | Após a recuperação, todas as sessões do participante são revogadas |
 | BR-30 | Todo texto exibido é pt-BR; datas no fuso do evento; valores em BRL |
-| BR-31 | O participante edita o próprio nome e as próprias restrições; o admin não edita dados do participante, apenas remove |
+| BR-31 | O participante edita apenas as próprias restrições alimentares (nome, usuário e data de nascimento são imutáveis); o admin não edita dados do participante, apenas remove |
 | BR-32 | O sorteio usa gerador criptográfico e algoritmo documentado e versionado |
 | BR-33 | Não existe "refazer sorteio": um novo sorteio exige novo evento |
 | BR-34 | Um participante removido antes do sorteio pode ser convidado novamente por novo link |
@@ -1578,7 +1579,7 @@ Toda alteração relevante atualiza: código, teste, doc do módulo e, se mudar 
 
 Estimativas relativas (sem compromisso de data): M0 pequeno-médio; M1 e M2 médios; M3 e M5 médios; M4 grande; M6 médio; M7 pequeno.
 
-**Status em 14/11/2026:** M0, M1, M2 e M3 concluídos. Próximo marco: **M4** — sorteio sem auto-sorteio, consulta do próprio par, confirmação de recebimento e o olho do administrador.
+**Status em 14/11/2026:** M0, M1, M2, M3 e M4 concluídos. Próximo marco: **M5** — planejamento alimentar com estimativas e visão consolidada de restrições.
 
 ---
 
@@ -1736,6 +1737,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.4 | 2026-11-14 | M2 concluído: login do participante, área inicial (`/app`) e recuperação de acesso com throttle; rota `/api/recuperacao` com `service_role` |
 | 1.5 | 2026-11-14 | D-18: área do participante com evento único; lista de participantes no admin com remoção (BR-25) |
 | 1.6 | 2026-11-14 | M3 concluído: lista de desejos (CRUD), perfil e restrições do participante, captcha com resultados de 0 a 10 e revisão de textos |
+| 1.7 | 2026-11-14 | M4 concluído: sorteio (derangement), resultado do próprio par, confirmação, relatos e revelação pelo admin; D-19 (nome imutável) |
 
 ---
 

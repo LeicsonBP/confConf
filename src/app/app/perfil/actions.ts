@@ -11,11 +11,6 @@ import type { ProfileFormState } from "./types";
 type Dietary = Database["public"]["Enums"]["dietary_restriction"];
 
 const schema = z.object({
-  fullName: z
-    .string()
-    .trim()
-    .min(2, "Informe seu nome completo.")
-    .max(120, "O nome aceita até 120 caracteres."),
   other: z.string().trim().max(300, "O detalhe aceita até 300 caracteres."),
 });
 
@@ -26,7 +21,6 @@ export async function updateProfile(
   const session = await requireParticipant();
 
   const parsed = schema.safeParse({
-    fullName: formData.get("fullName"),
     other: formData.get("other") ?? "",
   });
 
@@ -40,15 +34,6 @@ export async function updateProfile(
     .filter((value): value is Dietary => DIETARY_VALUES.includes(value));
 
   const supabase = await createClient();
-
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .update({ full_name: parsed.data.fullName })
-    .eq("id", session.userId);
-
-  if (profileError) {
-    return { error: "Não foi possível salvar seu nome." };
-  }
 
   const { data: participant } = await supabase
     .from("event_participants")
