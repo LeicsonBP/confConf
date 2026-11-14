@@ -1578,7 +1578,7 @@ Toda alteração relevante atualiza: código, teste, doc do módulo e, se mudar 
 
 Estimativas relativas (sem compromisso de data): M0 pequeno-médio; M1 e M2 médios; M3 e M5 médios; M4 grande; M6 médio; M7 pequeno.
 
-**Status em 14/11/2026:** M0, M1 e M2 concluídos; M3 iniciado com a área do participante (lista e detalhes das confraternizações). Próximos itens do M3: sorteio, confirmação, lista de desejos e edição de restrições.
+**Status em 14/11/2026:** M0, M1, M2 e M3 concluídos. Próximo marco: **M4** — sorteio sem auto-sorteio, consulta do próprio par, confirmação de recebimento e o olho do administrador.
 
 ---
 
@@ -1735,6 +1735,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.3 | 2026-11-14 | D-16/D-17: usuário = primeiro nome + 3 dígitos e campo endereço; ajustes de BR-03, BR-07, tabelas e ACs |
 | 1.4 | 2026-11-14 | M2 concluído: login do participante, área inicial (`/app`) e recuperação de acesso com throttle; rota `/api/recuperacao` com `service_role` |
 | 1.5 | 2026-11-14 | D-18: área do participante com evento único; lista de participantes no admin com remoção (BR-25) |
+| 1.6 | 2026-11-14 | M3 concluído: lista de desejos (CRUD), perfil e restrições do participante, captcha com resultados de 0 a 10 e revisão de textos |
 
 ---
 

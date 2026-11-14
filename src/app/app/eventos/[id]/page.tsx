@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ButtonLink } from "@/design-system/button";
 import { Stamp, TicketCard } from "@/design-system/ticket";
 import { createClient } from "@/lib/supabase/server";
 import { requireParticipant } from "@/modules/auth/server/participant-session";
@@ -51,6 +52,12 @@ export default async function ParticipantEventPage({
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-3">
+        <ButtonLink href={`/app/eventos/${event.id}/desejos`} variant="secondary">
+          Minha lista de desejos
+        </ButtonLink>
+      </div>
+
       <TicketCard className="p-6 sm:p-8">
         <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
           Informações
@@ -95,7 +102,7 @@ export default async function ParticipantEventPage({
       </TicketCard>
 
       <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
-        Em breve: sorteio e lista de desejos.
+        Em breve: sorteio.
       </p>
     </div>
   );

@@ -26,11 +26,19 @@ export default async function ParticipantLayout({ children }: { children: React.
               {session.fullName} · {session.username}
             </p>
           </div>
-          <form action={signOutParticipant}>
-            <Button type="submit" variant="ghost">
-              Sair
-            </Button>
-          </form>
+          <div className="flex items-center gap-5">
+            <Link
+              href="/app/perfil"
+              className="font-mono text-[11px] uppercase tracking-[0.15em] text-ink-soft underline-offset-4 hover:underline"
+            >
+              Meu perfil
+            </Link>
+            <form action={signOutParticipant}>
+              <Button type="submit" variant="ghost">
+                Sair
+              </Button>
+            </form>
+          </div>
         </div>
       </header>
 

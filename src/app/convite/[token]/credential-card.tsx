@@ -159,18 +159,18 @@ export function CredentialCard(credentials: SignupCredentials) {
           Acessar minha área
         </Link>
         <Button type="button" variant="secondary" onClick={saveImage}>
-          Salvar como imagem
+          Baixar informações de acesso
         </Button>
         {saved ? (
           <span role="status" className="text-sm text-bottle">
-            Imagem salva!
+            Arquivo salvo!
           </span>
         ) : null}
       </div>
 
       <p className="text-xs text-ink-faint">
-        Guarde a imagem: é com esse usuário e senha que você entra na sua área. Se perder, ainda dá
-        para recuperar o acesso com seu nome e data de nascimento.
+        Guarde o arquivo: é com esse usuário e senha que você entra na sua área. Se perder, ainda dá
+        para recuperar o acesso com seu usuário e data de nascimento.
       </p>
     </div>
   );

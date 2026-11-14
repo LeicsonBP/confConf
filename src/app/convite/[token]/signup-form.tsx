@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { Button } from "@/design-system/button";
 import { Field, inputClassName } from "@/design-system/field";
+import { DIETARY_OPTIONS } from "@/modules/participants/domain/restrictions";
 import { CredentialCard } from "./credential-card";
 import { signUpWithInvite } from "./actions";
 import type { SignupState } from "./types";
@@ -14,14 +15,6 @@ interface SignupFormProps {
   question: string;
   captchaToken: string;
 }
-
-const RESTRICTIONS = [
-  { value: "vegetariano", label: "Vegetariano" },
-  { value: "vegano", label: "Vegano" },
-  { value: "sem_lactose", label: "Sem lactose" },
-  { value: "sem_gluten", label: "Sem glúten" },
-  { value: "outra", label: "Outra restrição" },
-];
 
 export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProps) {
   const [state, formAction, pending] = useActionState(signUpWithInvite, initialState);
@@ -112,7 +105,7 @@ export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProp
             <p className="mt-2 text-xs text-ink-faint">Opcional — marque o que se aplica a você.</p>
 
             <div className="mt-5 grid gap-2 sm:grid-cols-2">
-              {RESTRICTIONS.map((restriction) => (
+              {DIETARY_OPTIONS.map((restriction) => (
                 <label
                   key={restriction.value}
                   className="flex items-center gap-3 px-2 py-2 text-sm"

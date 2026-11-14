@@ -18,23 +18,20 @@ export interface CaptchaPayload {
 }
 
 export const CAPTCHA_TTL_SECONDS = 600;
-export const CAPTCHA_MIN_VALUE = 1;
-export const CAPTCHA_MAX_VALUE = 9;
+export const CAPTCHA_MIN_VALUE = 0;
+export const CAPTCHA_MAX_VALUE = 10;
 
 export type RandomInt = (min: number, max: number) => number;
 
 /**
- * Gera uma conta de soma ou subtração sem resultado negativo.
- * A operação é exibida em palavras para funcionar bem com leitores de tela.
+ * Gera uma conta de soma ou subtração com resultados entre 0 e 10 e operandos
+ * entre 0 e 10 (fácil para qualquer pessoa).
  */
 export function generateQuestion(random: RandomInt): CaptchaQuestion {
   const op: CaptchaOperation = random(0, 1) === 0 ? "+" : "-";
   const a = random(CAPTCHA_MIN_VALUE, CAPTCHA_MAX_VALUE);
-  const b = random(CAPTCHA_MIN_VALUE, CAPTCHA_MAX_VALUE);
+  const b = op === "+" ? random(0, CAPTCHA_MAX_VALUE - a) : random(0, a);
 
-  if (op === "-") {
-    return { a: Math.max(a, b), op, b: Math.min(a, b) };
-  }
   return { a, op, b };
 }
 

@@ -9,25 +9,30 @@ import {
   type CaptchaPayload,
 } from "./captcha";
 
-describe("captcha", () => {  it("gera apenas somas e subtrações sem resultado negativo", () => {
-    for (let seed = 0; seed < 50; seed += 1) {
+describe("captcha", () => {
+  it("mantém operandos e resultado entre 0 e 10", () => {
+    for (let seed = 0; seed < 200; seed += 1) {
       let calls = 0;
       const question = generateQuestion((min, max) => {
         calls += 1;
         const span = max - min + 1;
         return min + (((seed * 7 + calls) % span + span) % span);
       });
-      expect(question.a).toBeGreaterThanOrEqual(1);
-      expect(question.b).toBeGreaterThanOrEqual(1);
+
+      expect(question.a).toBeGreaterThanOrEqual(0);
+      expect(question.a).toBeLessThanOrEqual(10);
+      expect(question.b).toBeGreaterThanOrEqual(0);
+      expect(question.b).toBeLessThanOrEqual(10);
       expect(answerOf(question)).toBeGreaterThanOrEqual(0);
+      expect(answerOf(question)).toBeLessThanOrEqual(10);
     }
   });
 
   it("gera pergunta determinística e texto em palavras", () => {
+    const values = [0, 7, 2]; // soma: 7 + 2 = 9
     let call = 0;
-    const values = [0, 7, 2]; // operação "+", a=7, b=2
     const question = generateQuestion(() => {
-      const value = values[call] ?? 1;
+      const value = values[call] ?? 0;
       call += 1;
       return value;
     });
@@ -35,10 +40,16 @@ describe("captcha", () => {  it("gera apenas somas e subtrações sem resultado 
     expect(answerOf(question)).toBe(9);
     expect(questionText(question)).toBe("Quanto é 7 mais 2?");
 
-    const subtraction = generateQuestion(() => 2);
-    expect(subtraction.op).toBe("-");
-    expect(questionText(subtraction)).toContain("menos");
-    expect(answerOf(subtraction)).toBeGreaterThanOrEqual(0);
+    const subtractionValues = [1, 10, 8]; // subtração: 10 - 8 = 2
+    let subCall = 0;
+    const subtraction = generateQuestion(() => {
+      const value = subtractionValues[subCall] ?? 0;
+      subCall += 1;
+      return value;
+    });
+    expect(subtraction).toEqual({ a: 10, op: "-", b: 8 });
+    expect(answerOf(subtraction)).toBe(2);
+    expect(questionText(subtraction)).toBe("Quanto é 10 menos 8?");
   });
 
   it("rejeita respostas fora do formato numérico", () => {

@@ -19,18 +19,11 @@ import { deleteEvent, removeParticipant, updateEvent } from "../actions";
 import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
 import { createInvite, revokeInvite } from "../invite-actions";
+import { labelForRestriction } from "@/modules/participants/domain/restrictions";
 import { InviteForm } from "./invite-form";
 import { InviteLink } from "./invite-link";
 import { RemoveParticipantForm } from "./remove-participant-form";
 import { RevokeInviteForm } from "./revoke-form";
-
-const RESTRICTION_LABELS: Record<string, string> = {
-  vegetariano: "Vegetariano",
-  vegano: "Vegano",
-  sem_lactose: "Sem lactose",
-  sem_gluten: "Sem glúten",
-  outra: "Outra",
-};
 
 function formatBirthDate(value: string): string {
   const [year, month, day] = value.split("-");
@@ -199,7 +192,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                       {restrictions.length > 0 ? (
                         <p className="mt-2 text-sm text-ink-soft">
                           Restrições:{" "}
-                          {restrictions.map((value) => RESTRICTION_LABELS[value] ?? value).join(", ")}
+                          {restrictions.map((value) => labelForRestriction(value)).join(", ")}
                         </p>
                       ) : (
                         <p className="mt-2 text-sm text-ink-faint">Sem restrições informadas</p>
