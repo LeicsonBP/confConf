@@ -28,7 +28,7 @@ import {
 import { CancelDrawForm } from "./cancel-draw-form";
 import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
-import { createInvite, revokeInvite } from "../invite-actions";
+import { createInvite, deleteInvite } from "../invite-actions";
 import { labelForRestriction } from "@/modules/participants/domain/restrictions";
 import { FOOD_KEYS, FOOD_RULES, buildFoodPlan } from "@/modules/food-planning/rules";
 import { reportCategoryLabel, reportStatusLabel } from "@/modules/reports/domain/report";
@@ -47,7 +47,7 @@ import { InviteLink } from "./invite-link";
 import { PrintButton } from "./print-button";
 import { RemoveParticipantForm } from "./remove-participant-form";
 import { ResolveReportForm } from "./resolve-report-form";
-import { RevokeInviteForm } from "./revoke-form";
+import { DeleteInviteForm } from "./delete-invite-form";
 
 function formatBirthDate(value: string): string {
   const [year, month, day] = value.split("-");
@@ -400,13 +400,11 @@ export default async function EventDetailPage({
                     <Stamp tone={invite.status === "ativo" ? "bottle" : "ink"}>
                       {inviteStatusLabel(invite.status)}
                     </Stamp>
-                    {invite.status === "ativo" ? (
-                      <RevokeInviteForm
-                        action={revokeInvite}
-                        eventId={event.id}
-                        inviteId={invite.id}
-                      />
-                    ) : null}
+                    <DeleteInviteForm
+                      action={deleteInvite}
+                      eventId={event.id}
+                      inviteId={invite.id}
+                    />
                   </div>
                 </div>
 

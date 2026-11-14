@@ -77,6 +77,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-27 | Resultado exibido **direto na unidade de compra** (garrafas, sacos de 5 kg, unidades/jogos), sem mostrar o total cru; respeita o mínimo comprável (1 pessoa → 1 garrafa de 500 ml, 1 saco de 5 kg) | Cliente (2026-11-14) | Ajusta AC-07 e §11.7 |
 | D-28 | **MFA (O-01) não entra na v1**: fica documentado como opcional para versão futura, sem bloquear o release | Decisão técnica (2026-11-14) | O-01 permanece "Could" |
 | D-29 | Exclusão do evento confirmada apenas com a palavra **`deletar`** (campo em caixa baixa) + **captcha**, sem exigir o nome da confraternização | Cliente (2026-11-14) | Ajusta BR-26 e o formulário de exclusão |
+| D-30 | Convites podem ser **excluídos** (remoção física) em vez de revogados, para manter a área do admin limpa; a prévia do convite mostra "Cadastre-se para: (nome)" | Cliente (2026-11-14) | Ajusta UC-07, BR-05/06 e AC-04 |
 
 ---
 
@@ -166,7 +167,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | UC-04 | Excluir evento | BR-26 | Must |
 | UC-05 | Listar e filtrar eventos | — | Must |
 | UC-06 | Gerar link de convite | BR-05, BR-06 | Must |
-| UC-07 | Listar, revogar e recriar convites | BR-06 | Must |
+| UC-07 | Listar, excluir e recriar convites | BR-06 | Must |
 | UC-08 | Listar participantes de um evento | BR-31 | Must |
 | UC-09 | Remover participante | BR-25 | Must |
 | UC-10 | Ver restrições alimentares consolidadas | BR-18, BR-19 | Must |
@@ -214,8 +215,8 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-02 | A conta do administrador é criada por script de operação, com senha forte e rotação trimestral recomendada |
 | BR-03 | O evento exige nome (3–120 caracteres) e data/hora; descrição, local, **endereço completo**, valor máximo do presente e informações adicionais são opcionais |
 | BR-04 | O amigo secreto é **opcional por evento**; o evento existe e funciona sem sorteio |
-| BR-05 | Só é possível cadastrar-se com um convite válido, não expirado e não revogado |
-| BR-06 | O convite tem validade padrão de 30 dias, usos configuráveis (**ilimitado por padrão**, para compartilhar em grupo) e pode ser revogado a qualquer momento; o admin vê o link sempre que quiser |
+| BR-05 | Só é possível cadastrar-se com um convite válido, não expirado e existente |
+| BR-06 | O convite tem validade padrão de 30 dias, usos configuráveis (**ilimitado por padrão**, para compartilhar em grupo) e pode ser **excluído** a qualquer momento; o admin vê o link sempre que quiser |
 | BR-07 | O identificador de usuário é o **primeiro nome** normalizado (sem acentos, minúsculas, sem símbolos) seguido de exatamente 3 dígitos aleatórios; é único e imutável |
 | BR-08 | O PIN tem 4 a 8 dígitos numéricos; é normalizado com zeros à esquerda até 6 caracteres para o Supabase Auth; nunca é exibido ao administrador |
 | BR-09 | Cada participante tem e-mail sintético não entregável derivado do identificador; não há envio de e-mail no sistema |
@@ -877,7 +878,7 @@ Implementado em `private.throttle()`, com contadores no banco (necessário porqu
 | Cadastrar-se por convite | Sim | — | — |
 | Ver eventos em que participa | Não | Sim | Sim (todos) |
 | Editar evento | Não | Não | Sim |
-| Gerar/revogar convites | Não | Não | Sim |
+| Gerar/excluir convites | Não | Não | Sim |
 | Ver restrições consolidadas | Não | Não | Sim |
 | Executar sorteio | Não | Não | Sim |
 | Ver o próprio par | Não | Sim | — |
@@ -944,7 +945,7 @@ O requisito original (§3.3) pedia que nem o admin visse o resultado, garantido 
 | `admin_users` | — | — | — (via `is_admin()`) | INSERT só via `bootstrap_admin` |
 | `events` | — (`invite_preview`) | SELECT se participa | CRUD | — |
 | `event_participants` | — | SELECT próprio; UPDATE próprio (restrições) | SELECT todos; UPDATE `removed_at` | — |
-| `invites` | — | — | SELECT (sem token); INSERT; UPDATE revogar | — |
+| `invites` | — | — | SELECT (sem token); INSERT; DELETE | — |
 | `secret_santa_assignments` | — | SELECT próprio par | SELECT todos | — |
 | `draw_runs` | — | SELECT se participa | SELECT todos | — |
 | `wishlist_items` | — | CRUD próprio; SELECT do amigo sorteado (após sorteio) | — | — |
@@ -1624,7 +1625,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 |---|---|
 | AC-02 | Dado o formulário de evento, quando salvo, então todos os campos são persistidos e exibidos (nome, data, local, endereço, valor máximo, descrição, informações); amigo secreto pode ser desligado |
 | AC-03 | Dado um evento com sorteio realizado, quando o admin tenta desligar o amigo secreto, então o sistema bloqueia |
-| AC-04 | Dado o botão "gerar convite", quando acionado, então o link aparece na lista e pode ser copiado quantas vezes quiser, com validade, usos e status (ativo/expirado/revogado/esgotado) |
+| AC-04 | Dado o botão "gerar convite", quando acionado, então o link aparece na lista e pode ser copiado quantas vezes quiser, com validade, usos e status (ativo/expirado/esgotado), podendo ser excluído |
 | AC-05 | Dado um participante ativo, quando o admin remove, então ele sai da visão consolidada; após o sorteio, a remoção é bloqueada |
 | AC-06 | Dado um evento com restrições variadas, quando o admin abre a visão consolidada, então vê contagens por tipo e o texto de "outras" |
 | AC-07 | Dado um evento com N participantes e restrições, quando abre as estimativas, então vê o resultado **na unidade de compra** (garrafas, sacos de 5 kg, unidades/jogos), sem total cru, com as premissas e o aviso de estimativa |
@@ -1783,6 +1784,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.24 | 2026-11-14 | Footer com borda superior e margem maior; link/copiar do convite alinhados; prévia do convite no WhatsApp com nome e data; planejamento alimentar penúltimo; exclusão por `deletar` + captcha (D-29) |
 | 1.25 | 2026-11-14 | Margens do footer aplicadas aos textos (24 px) com folga inferior de 20 px, mantendo o footer visível nas telas curtas |
 | 1.26 | 2026-11-14 | Footer com margens simétricas de 16 px entre borda/texto/linha/texto/fim, centralizando os dois textos |
+| 1.27 | 2026-11-14 | Convites agora são excluídos (não revogados) e a prévia no WhatsApp usa "Cadastre-se para: (nome)" |
 
 ---
 

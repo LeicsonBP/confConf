@@ -59,15 +59,16 @@ export async function generateMetadata({
   }
 
   const name = preview.event.name ?? "Confraternização";
+  const title = `Cadastre-se para: ${name}`;
   const description = shareDescription(preview);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   return {
-    title: name,
+    title,
     description,
     robots: { index: false, follow: false },
     openGraph: {
-      title: name,
+      title,
       description,
       type: "website",
       images: appUrl
@@ -76,7 +77,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary",
-      title: name,
+      title,
       description,
     },
   };

@@ -75,18 +75,18 @@ export async function createInvite(
   return { success: true };
 }
 
-const revokeSchema = z.object({
+const deleteSchema = z.object({
   eventId: z.string().regex(UUID_PATTERN),
   inviteId: z.string().regex(UUID_PATTERN),
 });
 
-export async function revokeInvite(
+export async function deleteInvite(
   _previous: InviteFormState,
   formData: FormData,
 ): Promise<InviteFormState> {
   await requireAdmin();
 
-  const parsed = revokeSchema.safeParse({
+  const parsed = deleteSchema.safeParse({
     eventId: formData.get("eventId"),
     inviteId: formData.get("inviteId"),
   });
@@ -98,13 +98,12 @@ export async function revokeInvite(
   const supabase = await createClient();
   const { error } = await supabase
     .from("invites")
-    .update({ revoked_at: new Date().toISOString() })
+    .delete()
     .eq("id", parsed.data.inviteId)
-    .eq("event_id", parsed.data.eventId)
-    .is("revoked_at", null);
+    .eq("event_id", parsed.data.eventId);
 
   if (error) {
-    return { error: "Não foi possível revogar o convite." };
+    return { error: "Não foi possível excluir o convite." };
   }
 
   revalidatePath(`/admin/eventos/${parsed.data.eventId}`);
