@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versão do documento | 1.0 |
+| Versão do documento | 1.1 |
 | Data | 2026-11-14 |
 | Repositório | `github.com/LeicsonBP/confConf` (público) |
 | Stack aprovada | Next.js 16 + TypeScript + Supabase |
@@ -61,6 +61,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-11 | Sem Edge Functions; lógica privilegiada em funções SQL `security definer` | Técnica | Menos superfície, transações atômicas, um único uso de `service_role` |
 | D-12 | Fluxo Git com `main` (produção) e `develop` (teste), merges só após CI verde | Cliente | Nenhum deploy de produção sem passar pelo ambiente de teste |
 | D-13 | `service_role` restrita ao endpoint de recuperação de credenciais | Técnica | Contenção da chave mais poderosa do sistema |
+| D-14 | **Ambiente único**: um projeto Supabase (`confConf`) e trabalho direto na branch `main`, sem `develop` | Cliente (2026-11-14) | Revoga D-12; CI valida migrações no Supabase local antes de cada push |
 
 ---
 
@@ -74,7 +75,7 @@ O participante não tem e-mail: entra com um **identificador** gerado a partir d
 
 O planejamento alimentar é calculado a partir do número de participantes e das restrições declaradas, sempre apresentado como **estimativa em faixas**, nunca como ordem de compra.
 
-O desenvolvimento segue **M0 a M7**, com testes unitários obrigatórios, testes de RLS no banco, testes de integração no CI e E2E da jornada completa. O ambiente de teste é a branch `develop`; a produção é a `main`, e só recebe merge após a bateria de testes passar.
+O desenvolvimento segue **M0 a M7**, com testes unitários obrigatórios, testes de RLS no banco, testes de integração no CI e E2E da jornada completa. Por decisão do cliente (**D-14**), existe **um único ambiente**: o projeto Supabase `confConf` e a branch `main`. A validação de banco acontece no Supabase local dentro do CI antes de cada push.
 
 **O que falta do cliente:** informar os dois tokens (GitHub e Supabase) e importar o projeto na Vercel quando o código amadurecer. O restante do provisionamento é executado pelo agente (seção 16).
 
@@ -84,7 +85,7 @@ O desenvolvimento segue **M0 a M7**, com testes unitários obrigatórios, testes
 
 ### 2.1 Exigências mantidas
 
-Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mantidas, com adaptações pontuais indicadas na matriz de rastreabilidade (seção 4). A stack de hospedagem (Vercel), banco/backend (Supabase) e versionamento (GitHub) está confirmada; o repositório existe e está vazio, e os dois ambientes de banco serão criados no M0.
+Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mantidas, com adaptações pontuais indicadas na matriz de rastreabilidade (seção 4). A stack de hospedagem (Vercel), banco/backend (Supabase) e versionamento (GitHub) está confirmada; o projeto Supabase único (`confConf`) foi configurado no M0.
 
 ### 2.2 Alterações de escopo aprovadas
 
@@ -95,6 +96,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | D-07 — Vercel importada pelo cliente | Provisionamento integral pelo agente | Guia passo a passo documentado; CI do repositório continua autônomo |
 | D-03 — PIN 4 a 8 dígitos | "senha numérica de até 6 dígitos" | Atende o texto do briefing e a configuração do GoTrue via normalização |
 | D-10 — tokens no chat | Boas práticas de gestão de segredos | Rotação obrigatória ao final do setup |
+| D-14 — ambiente único | Separação teste/produção (D-12) | Sem banco de teste separado; CI valida local; deploy direto da `main` |
 
 ### 2.3 Premissas
 
@@ -306,7 +308,7 @@ As entidades e regras ficam em `src/modules/<domínio>/domain/*`, como classes c
 | REQ-45 | §8 | Os 11 entregáveis da Fase 1 | Este documento | AC-40 | A |
 | REQ-46 | §8 | Fase 2 incremental com testes e ADRs | Seções 17, 18 | AC-35, AC-37 | A |
 | REQ-47 | §2.2 | Comparativo de frameworks com 7 critérios | Seção 7.2 | AC-39 | A |
-| REQ-48 | Pedido do cliente | Ambientes de teste e produção com uso correto de branches | Seção 15 | AC-41 | A |
+| REQ-48 | Pedido do cliente | Ambientes de teste e produção com uso correto de branches | Seção 15 | AC-41 | **R** (D-14) |
 | REQ-49 | Pedido do cliente | Provisionamento de Supabase e do repositório executado pelo agente | Seção 16 | AC-42 | A |
 | REQ-50 | Pedido do cliente | Vercel importada pelo cliente com documentação de apoio | Seções 15.8, 16 | AC-42 | A |
 
@@ -1264,7 +1266,7 @@ Checklist com a rotina de qualidade da seção 14.9, links para ADRs afetados e 
 | Componentes | Vitest + Testing Library | Local + CI | Todo PR |
 | RLS e funções SQL | pgTAP (`supabase test db`) | CI (Supabase local) | Todo PR |
 | Integração (fluxo real) | Vitest + Supabase local | CI | Todo PR |
-| E2E | Playwright | CI (nightly e release) | Merge em `develop`/release |
+| E2E | Playwright | CI (nightly) | Push em `main` |
 | Acessibilidade | axe-core | CI | Todo PR |
 
 ### 14.2 Casos unitários obrigatórios
@@ -1361,51 +1363,45 @@ No PR, os oito itens aparecem como checklist obrigatório.
 
 ### 15.1 Matriz de ambientes
 
-| Ambiente | Aplicação | Banco/Auth | Deploy | Dados |
+Ambiente único por decisão do cliente (D-14): o Supabase Free permite 2 projetos e ambos já estão em uso, então não existe banco de teste separado.
+
+| Contexto | Aplicação | Banco/Auth | Deploy | Dados |
 |---|---|---|---|---|
-| Local | `next dev` (porta 3000) | projeto Supabase `confconf-dev` | manual | seed fictício |
-| Teste | Vercel Preview (branch `develop` e PRs) | projeto `confconf-dev` | automático no merge | seed fictício; reset permitido |
-| Produção | Vercel Production (`main`) | projeto `confconf-prod` | merge em `main` + migração | reais |
+| Local | `next dev` (porta 3000) | projeto Supabase `confConf` | manual | reais — cuidado com operações destrutivas |
+| CI | GitHub Actions | Supabase local (Docker do runner) | — | seed fictício |
+| Produção | Vercel Production (`main`) | projeto `confConf` (`us-east-1`) | push em `main` | reais |
 
-Região dos projetos Supabase: `sa-east-1` (São Paulo), salvo indicação contrária.
-
-### 15.2 Branches e proteções
+### 15.2 Branch e proteções
 
 | Branch | Papel | Proteções |
 |---|---|---|
-| `main` | Produção | PR obrigatório; CI verde; sem force push; sem exclusão; só recebe `develop` ou `hotfix/*` |
-| `develop` | Integração/teste | PR obrigatório; CI verde; sem force push |
-| `feature/*`, `fix/*`, `docs/*`, `chore/*` | Trabalho | Nascem de `develop`; PR para `develop` |
-| `hotfix/*` | Correção urgente | Nasce de `main`; PR para `main` e back-merge para `develop` |
+| `main` | única branch de trabalho e deploy | CI verde obrigatório; sem force push; sem exclusão |
+| `feature/*`, `fix/*`, `docs/*`, `chore/*` | opcional, para mudanças maiores | PR para `main` |
 
-Configuradas via API no M0: PR obrigatório, checks obrigatórios (`ci` e `db-test`), bloqueio de force push e de exclusão, e merge por squash. Como há um único operador, a revisão humana obrigatória fica desligada — a barreira real é o CI; se entrar um segundo colaborador, passa a exigir 1 aprovação.
+Configuradas via API no M0: checks obrigatórios (`ci` e `db-test`), bloqueio de force push e de exclusão, e merge por squash. Como há um único operador, `enforce_admins` fica desligado e ele pode dar push direto em `main`; o CI roda em todo push e em todo PR.
 
-### 15.3 Fluxo de promoção
+### 15.3 Fluxo de trabalho
 
-1. `git switch -c feature/x develop`
+1. (Opcional) `git switch -c feature/x main`
 2. Desenvolvimento + testes locais.
-3. PR para `develop` → CI (lint, typecheck, unit, pgTAP, integração, build).
-4. Merge → `ci` aplica migrações no `confconf-dev` → Vercel publica Preview → QA manual na URL de teste.
-5. PR de release `develop` → `main` com checklist (migrações listadas, riscos, plano de rollback).
-6. Merge → migração em `confconf-prod` → deploy de produção → tag `vX.Y.Z`.
-7. Back-merge `main` → `develop`.
+3. Push em `main` (direto) ou PR de `feature/x` → CI (lint, typecheck, unit, pgTAP, integração, build).
+4. Migrações aplicadas no projeto `confConf` e deploy na Vercel.
+5. Tag `vX.Y.Z` ao fechar um marco.
 
-### 15.4 Migrações por ambiente
+### 15.4 Migrações
 
 - Fonte única em `supabase/migrations/`.
-- Teste: aplicadas automaticamente no merge para `develop`.
-- Produção: aplicadas por `release-migrate.yml` (workflow manual disparado na tag), com `supabase db push` e falha rápida.
+- Validação: Supabase local no CI (`db-test.yml`) antes de aplicar no projeto real.
+- Aplicação: `npm run ops:provision` (pela Management API, funciona sem a senha do banco) ou `supabase db push --remote` quando a senha estiver configurada.
 - Nunca editar migração aplicada; correção sempre em nova migração.
-- Antes do release: comparar `supabase db diff` entre a pasta e o projeto de teste (checagem de drift).
 
 ### 15.5 CI
 
 | Workflow | Gatilho | Jobs |
 |---|---|---|
-| `ci.yml` | PR para `develop`/`main` | instalar, lint, typecheck, unit com cobertura, build com env fictício |
-| `db-test.yml` | PR e merge em `develop` | `supabase start`, `db reset`, pgTAP, integração |
-| `e2e.yml` | merge em `develop` e manual | Playwright contra Preview |
-| `release-migrate.yml` | tag `v*` | `supabase db push` no `confconf-prod` |
+| `ci.yml` | push e PR em `main` | instalar, lint, typecheck, unit com cobertura, build com env fictício |
+| `db-test.yml` | push e PR em `main` | `supabase start`, `db reset`, pgTAP, integração |
+| `e2e.yml` | manual e nightly | Playwright |
 
 Requisitos: Node LTS, `npm ci`, cache de dependências, artefatos de cobertura e relatório de testes.
 
@@ -1432,11 +1428,9 @@ Requisitos: Node LTS, `npm ci`, cache de dependências, artefatos de cobertura e
 
 1. Importar `LeicsonBP/confConf` com preset **Next.js**, build `npm run build`, Node LTS.
 2. Configurar **Production Branch = `main`**.
-3. Variáveis por ambiente:
-   - Production: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `APP_SECRET`, `NEXT_PUBLIC_APP_URL` do projeto **prod**.
-   - Preview/Development: as mesmas variáveis do projeto **dev**.
-4. Onde obter cada valor: Dashboard do Supabase → Project Settings → API.
-5. Deploy de teste: merge em `develop` gera Preview estável (`<projeto>-git-develop-<escopo>.vercel.app`).
+3. Variáveis (Production e Preview usam o mesmo projeto `confConf`): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `APP_SECRET`, `NEXT_PUBLIC_APP_URL`.
+4. Onde obter cada valor: Dashboard do Supabase → Project Settings → API (ou `.ops/confconf.env`).
+5. Previews de PR são opcionais e usam o mesmo banco — nada destrutivo em preview.
 6. Checklist pós-importação: login admin, cadastro por convite, sorteio, recuperação, `robots.txt` bloqueando indexação de `/app` e `/admin`.
 7. `docs/deploy-vercel.md` terá o passo a passo com capturas de tela no M0.
 
@@ -1454,7 +1448,7 @@ O cliente fornece **entradas**; o agente executa o provisionamento. O que contin
 |---|---|---|---|
 | Token do GitHub | PAT clássico (ou fine-grained) | GitHub → Settings → Developer settings | `repo`, `workflow` |
 | Token do Supabase | `sbp_...` | Supabase → Account → Access Tokens | Acesso aos projetos da organização |
-| Confirmação de nomes/região | Texto | Resposta no chat | `confconf-dev`, `confconf-prod`, `sa-east-1` |
+| Confirmação do nome/região | Texto | Resposta no chat | `confConf` (região `us-east-1`) |
 
 Envio: colar no chat (D-10). O agente grava em arquivo local ignorado (`.ops/secrets.env`) e nos Secrets do GitHub.
 
@@ -1463,7 +1457,7 @@ Envio: colar no chat (D-10). O agente grava em arquivo local ignorado (`.ops/sec
 | Etapa | Ação |
 |---|---|
 | Ferramentas | Instalar `gh` (winget); usar `npx supabase` e `npx vercel` |
-| Supabase | Criar os dois projetos; capturar refs e chaves; configurar Auth (seção 9.10); aplicar migrações e seed de teste |
+| Supabase | Garantir o projeto `confConf`; capturar chaves; configurar Auth (seção 9.10); aplicar migrações (seed só local/CI) |
 | Banco | Criar admin master, imprimir credenciais uma vez, validar RPCs |
 | GitHub | Renomear remoto `confConf` → `origin`; proteger branches; criar labels, template de PR e issues; gravar Secrets; habilitar Actions |
 | CI | Commitar workflows e validar a primeira execução verde |
@@ -1490,19 +1484,19 @@ Envio: colar no chat (D-10). O agente grava em arquivo local ignorado (`.ops/sec
 ### 16.6 Sequência do M0
 
 1. Validar tokens e listar organizações/projeto.
-2. Criar `confconf-dev` e `confconf-prod`.
-3. Configurar Auth em ambos.
-4. Criar migrações iniciais + seed.
+2. Garantir o projeto `confConf` (criar se necessário).
+3. Configurar Auth.
+4. Criar migrações iniciais (seed apenas em local/CI).
 5. Configurar repositório (remoto, branches, proteções, labels, Secrets).
 6. Subir o esqueleto Next.js + CI e validar o primeiro pipeline verde.
 7. Criar o admin master e registrar credenciais com o cliente.
-8. Rodar `verify-env` e entregar o relatório.
+8. Rodar `npm run ops:provision` e entregar o relatório.
 
 ### 16.7 Limites do plano gratuito
 
 | Limite | Impacto | Mitigação |
 |---|---|---|
-| 2 projetos ativos | dev + prod usam todo o limite | Não criar projetos extras |
+| 2 projetos ativos | limite já consumido pelo cliente | ambiente único (D-14) |
 | Pausa por inatividade | Produção pode pausar | O-02: Pro na virada; runbook de reativação |
 | Sem backup automático | Sem restauração point-in-time | Exportar schema/dados periodicamente (script) |
 | Vercel Hobby não comercial | Uso pessoal apenas | Reavaliar se virar produto comercial |
@@ -1554,7 +1548,7 @@ Envio: colar no chat (D-10). O agente grava em arquivo local ignorado (`.ops/sec
 | ADR-0004 | Sorteio em função SQL transacional com Fisher–Yates |
 | ADR-0005 | RLS por papel e ausência de `service_role` fora da recuperação |
 | ADR-0006 | Captcha aritmético próprio |
-| ADR-0007 | Fluxo de branches `main`/`develop` e ambientes |
+| ADR-0007 | Branch única `main` e ambiente único (D-14) |
 | ADR-0008 | Admin pode visualizar o sorteio (substitui §3.3) |
 
 ### 17.4 Regra de documentação
@@ -1653,7 +1647,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-38 | Nenhuma decisão estrutural é implementada sem registro em D-/ADR e aprovação |
 | AC-39 | Documento traz comparativo dos 4 frameworks com notas e justificativa da escolha |
 | AC-40 | Os 11 entregáveis da Fase 1 estão presentes neste documento |
-| AC-41 | `develop` publica o ambiente de teste; `main` publica produção; nenhum merge em `main` sem CI verde |
+| AC-41 | `main` é a única branch de deploy; nenhum push em `main` sem CI verde e sem migração validada no Supabase local |
 | AC-42 | Provisionamento do Supabase e do repositório executado pelo agente; guia da Vercel entregue ao cliente |
 
 ---
@@ -1672,12 +1666,14 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | R-08 | Captcha aritmético é simples | Bots avançados resolvem | Throttle como defesa principal; captcha é primeira camada | Aceito (D-06) |
 | R-09 | `service_role` no servidor | Chave poderosa no ambiente da aplicação | Um único endpoint, `server-only`, auditoria, varredura | Aceito |
 | R-10 | Sem e-mail | Sem notificação e sem "esqueci minha senha" por e-mail | Recuperação por dois fatores + cartão de credenciais | Aceito |
+| R-11 | Sem ambiente isolado de teste (D-14) | Código e migração chegam juntos na produção | CI valida migrações no Supabase local; deploy da Vercel só após CI verde; runbook de rollback | **Aceite explícito do cliente (D-14)** |
 
 **Aceites que precisam da sua confirmação antes do M4** (podem ser dados no início da Fase 2):
 
 - [ ] R-01 — PIN mínimo de 4 dígitos, com captcha e bloqueio por tentativas.
 - [ ] R-02 — recuperação por identificador + data de nascimento.
 - [ ] R-03 — administrador pode revelar o sorteio (substitui §3.3).
+- [ ] R-11 — ambiente único, sem banco de teste separado (D-14).
 
 ---
 
@@ -1687,7 +1683,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 |---|---|---|---|
 | 1 | Colar o token do GitHub (escopos `repo`, `workflow`) | Cliente | Início do M0 |
 | 2 | Colar o token do Supabase (`sbp_...`) | Cliente | Início do M0 |
-| 3 | Confirmar nomes/região dos projetos (`confconf-dev`, `confconf-prod`, `sa-east-1`) | Cliente | Início do M0 |
+| 3 | Confirmar o projeto único (`confConf`) | Cliente | Início do M0 |
 | 4 | Confirmar os aceites R-01, R-02 e R-03 | Cliente | Antes do M4 |
 | 5 | Importar o projeto na Vercel e cadastrar as variáveis | Cliente | M7 |
 | 6 | Rotacionar os tokens usados no setup | Cliente | Fim do M0 |
@@ -1710,8 +1706,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | PIN | Senha numérica de 4 a 8 dígitos do participante |
 | Identificador | Login do participante, derivado do nome + 3 dígitos |
 | Canhoto | Parte destacável do ingresso; metáfora do cartão de credenciais |
-| `develop` | Branch de integração que alimenta o ambiente de teste |
-| `main` | Branch de produção |
+| `main` | Única branch de trabalho e deploy (D-14) |
 
 ### 22.2 Referências
 
@@ -1727,6 +1722,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | Versão | Data | Alteração |
 |---|---|---|
 | 1.0 | 2026-11-14 | Consolidação da Fase 1: 11 entregáveis, D-01 a D-13, ambientes/branches e operação assistida por agente |
+| 1.1 | 2026-11-14 | D-14: ambiente único e trabalho direto na `main`; ajuste das seções 1, 2, 4, 15, 16, 20 e 21 |
 
 ---
 

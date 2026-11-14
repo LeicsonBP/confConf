@@ -55,7 +55,7 @@ Aplicação em `http://localhost:3000`. Healthcheck em `GET /api/health`.
 | `npm run db:types` | regenerar tipos do banco |
 | `npm run e2e` | Playwright (a partir do M2) |
 
-> Sem Docker na máquina, o desenvolvimento usa o projeto Supabase de teste (`confconf-dev`). O CI usa Supabase local nos runners do GitHub.
+> Sem Docker na máquina, o desenvolvimento usa o projeto Supabase `confConf` (mesmo banco da produção — cuidado com comandos destrutivos). O CI usa Supabase local nos runners do GitHub.
 
 ## Estrutura
 
@@ -70,15 +70,16 @@ supabase/                # migrações, seed e testes pgTAP
 proxy.ts                 # renovação de sessão (novo nome do middleware no Next 16)
 ```
 
-## Ambientes e branches
+## Ambiente e branches
 
-| Branch | Ambiente | Banco |
+Projeto **single-environment** por decisão do cliente (limite de 2 projetos do Supabase Free já em uso): não há banco de teste separado — a validação acontece no **Supabase local** dentro do CI antes de qualquer merge.
+
+| Branch | Uso | Banco |
 |---|---|---|
-| `feature/*`, `fix/*` | PR | — |
-| `develop` | **teste** (Vercel Preview) | `confconf-dev` |
-| `main` | **produção** (Vercel Production) | `confconf-prod` |
+| `main` | única branch de trabalho e deploy | `confConf` (produção) |
+| `feature/*`, `fix/*`, `docs/*` | opcional, para mudanças maiores | — |
 
-Nenhum merge em `main` sem CI verde. Detalhes em [`docs/environments.md`](./docs/environments.md) e no guia [`docs/deploy-vercel.md`](./docs/deploy-vercel.md).
+Todo push em `main` roda CI (lint, tipos, testes, build) e valida as migrações em Supabase local. Detalhes em [`docs/environments.md`](./docs/environments.md) e no guia [`docs/deploy-vercel.md`](./docs/deploy-vercel.md).
 
 ## Documentação
 
