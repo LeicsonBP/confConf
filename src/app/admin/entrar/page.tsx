@@ -26,7 +26,9 @@ export default async function AdminLoginPage() {
       </Link>
 
       <TicketCard className="p-8 sm:p-10">
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">Portaria</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">
+          Área do administrador
+        </p>
         <h1 className="mt-3 font-display text-4xl leading-none">Entrar no painel</h1>
         <p className="mt-3 text-sm text-ink-soft">
           Acesso exclusivo do administrador master. Sessão protegida por captcha e limite de

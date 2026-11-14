@@ -58,7 +58,7 @@ export async function createEvent(
   });
 
   if (error) {
-    return { error: "Não foi possível criar o evento. Tente novamente." };
+    return { error: "Não foi possível criar a confraternização. Tente novamente." };
   }
 
   revalidatePath("/admin");
@@ -73,7 +73,7 @@ export async function updateEvent(
 
   const eventId = String(formData.get("eventId") ?? "");
   if (!UUID_PATTERN.test(eventId)) {
-    return { error: "Evento inválido." };
+    return { error: "Confraternização inválida." };
   }
 
   const parsed = parseEventFormData(formData);
@@ -104,7 +104,7 @@ export async function deleteEvent(
   const confirmation = String(formData.get("confirmation") ?? "").trim();
 
   if (!UUID_PATTERN.test(eventId)) {
-    return { error: "Evento inválido." };
+    return { error: "Confraternização inválida." };
   }
 
   const supabase = await createClient();
@@ -115,17 +115,17 @@ export async function deleteEvent(
     .maybeSingle();
 
   if (readError || !event) {
-    return { error: "Evento não encontrado." };
+    return { error: "Confraternização não encontrada." };
   }
 
   if (confirmation !== event.name) {
-    return { error: "Digite o nome exato do evento para confirmar a exclusão." };
+    return { error: "Digite o nome exato da confraternização para confirmar a exclusão." };
   }
 
   const { error } = await supabase.from("events").delete().eq("id", eventId);
 
   if (error) {
-    return { error: "Não foi possível excluir o evento." };
+    return { error: "Não foi possível excluir a confraternização." };
   }
 
   revalidatePath("/admin");

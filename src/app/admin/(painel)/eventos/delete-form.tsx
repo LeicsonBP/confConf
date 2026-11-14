@@ -23,7 +23,7 @@ export function DeleteEventForm({ action, eventId, eventName }: DeleteEventFormP
       <Field
         label={`Digite "${eventName}" para confirmar`}
         htmlFor="confirmation"
-        hint="A exclusão remove participantes, convites, listas e relatos deste evento."
+        hint="A exclusão remove participantes, convites, listas e relatos desta confraternização."
         required
       >
         <input
@@ -43,7 +43,7 @@ export function DeleteEventForm({ action, eventId, eventName }: DeleteEventFormP
       ) : null}
 
       <Button type="submit" variant="danger" disabled={pending}>
-        {pending ? "Excluindo..." : "Excluir evento"}
+        {pending ? "Excluindo..." : "Excluir confraternização"}
       </Button>
     </form>
   );

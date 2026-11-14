@@ -15,7 +15,7 @@ import { EventForm } from "../event-form";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Evento",
+  title: "Confraternização",
   robots: { index: false, follow: false },
 };
 
@@ -40,7 +40,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           href="/admin"
           className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint"
         >
-          ← Eventos
+          ← Confraternizações
         </Link>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -52,7 +52,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           </div>
           <div className="flex flex-wrap gap-2">
             <Stamp tone={event.has_secret_santa ? "stamp" : "ink"}>
-              {event.has_secret_santa ? "Com sorteio" : "Sem sorteio"}
+              {event.has_secret_santa ? "Com amigo secreto" : "Sem amigo secreto"}
             </Stamp>
             {event.max_gift_cents !== null ? (
               <Stamp tone="bottle">Até R$ {formatCentsToBrl(event.max_gift_cents)}</Stamp>
@@ -63,7 +63,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
 
       <TicketCard className="p-6 sm:p-8">
         <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
-          Dados do evento
+          Dados da confraternização
         </h2>
         <div className="mt-5">
           <EventForm
@@ -84,10 +84,12 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       </TicketCard>
 
       <TicketCard className="border-stamp p-6 sm:p-8">
-        <h2 className="font-display text-2xl leading-none text-stamp">Excluir evento</h2>
+        <h2 className="font-display text-2xl leading-none text-stamp">
+          Excluir confraternização
+        </h2>
         <p className="mt-2 text-sm text-ink-soft">
-          Ação irreversível. Participantes, convites, listas de desejos e relatos deste evento serão
-          apagados junto.
+          Ação irreversível. Participantes, convites, listas de desejos e relatos desta
+          confraternização serão apagados junto.
         </p>
         <PerforatedDivider />
         <div className="mt-5">

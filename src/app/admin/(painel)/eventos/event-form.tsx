@@ -43,7 +43,7 @@ export function EventForm({ action, initial = emptyValues, eventId, submitLabel 
               required
               defaultValue={initial.name}
               className={inputClassName}
-              placeholder="Confraternização da equipe"
+              placeholder="Confraternização da família"
               aria-invalid={fieldError("name") ? true : undefined}
             />
           </Field>
@@ -95,8 +95,14 @@ export function EventForm({ action, initial = emptyValues, eventId, submitLabel 
           />
         </Field>
 
-        <div className="flex items-end">
-          <label className="flex items-center gap-3 border-2 border-ink bg-paper px-3 py-2.5">
+        <div className="flex flex-col gap-1.5">
+          <span
+            aria-hidden="true"
+            className="font-mono text-[11px] uppercase tracking-[0.15em] text-ink-soft"
+          >
+            &nbsp;
+          </span>
+          <label className="flex h-12 items-center gap-3 border-2 border-ink bg-paper px-3">
             <input
               type="checkbox"
               name="hasSecretSanta"
@@ -108,7 +114,11 @@ export function EventForm({ action, initial = emptyValues, eventId, submitLabel 
         </div>
 
         <div className="sm:col-span-2">
-          <Field label="Descrição do evento" htmlFor="description" error={fieldError("description")}>
+          <Field
+            label="Descrição da confraternização"
+            htmlFor="description"
+            error={fieldError("description")}
+          >
             <textarea
               id="description"
               name="description"

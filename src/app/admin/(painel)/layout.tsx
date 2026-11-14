@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await requireAdmin();
+  await requireAdmin();
 
   return (
     <div className="min-h-screen">
@@ -23,19 +23,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link href="/admin" className="font-display text-2xl leading-none">
               confConf
             </Link>
-            <Stamp tone="stamp">Portaria</Stamp>
+            <Stamp tone="stamp">Área do administrador</Stamp>
           </div>
 
-          <div className="flex items-center gap-5">
-            <span className="hidden font-mono text-[11px] text-ink-soft sm:inline">
-              {session.email}
-            </span>
-            <form action={signOutAdmin}>
-              <Button type="submit" variant="ghost">
-                Sair
-              </Button>
-            </form>
-          </div>
+          <form action={signOutAdmin}>
+            <Button type="submit" variant="ghost">
+              Sair
+            </Button>
+          </form>
         </div>
       </header>
 

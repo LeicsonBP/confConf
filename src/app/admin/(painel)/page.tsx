@@ -8,7 +8,7 @@ import { formatEventDate } from "@/modules/events/domain/event";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Eventos",
+  title: "Confraternizações",
   robots: { index: false, follow: false },
 };
 
@@ -41,22 +41,26 @@ export default async function AdminEventsPage() {
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">Portaria</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">
+            Área do administrador
+          </p>
           <h1 className="mt-2 font-display text-4xl leading-none">Confraternizações</h1>
           <p className="mt-2 text-sm text-ink-soft">
             {list.length === 0
-              ? "Nenhum evento cadastrado ainda."
-              : `${list.length} evento(s) cadastrado(s).`}
+              ? "Nenhuma confraternização cadastrada ainda."
+              : list.length === 1
+                ? "1 confraternização cadastrada."
+                : `${list.length} confraternizações cadastradas.`}
           </p>
         </div>
         <ButtonLink href="/admin/eventos/novo" variant="primary">
-          Novo evento
+          Nova confraternização
         </ButtonLink>
       </div>
 
       {error ? (
         <p role="alert" className="border-2 border-stamp px-3 py-2 text-sm text-stamp">
-          Não foi possível carregar os eventos. Recarregue a página.
+          Não foi possível carregar as confraternizações. Recarregue a página.
         </p>
       ) : null}
 
@@ -64,11 +68,11 @@ export default async function AdminEventsPage() {
         <TicketCard className="p-8 text-center">
           <p className="font-display text-2xl">A festa começa com um convite</p>
           <p className="mt-2 text-sm text-ink-soft">
-            Crie o primeiro evento para depois gerar os links de convite dos participantes.
+            Crie a primeira confraternização para depois gerar os convites dos participantes.
           </p>
           <div className="mt-6 flex justify-center">
             <ButtonLink href="/admin/eventos/novo" variant="primary">
-              Criar primeiro evento
+              Criar primeira confraternização
             </ButtonLink>
           </div>
         </TicketCard>
@@ -88,7 +92,7 @@ export default async function AdminEventsPage() {
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                       <Stamp tone={event.has_secret_santa ? "stamp" : "ink"}>
-                        {event.has_secret_santa ? "Com sorteio" : "Sem sorteio"}
+                        {event.has_secret_santa ? "Com amigo secreto" : "Sem amigo secreto"}
                       </Stamp>
                       <Stamp tone="bottle">
                         {counts.get(event.id) ?? 0} participante(s)
@@ -97,7 +101,7 @@ export default async function AdminEventsPage() {
                   </div>
                   <PerforatedDivider />
                   <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
-                    Abrir ingresso →
+                    Acessar confraternização →
                   </p>
                 </TicketCard>
               </Link>
