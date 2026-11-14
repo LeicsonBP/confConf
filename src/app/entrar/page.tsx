@@ -20,12 +20,12 @@ export default async function ParticipantLoginPage() {
   const { question, token } = createCaptcha();
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center gap-6 px-6 py-16">
+    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-3 px-6 py-5">
       <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-faint">
         ← confConf
       </Link>
 
-      <TicketCard className="p-8 sm:p-10">
+      <TicketCard className="p-6 sm:p-8">
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">
           Área do participante
         </p>
@@ -34,11 +34,11 @@ export default async function ParticipantLoginPage() {
           Use o usuário que você recebeu no cadastro e a senha que você definiu.
         </p>
 
-        <div className="mt-8">
+        <div className="mt-6">
           <ParticipantLoginForm question={question} token={token} />
         </div>
 
-        <p className="mt-8 text-sm text-ink-soft">
+        <p className="mt-6 text-sm text-ink-soft">
           Esqueceu o acesso?{" "}
           <Link href="/recuperar" className="underline decoration-2 underline-offset-4">
             Recuperar senha

@@ -17,28 +17,30 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   await requireAdmin();
 
   return (
-    <div className="min-h-screen">
+    <div className="flex flex-1 flex-col">
       <header className="border-b-2 border-ink bg-paper-2 print:hidden">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="mx-auto max-w-5xl px-6 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <Link href="/admin" className="font-display text-2xl leading-none">
               confConf
             </Link>
-            <Stamp tone="stamp">
-              <span className="inline-flex items-center gap-1.5">
-                <IconShield size={12} />
-                Área do administrador
-              </span>
-            </Stamp>
+            <div className="ml-auto">
+              <HeaderNav signOut={signOutAdmin} />
+            </div>
           </div>
 
-          <div className="ml-auto">
-            <HeaderNav signOut={signOutAdmin} />
-          </div>
+          <div aria-hidden="true" className="my-3 border-t-2 border-dashed border-ink-faint" />
+
+          <Stamp tone="stamp">
+            <span className="inline-flex items-center gap-1.5">
+              <IconShield size={12} />
+              Área do administrador
+            </span>
+          </Stamp>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl px-6 py-10">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">{children}</main>
     </div>
   );
 }

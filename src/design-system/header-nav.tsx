@@ -11,7 +11,7 @@ interface HeaderNavProps {
 }
 
 const linkClass =
-  "inline-flex items-center gap-2 border-2 border-ink bg-transparent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.15em] text-ink transition-colors hover:bg-paper-3";
+  "inline-flex items-center gap-2 border-2 border-ink bg-transparent px-4 py-2.5 font-mono text-[11px] leading-4 uppercase tracking-[0.15em] text-ink transition-colors hover:bg-paper-3";
 
 export function HeaderNav({ profileHref, signOut }: HeaderNavProps) {
   const [open, setOpen] = useState(false);
@@ -25,7 +25,11 @@ export function HeaderNav({ profileHref, signOut }: HeaderNavProps) {
           </Link>
         ) : null}
         <form action={signOut}>
-          <Button type="submit" variant="outline" className="px-4 py-2 text-[11px]">
+          <Button
+            type="submit"
+            variant="outline"
+            className="px-4 py-2.5 text-[11px] leading-4"
+          >
             Sair
           </Button>
         </form>
@@ -54,7 +58,11 @@ export function HeaderNav({ profileHref, signOut }: HeaderNavProps) {
               </Link>
             ) : null}
             <form action={signOut}>
-              <Button type="submit" variant="outline" className="w-full justify-start px-4 py-2 text-[11px]">
+              <Button
+                type="submit"
+                variant="outline"
+                className="w-full justify-start px-4 py-2.5 text-[11px] leading-4"
+              >
                 Sair
               </Button>
             </form>

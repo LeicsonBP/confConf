@@ -59,22 +59,28 @@ export default function RootLayout({
         <div id="conteudo" className="flex flex-1 flex-col" tabIndex={-1}>
           {children}
         </div>
-        <footer className="border-t-2 border-ink bg-paper-2 px-6 py-5 text-center text-ink-soft print:hidden">
-          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm">
-            <span className="inline-flex items-center gap-1.5 font-display text-ink">
-              <IconTicket size={15} />
-              confConf
-            </span>
-            <span aria-hidden="true">·</span>
-            <span>Feito para reunir gente querida.</span>
-            <span aria-hidden="true">·</span>
-            <Link href="/privacidade" className="underline decoration-2 underline-offset-4">
-              Privacidade e dados
-            </Link>
-          </p>
-          <p className="mt-1.5 text-sm font-bold text-ink">
-            Programado por DeepSeek, sob o julgamento, pressão, chicotadas e supervisão do Leicson.
-          </p>
+        <footer className="bg-paper-2 px-6 pb-5 print:hidden">
+          <div className="mx-auto max-w-5xl">
+            <div aria-hidden="true" className="border-t-2 border-dashed border-ink-faint" />
+            <div className="pt-4 text-center">
+              <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm">
+                <span className="inline-flex items-center gap-1.5 font-display text-ink">
+                  <IconTicket size={15} />
+                  confConf
+                </span>
+                <span aria-hidden="true">·</span>
+                <span>Feito para reunir gente querida.</span>
+                <span aria-hidden="true">·</span>
+                <Link href="/privacidade" className="underline decoration-2 underline-offset-4">
+                  Privacidade e dados
+                </Link>
+              </p>
+              <p className="mt-1.5 text-sm font-bold text-ink">
+                Programado por DeepSeek, sob o julgamento, pressão, chicotadas e supervisão do
+                Leicson.
+              </p>
+            </div>
+          </div>
         </footer>
       </body>
     </html>

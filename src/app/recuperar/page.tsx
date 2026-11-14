@@ -16,7 +16,7 @@ export default function RecoveryPage() {
   const second = createCaptcha();
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center gap-6 px-6 py-16">
+    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-6 px-6 py-8 sm:py-12">
       <Link href="/entrar" className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-faint">
         ← Entrar
       </Link>
