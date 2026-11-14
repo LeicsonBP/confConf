@@ -30,10 +30,7 @@ export default async function AdminLoginPage() {
           Área do administrador
         </p>
         <h1 className="mt-3 font-display text-4xl leading-none">Entrar no painel</h1>
-        <p className="mt-3 text-sm text-ink-soft">
-          Acesso exclusivo do administrador master. Sessão protegida por captcha e limite de
-          tentativas do Supabase Auth.
-        </p>
+        <p className="mt-3 text-sm text-ink-soft">Tá fazendo o que aqui? Eu hein.</p>
         <div className="mt-8">
           <LoginForm question={question} token={token} />
         </div>

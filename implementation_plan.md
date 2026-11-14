@@ -65,6 +65,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-15 | **Link de convite reutilizável e sempre visível** ao admin (usos ilimitados por padrão); token guardado cifrado | Cliente (2026-11-14) | Revoga o "uso único/uma exibição"; ver ADR-0009 |
 | D-16 | **Usuário do participante = primeiro nome normalizado + 3 dígitos** (ex.: `leicson745`), sem símbolos, acentos ou hífen | Cliente (2026-11-14) | Sub­stitui o identificador baseado no nome completo; identificadores antigos continuam válidos |
 | D-17 | **Endereço completo do evento** como campo opcional, exibido aos convidados junto com o local | Cliente (2026-11-14) | Novo campo em `events.address`, sem alterar o `location` |
+| D-18 | **Participante pertence a uma única confraternização**; a área do participante abre direto o evento, sem tela de seleção | Cliente (2026-11-14) | `/app` redireciona para o evento do participante |
 
 ---
 
@@ -222,7 +223,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-22 | Item da lista de desejos exige título (1–120 caracteres); link é opcional e precisa ser `http(s)` |
 | BR-23 | A lista de desejos é visível ao dono e ao participante sorteado para ele, **depois** do sorteio; nunca ao administrador |
 | BR-24 | Relato de problema é categorizado (`recebi_eu_mesmo`, `nao_recebi`, `outro`), com mensagem de 10 a 2000 caracteres, e pode ser resolvido pelo admin |
-| BR-25 | Após o sorteio, participantes não podem ser removidos nem adicionados |
+| BR-25 | Após o sorteio, participantes não podem ser removidos nem adicionados; antes do sorteio o administrador pode remover um participante (remoção física, com registro em auditoria) |
 | BR-26 | Excluir um evento remove em cascata participantes, convites, pares, listas e relatos após confirmação digitada |
 | BR-27 | Falhas de login não revelam se a conta existe |
 | BR-28 | Recuperação exige identificador e data de nascimento corretos, mais captcha e limite de tentativas |
@@ -1733,6 +1734,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.2 | 2026-11-14 | D-15: link de convite reutilizável e sempre visível (token cifrado); ajuste de BR-06, tabela `invites`, RLS e AC-04 |
 | 1.3 | 2026-11-14 | D-16/D-17: usuário = primeiro nome + 3 dígitos e campo endereço; ajustes de BR-03, BR-07, tabelas e ACs |
 | 1.4 | 2026-11-14 | M2 concluído: login do participante, área inicial (`/app`) e recuperação de acesso com throttle; rota `/api/recuperacao` com `service_role` |
+| 1.5 | 2026-11-14 | D-18: área do participante com evento único; lista de participantes no admin com remoção (BR-25) |
 
 ---
 

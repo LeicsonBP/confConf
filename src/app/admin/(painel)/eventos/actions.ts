@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/modules/auth/server/session";
 import { eventInputSchema, toEventRow } from "@/modules/events/domain/event";
@@ -93,6 +94,40 @@ export async function updateEvent(
   revalidatePath("/admin");
   revalidatePath(`/admin/eventos/${eventId}`);
   redirect(`/admin/eventos/${eventId}`);
+}
+
+export async function removeParticipant(
+  _previous: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  await requireAdmin();
+
+  const parsed = z
+    .object({ eventId: z.string().regex(UUID_PATTERN), participantId: z.string().regex(UUID_PATTERN) })
+    .safeParse({
+      eventId: formData.get("eventId"),
+      participantId: formData.get("participantId"),
+    });
+
+  if (!parsed.success) {
+    return { error: "Participante inválido." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_remove_participant", {
+    p_event: parsed.data.eventId,
+    p_participant: parsed.data.participantId,
+  });
+
+  if (error) {
+    if (error.message.includes("depois do sorteio")) {
+      return { error: "Não é possível remover participantes depois do sorteio." };
+    }
+    return { error: "Não foi possível remover o participante." };
+  }
+
+  revalidatePath(`/admin/eventos/${parsed.data.eventId}`);
+  return { success: true };
 }
 
 export async function deleteEvent(

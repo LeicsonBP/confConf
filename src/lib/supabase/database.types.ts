@@ -437,6 +437,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_remove_participant: {
+        Args: { p_event: string; p_participant: string }
+        Returns: undefined
+      }
       am_i_admin: { Args: never; Returns: boolean }
       bootstrap_admin: {
         Args: { p_note?: string; p_user_id: string }

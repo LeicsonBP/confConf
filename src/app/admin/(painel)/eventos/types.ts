@@ -1,5 +1,6 @@
 export interface EventFormState {
   error?: string;
+  success?: boolean;
   fieldErrors?: Record<string, string>;
 }
 

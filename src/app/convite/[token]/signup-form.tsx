@@ -36,7 +36,7 @@ export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProp
       <div>
         <h2 className="font-display text-2xl leading-none">Seus dados</h2>
         <p className="mt-2 text-sm text-ink-soft">
-          No fim você recebe seu usuário e senha para acessar a área do participante.
+          No fim você recebe seu usuário de acesso. A senha é a que você definir aqui.
         </p>
       </div>
 

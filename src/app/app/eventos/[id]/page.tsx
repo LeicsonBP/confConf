@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Stamp, TicketCard } from "@/design-system/ticket";
 import { createClient } from "@/lib/supabase/server";
@@ -31,12 +30,9 @@ export default async function ParticipantEventPage({
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <Link
-          href="/app"
-          className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint"
-        >
-          ← Minhas confraternizações
-        </Link>
+        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-stamp">
+          Minha confraternização
+        </p>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="font-display text-4xl leading-none">{event.name}</h1>
@@ -99,7 +95,7 @@ export default async function ParticipantEventPage({
       </TicketCard>
 
       <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
-        Sorteio e lista de desejos chegam no próximo marco.
+        Em breve: sorteio e lista de desejos.
       </p>
     </div>
   );

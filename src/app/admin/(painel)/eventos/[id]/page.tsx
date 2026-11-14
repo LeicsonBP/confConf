@@ -15,13 +15,28 @@ import {
   inviteStatusLabel,
 } from "@/modules/invites/domain/invite";
 import { decryptInviteToken } from "@/modules/invites/server/token";
-import { deleteEvent, updateEvent } from "../actions";
+import { deleteEvent, removeParticipant, updateEvent } from "../actions";
 import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
 import { createInvite, revokeInvite } from "../invite-actions";
 import { InviteForm } from "./invite-form";
 import { InviteLink } from "./invite-link";
+import { RemoveParticipantForm } from "./remove-participant-form";
 import { RevokeInviteForm } from "./revoke-form";
+
+const RESTRICTION_LABELS: Record<string, string> = {
+  vegetariano: "Vegetariano",
+  vegano: "Vegano",
+  sem_lactose: "Sem lactose",
+  sem_gluten: "Sem glúten",
+  outra: "Outra",
+};
+
+function formatBirthDate(value: string): string {
+  const [year, month, day] = value.split("-");
+  if (!year || !month || !day) return value;
+  return `${day}/${month}/${year}`;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +64,24 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
     .select("id,label,expires_at,used_count,max_uses,revoked_at,token_ciphertext")
     .eq("event_id", id)
     .order("created_at", { ascending: false });
+
+  const { data: participants } = await supabase
+    .from("event_participants")
+    .select("id,user_id,dietary_restrictions,dietary_other,joined_at")
+    .eq("event_id", id)
+    .is("removed_at", null)
+    .order("joined_at", { ascending: true });
+
+  let profiles: { id: string; full_name: string; username: string; birth_date: string }[] = [];
+  const userIds = (participants ?? []).map((participant) => participant.user_id);
+  if (userIds.length > 0) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id,full_name,username,birth_date")
+      .in("id", userIds);
+    profiles = data ?? [];
+  }
+  const profileMap = new Map(profiles.map((profile) => [profile.id, profile]));
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const now = new Date();
@@ -125,6 +158,71 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             }}
           />
         </div>
+      </TicketCard>
+
+      <TicketCard className="p-6 sm:p-8">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-soft">
+              Participantes
+            </h2>
+            <p className="mt-2 text-sm text-ink-soft">
+              {(participants ?? []).length === 0
+                ? "Ninguém entrou ainda. Compartilhe um link de convite."
+                : `${(participants ?? []).length} pessoa(s) confirmada(s) neste evento.`}
+            </p>
+          </div>
+        </div>
+
+        <PerforatedDivider className="my-8" />
+
+        {(participants ?? []).length === 0 ? (
+          <p className="text-sm text-ink-faint">Nenhum participante cadastrado.</p>
+        ) : (
+          <ul className="flex flex-col gap-4">
+            {(participants ?? []).map((participant) => {
+              const profile = profileMap.get(participant.user_id);
+              const restrictions = participant.dietary_restrictions ?? [];
+
+              return (
+                <li key={participant.id} className="border-2 border-ink bg-paper p-5 sm:p-6">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="font-display text-lg leading-tight">
+                        {profile?.full_name ?? "Participante"}
+                      </p>
+                      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-faint">
+                        {profile?.username ?? participant.user_id}
+                        {profile?.birth_date ? ` · ${formatBirthDate(profile.birth_date)}` : ""}
+                      </p>
+
+                      {restrictions.length > 0 ? (
+                        <p className="mt-2 text-sm text-ink-soft">
+                          Restrições:{" "}
+                          {restrictions.map((value) => RESTRICTION_LABELS[value] ?? value).join(", ")}
+                        </p>
+                      ) : (
+                        <p className="mt-2 text-sm text-ink-faint">Sem restrições informadas</p>
+                      )}
+
+                      {participant.dietary_other ? (
+                        <p className="mt-1 text-sm text-ink-soft">
+                          Detalhe: {participant.dietary_other}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <RemoveParticipantForm
+                      action={removeParticipant}
+                      eventId={event.id}
+                      participantId={participant.id}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </TicketCard>
 
       <TicketCard className="p-6 sm:p-8">

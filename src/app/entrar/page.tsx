@@ -31,7 +31,7 @@ export default async function ParticipantLoginPage() {
         </p>
         <h1 className="mt-3 font-display text-4xl leading-none">Entrar</h1>
         <p className="mt-3 text-sm text-ink-soft">
-          Use o usuário e a senha que você recebeu no cadastro.
+          Use o usuário que você recebeu no cadastro e a senha que você definiu.
         </p>
 
         <div className="mt-8">

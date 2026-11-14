@@ -16,6 +16,12 @@ export default function HomePage() {
           >
             Área do Administrador
           </Link>
+          <Link
+            href="/entrar"
+            className="inline-flex items-center justify-center border-2 border-ink bg-transparent px-8 py-3 text-sm font-medium tracking-wide text-ink transition-colors hover:bg-paper-3"
+          >
+            Área do Participante
+          </Link>
         </div>
       </section>
     </main>
