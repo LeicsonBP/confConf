@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Alfa_Slab_One, IBM_Plex_Mono, Spline_Sans } from "next/font/google";
 import { IconTicket } from "@/design-system/icons";
+import { ServiceWorkerRegister } from "@/design-system/service-worker";
 import "./globals.css";
 
 const display = Alfa_Slab_One({
@@ -48,6 +49,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="flex min-h-dvh flex-col">
+        <ServiceWorkerRegister />
         <a
           href="#conteudo"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:border-2 focus:border-ink focus:bg-paper focus:px-4 focus:py-2 focus:text-sm focus:font-medium"
