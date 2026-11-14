@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PerforatedDivider, TicketCard } from "@/design-system/ticket";
 import { createClient } from "@/lib/supabase/server";
 import { sha256Hex } from "@/lib/crypto";
@@ -97,7 +98,16 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
 
         <PerforatedDivider className="my-8" />
 
-        <SignupForm tokenHash={tokenHash} question={question} captchaToken={captchaToken} />
+        <div className="mt-6">
+          <SignupForm tokenHash={tokenHash} question={question} captchaToken={captchaToken} />
+        </div>
+
+        <p className="mt-8 text-sm text-ink-soft">
+          Já tem cadastro?{" "}
+          <Link href="/entrar" className="underline decoration-2 underline-offset-4">
+            Entrar na sua área
+          </Link>
+        </p>
       </TicketCard>
     </main>
   );

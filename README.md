@@ -7,7 +7,7 @@ O produto tem identidade visual própria — ingresso/talão retrô, papel kraft
 ## Status
 
 - **Fase 1 (planejamento e arquitetura):** concluída — veja [`implementation_plan.md`](./implementation_plan.md).
-- **Fase 2 (implementação):** em andamento — **M0** (fundação) e **M1** (login do admin, painel e CRUD de eventos) concluídos.
+- **Fase 2 (implementação):** em andamento — **M0** (fundação), **M1** (admin e confraternizações) e **M2** (convites, cadastro, login e recuperação) concluídos; **M3** iniciado (área do participante).
 
 ## Stack
 

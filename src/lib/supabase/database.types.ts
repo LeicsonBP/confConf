@@ -443,6 +443,14 @@ export type Database = {
         Returns: undefined
       }
       invite_preview: { Args: { p_token_hash: string }; Returns: Json }
+      recovery_throttle: {
+        Args: { p_key: string; p_max: number; p_window_seconds: number }
+        Returns: {
+          allowed: boolean
+          retry_after_seconds: number
+        }[]
+      }
+      recovery_throttle_reset: { Args: { p_key: string }; Returns: undefined }
       redeem_invite: {
         Args: {
           p_birth_date: string

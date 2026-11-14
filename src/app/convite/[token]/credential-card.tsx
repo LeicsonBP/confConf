@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/design-system/button";
 import { formatEventDate } from "@/modules/events/domain/event";
@@ -150,8 +151,14 @@ export function CredentialCard(credentials: SignupCredentials) {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-4">
-        <Button type="button" onClick={saveImage}>
+      <div className="flex flex-wrap items-center gap-3">
+        <Link
+          href="/app"
+          className="inline-flex items-center justify-center border-2 border-ink bg-ink px-6 py-2.5 font-mono text-xs uppercase tracking-[0.15em] text-paper transition-colors hover:border-stamp hover:bg-stamp"
+        >
+          Acessar minha área
+        </Link>
+        <Button type="button" variant="secondary" onClick={saveImage}>
           Salvar como imagem
         </Button>
         {saved ? (
