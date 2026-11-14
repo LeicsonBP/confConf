@@ -31,11 +31,7 @@ export interface RestrictedEstimate {
   note: string;
   count: number;
   quantity: number;
-}
-
-export interface PackagingOption {
-  label: string;
-  count: number;
+  display: string;
 }
 
 export interface FoodEstimate {
@@ -44,8 +40,8 @@ export interface FoodEstimate {
   unit: QuantityUnit;
   quantity: number;
   note: string;
-  /** Formas de compra (garrafas, sacos) quando aplicável. */
-  packaging?: PackagingOption[];
+  /** Resultado já na unidade de compra (garrafas, sacos, unidades). */
+  display: string;
   restricted?: RestrictedEstimate;
 }
 
@@ -89,9 +85,7 @@ const BOTTLE_SIZES = [
   { ml: 2000, label: "2 L" },
 ] as const;
 
-const ICE_BAG_GRAMS = 5000;
-
-/**
+const ICE_BAG_GRAMS = 5000;/**
  * Médias por pessoa baseadas em referências de festas (M5, D-25):
  * salgados 12–15 quando são a comida principal, doces 5–6, bolo ~100 g,
  * refrigerante ~400 ml, água ~500 ml, gelo ~500 g.
@@ -156,6 +150,65 @@ export function roundUpToFive(value: number): number {
   return Math.ceil(value / 5) * 5;
 }
 
+function plural(count: number, singular: string, pluralForm: string): string {
+  return `${count} ${count === 1 ? singular : pluralForm}`;
+}
+
+interface BottleChoice {
+  count: number;
+  label: string;
+}
+
+/**
+ * Menor embalagem que atende: abaixo de 2 L usa uma garrafa do tamanho
+ * imediatamente acima; a partir de 2 L usa garrafas de 2 L.
+ */
+function chooseBottle(totalMl: number): BottleChoice | null {
+  if (totalMl <= 0) return null;
+
+  if (totalMl < 2000) {
+    const size = BOTTLE_SIZES.find((option) => option.ml >= totalMl) ?? {
+      ml: 500,
+      label: "500 ml",
+    };
+    return { count: 1, label: size.label };
+  }
+
+  const size = BOTTLE_SIZES[3] ?? { ml: 2000, label: "2 L" };
+  return { count: Math.ceil(totalMl / size.ml), label: size.label };
+}
+
+function displayFor(key: string, quantity: number): string {
+  switch (key) {
+    case "salgados":
+      return plural(quantity, "salgado", "salgados");
+    case "doces":
+      return plural(quantity, "doce", "doces");
+    case "bolo":
+      return formatQuantity(quantity, "g");
+    case "refrigerante":
+    case "agua": {
+      const bottle = chooseBottle(quantity);
+      if (!bottle) return "0 garrafas";
+      return `${plural(bottle.count, "garrafa", "garrafas")} de ${bottle.label}`;
+    }
+    case "gelo": {
+      const bags = Math.ceil(quantity / ICE_BAG_GRAMS);
+      return `${plural(bags, "saco", "sacos")} de 5 kg`;
+    }
+    case "descartaveis":
+      return plural(quantity, "jogo", "jogos");
+    default:
+      return formatQuantity(quantity, "un");
+  }
+}
+
+function restrictedDisplayFor(key: string, quantity: number): string {
+  if (key === "doces") return plural(quantity, "doce", "doces");
+  if (key === "bolo") return formatQuantity(quantity, "g");
+  return formatQuantity(quantity, "un");
+}
+
 function hasRestriction(participant: FoodParticipant, value: string): boolean {
   return participant.restrictions.includes(value);
 }
@@ -202,30 +255,18 @@ export function buildFoodPlan(
       const quantity =
         total === 0 ? 0 : rule.precise ? Math.ceil(base) : roundUpToFive(base);
 
-      let packaging: PackagingOption[] | undefined;
-      if (quantity > 0) {
-        if (rule.key === "refrigerante" || rule.key === "agua") {
-          packaging = BOTTLE_SIZES.map((size) => ({
-            label: size.label,
-            count: Math.ceil(quantity / size.ml),
-          }));
-        } else if (rule.key === "gelo") {
-          packaging = [
-            { label: "saco(s) de 5 kg", count: Math.ceil(quantity / ICE_BAG_GRAMS) },
-          ];
-        }
-      }
-
       let restricted: RestrictedEstimate | undefined;
       if (rule.restricted) {
         const count = rule.restricted.restriction === "sem_lactose" ? lactoseFree : glutenFree;
         if (count > 0) {
           const perRestricted = rule.perPerson > 0 ? rule.perPerson : 1;
+          const restrictedQuantity = roundUpToFive(Math.max(count * perRestricted, count));
           restricted = {
             label: rule.restricted.label,
             note: rule.restricted.note,
             count,
-            quantity: roundUpToFive(Math.max(count * perRestricted, count)),
+            quantity: restrictedQuantity,
+            display: restrictedDisplayFor(rule.key, restrictedQuantity),
           };
         }
       }
@@ -236,7 +277,7 @@ export function buildFoodPlan(
         unit: rule.unit,
         quantity,
         note: rule.note,
-        packaging,
+        display: displayFor(rule.key, quantity),
         restricted,
       };
     },

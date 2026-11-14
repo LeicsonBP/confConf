@@ -55,17 +55,17 @@ describe("buildFoodPlan", () => {
 
     const byKey = Object.fromEntries(plan.estimates.map((item) => [item.key, item]));
     expect(byKey.salgados?.quantity).toBe(120);
+    expect(byKey.salgados?.display).toBe("120 salgados");
     expect(byKey.doces?.quantity).toBe(50);
+    expect(byKey.doces?.display).toBe("50 doces");
     expect(byKey.bolo?.quantity).toBe(1000);
+    expect(byKey.bolo?.display).toBe("1,0 kg");
     expect(byKey.agua?.quantity).toBe(5000);
+    expect(byKey.agua?.display).toBe("3 garrafas de 2 L");
+    expect(byKey.refrigerante?.display).toBe("2 garrafas de 2 L");
+    expect(byKey.gelo?.display).toBe("1 saco de 5 kg");
     expect(byKey.descartaveis?.quantity).toBe(12);
-    expect(byKey.refrigerante?.packaging).toEqual([
-      { label: "500 ml", count: 8 },
-      { label: "1 L", count: 4 },
-      { label: "1,5 L", count: 3 },
-      { label: "2 L", count: 2 },
-    ]);
-    expect(byKey.gelo?.packaging).toEqual([{ label: "saco(s) de 5 kg", count: 1 }]);
+    expect(byKey.descartaveis?.display).toBe("12 jogos");
     expect(plan.generatedAt).toBe("2026-11-14T12:00:00.000Z");
     expect(plan.hasRestrictedOptions).toBe(false);
   });
@@ -74,8 +74,10 @@ describe("buildFoodPlan", () => {
     const plan = buildFoodPlan([participant("Ana")]);
     const byKey = Object.fromEntries(plan.estimates.map((item) => [item.key, item]));
     expect(byKey.salgados?.quantity).toBe(15);
+    expect(byKey.salgados?.display).toBe("15 salgados");
     expect(byKey.doces?.quantity).toBe(5);
     expect(byKey.descartaveis?.quantity).toBe(2);
+    expect(byKey.refrigerante?.display).toBe("1 garrafa de 500 ml");
   });
 
   it("cria opções restritas com piso por pessoa e múltiplo de 5", () => {
@@ -89,11 +91,12 @@ describe("buildFoodPlan", () => {
     expect(doces?.restricted).toMatchObject({
       count: 2,
       quantity: 10,
+      display: "10 doces",
       label: "Doces sem lactose",
     });
 
     const bolo = plan.estimates.find((item) => item.key === "bolo");
-    expect(bolo?.restricted).toMatchObject({ count: 1, quantity: 100 });
+    expect(bolo?.restricted).toMatchObject({ count: 1, quantity: 100, display: "100 g" });
     expect(plan.hasRestrictedOptions).toBe(true);
   });
 
@@ -104,7 +107,7 @@ describe("buildFoodPlan", () => {
     expect(plan.hasRestrictedOptions).toBe(false);
     for (const estimate of plan.estimates) {
       expect(estimate.quantity).toBe(0);
-      expect(estimate.packaging).toBeUndefined();
+      expect(estimate.display).toContain("0 ");
     }
   });
 
@@ -114,7 +117,7 @@ describe("buildFoodPlan", () => {
     );
     const gelo = plan.estimates.find((item) => item.key === "gelo");
     expect(gelo?.quantity).toBe(10000);
-    expect(gelo?.packaging).toEqual([{ label: "saco(s) de 5 kg", count: 2 }]);
+    expect(gelo?.display).toBe("2 sacos de 5 kg");
   });
 
   it("calcula apenas os itens selecionados", () => {

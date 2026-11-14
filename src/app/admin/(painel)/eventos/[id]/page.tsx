@@ -29,7 +29,7 @@ import { DeleteEventForm } from "../delete-form";
 import { EventForm } from "../event-form";
 import { createInvite, revokeInvite } from "../invite-actions";
 import { labelForRestriction } from "@/modules/participants/domain/restrictions";
-import { FOOD_KEYS, FOOD_RULES, buildFoodPlan, formatQuantity } from "@/modules/food-planning/rules";
+import { FOOD_KEYS, FOOD_RULES, buildFoodPlan } from "@/modules/food-planning/rules";
 import { reportCategoryLabel, reportStatusLabel } from "@/modules/reports/domain/report";
 import { DrawForm } from "./draw-form";
 import { FoodSelectionForm } from "./food-selection-form";
@@ -354,26 +354,14 @@ export default async function EventDetailPage({
                   <li key={estimate.key} className="border-2 border-ink bg-paper p-4">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <span className="font-medium">{estimate.label}</span>
-                      <span className="font-mono text-sm">
-                        {formatQuantity(estimate.quantity, estimate.unit)}
-                      </span>
+                      <span className="font-mono text-sm">{estimate.display}</span>
                     </div>
                     {estimate.note ? (
                       <p className="mt-1 text-xs text-ink-faint">{estimate.note}</p>
                     ) : null}
-                    {estimate.packaging ? (
-                      <p className="mt-2 text-xs text-ink-soft">
-                        {estimate.packaging.length === 1
-                          ? `Embalagem: ${estimate.packaging[0]?.count} ${estimate.packaging[0]?.label}`
-                          : `Garrafas: ${estimate.packaging
-                              .map((option) => `${option.label} × ${option.count}`)
-                              .join(" · ")}`}
-                      </p>
-                    ) : null}
                     {estimate.restricted ? (
                       <p className="mt-2 border-t-2 border-dashed border-ink-faint pt-2 text-sm text-ink-soft">
-                        {estimate.restricted.label}:{" "}
-                        {formatQuantity(estimate.restricted.quantity, estimate.unit)}{" "}
+                        {estimate.restricted.label}: {estimate.restricted.display}{" "}
                         <span className="text-xs">
                           (para {estimate.restricted.count} pessoa(s))
                         </span>
@@ -385,9 +373,10 @@ export default async function EventDetailPage({
             </ul>
 
             <p className="mt-4 text-xs text-ink-faint">
-              Estimativa, não é ordem de compra. Alimentos e bebidas são arredondados para cima em
-              múltiplos de 5; descartáveis usam 1,2 × pessoas, sem arredondamento. Bebidas aparecem
-              por garrafa e gelo por saco de 5 kg. Premissas por pessoa:{" "}
+              Estimativa, não é ordem de compra. O resultado já vem na unidade de compra: garrafas
+              (500 ml a 2 L), sacos de 5 kg de gelo, unidades e jogos. Alimentos e bebidas são
+              arredondados para cima em múltiplos de 5; descartáveis usam 1,2 × pessoas, sem
+              arredondamento. Premissas por pessoa:{" "}
               {FOOD_RULES.map((rule) =>
                 rule.factor !== undefined
                   ? `${rule.label}: ${rule.factor}× pessoas`

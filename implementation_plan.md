@@ -74,6 +74,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-24 | **Seleção dos itens comprados** no planejamento alimentar (checkboxes) com botão **Calcular**; o cálculo usa só os itens marcados | Cliente (2026-11-14) | Novo campo `events.food_selection` |
 | D-25 | Unificar **"Salgadinhos" e "Salgados"** em "Salgados"; revisar as médias e exibir **um número único múltiplo de 5** (não faixa) | Cliente (2026-11-14) | Ajusta BR-20, AC-07 e §11.7; migração converte a seleção |
 | D-26 | **Descartáveis sem arredondamento**; **bebidas por garrafa** (500 ml, 1 L, 1,5 L, 2 L) e **gelo por saco de 5 kg** | Cliente (2026-11-14) | Ajusta a apresentação das estimativas |
+| D-27 | Resultado exibido **direto na unidade de compra** (garrafas, sacos de 5 kg, unidades/jogos), sem mostrar o total cru; respeita o mínimo comprável (1 pessoa → 1 garrafa de 500 ml, 1 saco de 5 kg) | Cliente (2026-11-14) | Ajusta AC-07 e §11.7 |
 
 ---
 
@@ -1085,9 +1086,9 @@ Entrada: total de participantes ativos e contagem por restrição (vegano conta 
 | Gelo | 500 g | Exibir em sacos de 5 kg |
 | Descartáveis | 1,2 × participantes | Pratos, copos, guardanapos; **sem arredondamento** |
 
-Cálculo: `quantidade = arredonda_para_cima(pessoas × consumo, múltiplo de 5)` para alimentos e bebidas; descartáveis usam `ceil(pessoas × 1,2)` sem arredondamento. Opções restritas usam a proporção de pessoas com a restrição, com piso de 1 porção por pessoa restrita. Bebidas mostram quantas garrafas de cada tamanho e o gelo quantos sacos de 5 kg. A tela mostra sempre "estimativa", as premissas e a data do cálculo. Parâmetros em `src/modules/food-planning/rules.ts` (validados no M5, O-11).
+Cálculo: `quantidade = arredonda_para_cima(pessoas × consumo, múltiplo de 5)` para alimentos e bebidas; descartáveis usam `ceil(pessoas × 1,2)` sem arredondamento. Opções restritas usam a proporção de pessoas com a restrição, com piso de 1 porção por pessoa restrita. O resultado é exibido **na unidade de compra**: bebidas em garrafas (uma garrafa de 500 ml a 1,5 L quando o total é menor que 2 L; garrafas de 2 L acima disso), gelo em sacos de 5 kg, salgados/doces em unidades e descartáveis em jogos. A tela mostra sempre "estimativa", as premissas e a data do cálculo. Parâmetros em `src/modules/food-planning/rules.ts` (validados no M5, O-11).
 
-**Implementado (M5):** seção "Planejamento alimentar" no evento do admin com **seleção dos itens comprados (checkboxes + Calcular)**, restrições consolidadas (vegano conta como vegetariano, sem dupla contagem), textos de "outras" restrições, **quantidade única múltipla de 5** apenas para os itens marcados, **bebidas por garrafa**, **gelo por saco de 5 kg** e **descartáveis sem arredondamento**, opções sem lactose (doces) e sem glúten (bolo), premissas e botão de impressão (CSS `print`). A seleção fica em `events.food_selection`; os valores da tabela acima ficam em `FOOD_RULES` e podem ser ajustados em um único lugar. As médias foram revisadas em 14/11/2026 com referências públicas de festas (UOL, iFood, Festeiros e Guia Festa Brasil).
+**Implementado (M5):** seção "Planejamento alimentar" no evento do admin com **seleção dos itens comprados (checkboxes + Calcular)**, restrições consolidadas (vegano conta como vegetariano, sem dupla contagem), textos de "outras" restrições, resultado **já na unidade de compra** (garrafas, sacos de 5 kg, unidades e jogos) apenas para os itens marcados, opções sem lactose (doces) e sem glúten (bolo), premissas e botão de impressão (CSS `print`). A seleção fica em `events.food_selection`; os valores da tabela acima ficam em `FOOD_RULES` e podem ser ajustados em um único lugar. As médias foram revisadas em 14/11/2026 com referências públicas de festas (UOL, iFood, Festeiros e Guia Festa Brasil).
 
 ### 11.8 Gestão de participantes e restrições
 
@@ -1624,7 +1625,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-04 | Dado o botão "gerar convite", quando acionado, então o link aparece na lista e pode ser copiado quantas vezes quiser, com validade, usos e status (ativo/expirado/revogado/esgotado) |
 | AC-05 | Dado um participante ativo, quando o admin remove, então ele sai da visão consolidada; após o sorteio, a remoção é bloqueada |
 | AC-06 | Dado um evento com restrições variadas, quando o admin abre a visão consolidada, então vê contagens por tipo e o texto de "outras" |
-| AC-07 | Dado um evento com N participantes e restrições, quando abre as estimativas, então vê **quantidades únicas múltiplas de 5** por item selecionado (bebidas por garrafa, gelo por saco de 5 kg e descartáveis sem arredondamento), as premissas e o aviso de estimativa |
+| AC-07 | Dado um evento com N participantes e restrições, quando abre as estimativas, então vê o resultado **na unidade de compra** (garrafas, sacos de 5 kg, unidades/jogos), sem total cru, com as premissas e o aviso de estimativa |
 | AC-08 | Dada a conta de admin, quando ele se cadastra por convite com outra conta, então participa normalmente e o painel continua restrito ao papel admin |
 
 ### 19.3 Sorteio
@@ -1768,6 +1769,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.13 | 2026-11-14 | D-24: seleção dos itens comprados com botão Calcular; cálculo restrito à seleção salva (BR-42, AC-47) |
 | 1.14 | 2026-11-14 | D-25: "Salgados" unificado, médias revisadas (12 salgados, 5 doces, 100 g bolo, 400 ml refrigerante, 500 ml água, 500 g gelo) e resultado em número único múltiplo de 5 |
 | 1.15 | 2026-11-14 | D-26: descartáveis sem arredondamento; bebidas em garrafas (500 ml–2 L) e gelo em sacos de 5 kg |
+| 1.16 | 2026-11-14 | D-27: resultado direto na unidade de compra, sem total cru; mínimo comprável respeitado (1 garrafa de 500 ml, 1 saco de 5 kg) |
 
 ---
 
