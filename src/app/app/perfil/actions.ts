@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/database.types";
 import { requireParticipant } from "@/modules/auth/server/participant-session";
@@ -10,23 +9,11 @@ import type { ProfileFormState } from "./types";
 
 type Dietary = Database["public"]["Enums"]["dietary_restriction"];
 
-const schema = z.object({
-  other: z.string().trim().max(300, "O detalhe aceita até 300 caracteres."),
-});
-
 export async function updateProfile(
   _previous: ProfileFormState,
   formData: FormData,
 ): Promise<ProfileFormState> {
   const session = await requireParticipant();
-
-  const parsed = schema.safeParse({
-    other: formData.get("other") ?? "",
-  });
-
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Revise os dados informados." };
-  }
 
   const restrictions = formData
     .getAll("restrictions")
@@ -45,10 +32,7 @@ export async function updateProfile(
   if (participant) {
     const { error: participantError } = await supabase
       .from("event_participants")
-      .update({
-        dietary_restrictions: restrictions,
-        dietary_other: parsed.data.other || null,
-      })
+      .update({ dietary_restrictions: restrictions })
       .eq("id", participant.id);
 
     if (participantError) {

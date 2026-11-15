@@ -30,7 +30,7 @@ export default async function ProfilePage() {
 
   const { data: participant } = await supabase
     .from("event_participants")
-    .select("dietary_restrictions,dietary_other")
+    .select("dietary_restrictions")
     .eq("user_id", session.userId)
     .is("removed_at", null)
     .maybeSingle();
@@ -75,10 +75,7 @@ export default async function ProfilePage() {
           Meus dados
         </h2>
         <PerforatedDivider className="my-8" />
-        <ProfileForm
-          restrictions={participant?.dietary_restrictions ?? []}
-          other={participant?.dietary_other ?? ""}
-        />
+        <ProfileForm restrictions={participant?.dietary_restrictions ?? []} />
       </TicketCard>
     </div>
   );

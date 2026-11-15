@@ -3,7 +3,6 @@ export const DIETARY_OPTIONS = [
   { value: "vegano", label: "Vegano(a)" },
   { value: "sem_lactose", label: "Intolerante à lactose" },
   { value: "sem_gluten", label: "Celíaco(a)" },
-  { value: "outra", label: "Outra restrição" },
 ] as const;
 
 export type DietaryValue = (typeof DIETARY_OPTIONS)[number]["value"];

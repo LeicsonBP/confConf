@@ -5,25 +5,14 @@ export type QuantityUnit = "un" | "g" | "ml" | "jogos";
 export interface FoodParticipant {
   fullName: string;
   restrictions: string[];
-  other: string | null;
 }
 
-export type RestrictionKey =
-  | "vegetariano"
-  | "vegano"
-  | "sem_lactose"
-  | "sem_gluten"
-  | "outra";
+export type RestrictionKey = "vegetariano" | "vegano" | "sem_lactose" | "sem_gluten";
 
 export interface RestrictionSummary {
   key: RestrictionKey;
   label: string;
   count: number;
-}
-
-export interface OtherRestriction {
-  name: string;
-  detail: string;
 }
 
 export interface RestrictedEstimate {
@@ -48,7 +37,6 @@ export interface FoodEstimate {
 export interface FoodPlan {
   total: number;
   restrictions: RestrictionSummary[];
-  others: OtherRestriction[];
   estimates: FoodEstimate[];
   generatedAt: string;
   hasRestrictedOptions: boolean;
@@ -232,7 +220,6 @@ export function buildFoodPlan(
   const glutenFree = participants.filter((participant) =>
     hasRestriction(participant, "sem_gluten"),
   ).length;
-  const other = participants.filter((participant) => hasRestriction(participant, "outra")).length;
 
   const restrictions: RestrictionSummary[] = [
     { key: "vegetariano", label: DIETARY_LABELS.vegetariano ?? "Vegetariano(a)", count: vegetarian },
@@ -247,15 +234,7 @@ export function buildFoodPlan(
       label: DIETARY_LABELS.sem_gluten ?? "Celíaco(a)",
       count: glutenFree,
     },
-    { key: "outra", label: DIETARY_LABELS.outra ?? "Outra restrição", count: other },
   ];
-
-  const others: OtherRestriction[] = participants
-    .filter((participant) => hasRestriction(participant, "outra") && participant.other)
-    .map((participant) => ({
-      name: participant.fullName,
-      detail: (participant.other ?? "").trim(),
-    }));
 
   const estimates: FoodEstimate[] = FOOD_RULES.filter((rule) => selected.includes(rule.key)).map(
     (rule) => {
@@ -294,7 +273,6 @@ export function buildFoodPlan(
   return {
     total,
     restrictions,
-    others,
     estimates,
     generatedAt,
     hasRestrictedOptions: estimates.some((estimate) => Boolean(estimate.restricted)),

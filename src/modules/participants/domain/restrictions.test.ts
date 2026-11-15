@@ -8,14 +8,8 @@ import {
 
 describe("restrições alimentares", () => {
   it("expõe opções e valores consistentes", () => {
-    expect(DIETARY_OPTIONS).toHaveLength(5);
-    expect(DIETARY_VALUES).toEqual([
-      "vegetariano",
-      "vegano",
-      "sem_lactose",
-      "sem_gluten",
-      "outra",
-    ]);
+    expect(DIETARY_OPTIONS).toHaveLength(4);
+    expect(DIETARY_VALUES).toEqual(["vegetariano", "vegano", "sem_lactose", "sem_gluten"]);
     expect(DIETARY_LABELS.vegano).toBe("Vegano(a)");
   });
 

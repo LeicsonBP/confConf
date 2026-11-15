@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { Button } from "@/design-system/button";
 import { Field, inputClassName } from "@/design-system/field";
 import { DIETARY_OPTIONS } from "@/modules/participants/domain/restrictions";
@@ -18,7 +18,6 @@ interface SignupFormProps {
 
 export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProps) {
   const [state, formAction, pending] = useActionState(signUpWithInvite, initialState);
-  const [hasOther, setHasOther] = useState(false);
 
   if (state.success && state.credentials) {
     return <CredentialCard {...state.credentials} />;
@@ -115,31 +114,11 @@ export function SignupForm({ tokenHash, question, captchaToken }: SignupFormProp
                     name="restrictions"
                     value={restriction.value}
                     className="h-5 w-5 accent-[var(--stamp)]"
-                    onChange={
-                      restriction.value === "outra"
-                        ? (event) => setHasOther(event.currentTarget.checked)
-                        : undefined
-                    }
                   />
                   {restriction.label}
                 </label>
               ))}
             </div>
-
-            {hasOther ? (
-              <div className="mt-5">
-                <Field label="Qual outra restrição?" htmlFor="other">
-                  <input
-                    id="other"
-                    name="other"
-                    type="text"
-                    maxLength={300}
-                    className={inputClassName}
-                    placeholder="Ex.: alergia a camarão"
-                  />
-                </Field>
-              </div>
-            ) : null}
           </fieldset>
         </div>
 

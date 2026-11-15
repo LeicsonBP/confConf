@@ -12,7 +12,6 @@ const ALLOWED_RESTRICTIONS = [
   "vegano",
   "sem_lactose",
   "sem_gluten",
-  "outra",
 ] as const;
 
 const signupSchema = z.object({
@@ -21,7 +20,6 @@ const signupSchema = z.object({
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Informe sua data de nascimento."),
   pin: z.string().regex(/^\d{4,8}$/, "O PIN deve ter de 4 a 8 dígitos."),
   pinConfirm: z.string().regex(/^\d{4,8}$/, "Confirme o PIN."),
-  other: z.string().trim().max(300, "Máximo de 300 caracteres."),
   captchaToken: z.string().min(10).max(2000),
   captchaAnswer: z.string().trim().min(1).max(8),
 });
@@ -41,7 +39,6 @@ export async function signUpWithInvite(
     birthDate: formData.get("birthDate"),
     pin: formData.get("pin"),
     pinConfirm: formData.get("pinConfirm"),
-    other: formData.get("other") ?? "",
     captchaToken: formData.get("captchaToken"),
     captchaAnswer: formData.get("captchaAnswer"),
   });
@@ -113,7 +110,7 @@ export async function signUpWithInvite(
       p_birth_date: parsed.data.birthDate,
       p_username: username,
       p_restrictions: restrictions,
-      p_other: parsed.data.other,
+      p_other: "",
     });
 
     if (redeemError) {

@@ -6,12 +6,8 @@ import {
   type FoodParticipant,
 } from "./rules";
 
-function participant(
-  fullName: string,
-  restrictions: string[] = [],
-  other: string | null = null,
-): FoodParticipant {
-  return { fullName, restrictions, other };
+function participant(fullName: string, restrictions: string[] = []): FoodParticipant {
+  return { fullName, restrictions };
 }
 
 describe("roundUpToFive", () => {
@@ -32,7 +28,7 @@ describe("buildFoodPlan", () => {
       participant("Ana", ["vegano"]),
       participant("Bia", ["vegetariano"]),
       participant("Caio", ["sem_lactose", "sem_gluten"]),
-      participant("Duda", ["outra"], "alergia a camarão"),
+      participant("Duda"),
     ]);
 
     expect(plan.total).toBe(4);
@@ -42,9 +38,7 @@ describe("buildFoodPlan", () => {
       vegano: 1,
       sem_lactose: 1,
       sem_gluten: 1,
-      outra: 1,
     });
-    expect(plan.others).toEqual([{ name: "Duda", detail: "alergia a camarão" }]);
   });
 
   it("usa números únicos múltiplos de 5 para 10 pessoas", () => {
@@ -103,7 +97,6 @@ describe("buildFoodPlan", () => {
   it("zera tudo sem participantes", () => {
     const plan = buildFoodPlan([]);
     expect(plan.total).toBe(0);
-    expect(plan.others).toEqual([]);
     expect(plan.hasRestrictedOptions).toBe(false);
     for (const estimate of plan.estimates) {
       expect(estimate.quantity).toBe(0);
@@ -128,7 +121,7 @@ describe("buildFoodPlan", () => {
 
     const none = buildFoodPlan(participants, { selected: [] });
     expect(none.estimates).toEqual([]);
-    expect(none.restrictions).toHaveLength(5);
+    expect(none.restrictions).toHaveLength(4);
   });
 });
 

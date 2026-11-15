@@ -78,6 +78,7 @@ Convenção de identificadores usada em todo o documento: `D-` decisão, `REQ-` 
 | D-28 | **MFA (O-01) não entra na v1**: fica documentado como opcional para versão futura, sem bloquear o release | Decisão técnica (2026-11-14) | O-01 permanece "Could" |
 | D-29 | Exclusão do evento confirmada apenas com a palavra **`deletar`** (campo em caixa baixa) + **captcha**, sem exigir o nome da confraternização | Cliente (2026-11-14) | Ajusta BR-26 e o formulário de exclusão |
 | D-30 | Convites podem ser **excluídos** (remoção física) em vez de revogados, para manter a área do admin limpa; a prévia do convite mostra "Cadastre-se para: (nome)" | Cliente (2026-11-14) | Ajusta UC-07, BR-05/06 e AC-04 |
+| D-31 | Removida a opção **“Outra restrição”**; cadastros existentes foram limpos e o campo de detalhe ficou obsoleto | Cliente (2026-11-14) | Ajusta BR-18 e §11.8 |
 
 ---
 
@@ -228,7 +229,7 @@ Todas as exigências de §2, §3.1, §3.2, §4, §5 e §6 do briefing foram mant
 | BR-15 | O sorteio pode ser **desfeito e refeito** pelo administrador; desfazer apaga pares e confirmações e reabre o elenco |
 | BR-16 | Após o sorteio, o elenco fica congelado e o amigo secreto não pode ser desativado |
 | BR-17 | A confirmação do sorteio é opcional, idempotente e visível ao administrador como contagem |
-| BR-18 | Restrições alimentares: vegetariano, vegano, intolerante à lactose, celíaco e outra (com descrição livre de até 300 caracteres) |
+| BR-18 | Restrições alimentares: vegetariano, vegano, intolerante à lactose e celíaco |
 | BR-19 | Vegano implica vegetariano; nas contagens, o vegano é contado uma única vez |
 | BR-20 | Planejamento alimentar é apresentado como estimativa com **quantidade única arredondada para cima em múltiplos de 5**, premissas explícitas e aviso de que não é ordem de compra |
 | BR-21 | O valor máximo do presente é informativo e aparece como orientação na lista de desejos |
@@ -1091,13 +1092,13 @@ Entrada: total de participantes ativos e contagem por restrição (vegano conta 
 
 Cálculo: `quantidade = arredonda_para_cima(pessoas × consumo, múltiplo de 5)` para alimentos e bebidas; descartáveis usam `ceil(pessoas × 1,2)` sem arredondamento. Opções restritas usam a proporção de pessoas com a restrição, com piso de 1 porção por pessoa restrita. O resultado é exibido **na unidade de compra**: bebidas em garrafas (uma garrafa de 500 ml a 1,5 L quando o total é menor que 2 L; garrafas de 2 L acima disso), gelo em sacos de 5 kg, salgados/doces em unidades e descartáveis em jogos. A tela mostra sempre "estimativa", as premissas e a data do cálculo. Parâmetros em `src/modules/food-planning/rules.ts` (validados no M5, O-11).
 
-**Implementado (M5):** seção "Planejamento alimentar" no evento do admin com **seleção dos itens comprados (checkboxes + Calcular)**, restrições consolidadas (vegano conta como vegetariano, sem dupla contagem), textos de "outras" restrições, resultado **já na unidade de compra** (garrafas, sacos de 5 kg, unidades e jogos) apenas para os itens marcados, opções sem lactose (doces) e sem glúten (bolo), premissas e botão de impressão (CSS `print`). A seleção fica em `events.food_selection`; os valores da tabela acima ficam em `FOOD_RULES` e podem ser ajustados em um único lugar. As médias foram revisadas em 14/11/2026 com referências públicas de festas (UOL, iFood, Festeiros e Guia Festa Brasil).
+**Implementado (M5):** seção "Planejamento alimentar" no evento do admin com **seleção dos itens comprados (checkboxes + Calcular)**, restrições consolidadas (vegano conta como vegetariano, sem dupla contagem), resultado **já na unidade de compra** (garrafas, sacos de 5 kg, unidades e jogos) apenas para os itens marcados, opções sem lactose (doces) e sem glúten (bolo), premissas e botão de impressão (CSS `print`). A seleção fica em `events.food_selection`; os valores da tabela acima ficam em `FOOD_RULES` e podem ser ajustados em um único lugar. As médias foram revisadas em 14/11/2026 com referências públicas de festas (UOL, iFood, Festeiros e Guia Festa Brasil).
 
 ### 11.8 Gestão de participantes e restrições
 
 - Admin lista participantes ativos e removidos, com nome, identificador, data de nascimento e restrições.
 - Remover = `removed_at` (bloqueado após o sorteio).
-- A visão consolidada agrupa por restrição e destaca "outras" com o texto informado.
+- A visão consolidada agrupa por restrição (sem opção de texto livre).
 - Nenhum dado pessoal aparece em log.
 
 ---
@@ -1627,7 +1628,7 @@ Formato: cenário verificável, com negativos de segurança destacados.
 | AC-03 | Dado um evento com sorteio realizado, quando o admin tenta desligar o amigo secreto, então o sistema bloqueia |
 | AC-04 | Dado o botão "gerar convite", quando acionado, então o link aparece na lista e pode ser copiado quantas vezes quiser, com validade, usos e status (ativo/expirado/esgotado), podendo ser excluído |
 | AC-05 | Dado um participante ativo, quando o admin remove, então ele sai da visão consolidada; após o sorteio, a remoção é bloqueada |
-| AC-06 | Dado um evento com restrições variadas, quando o admin abre a visão consolidada, então vê contagens por tipo e o texto de "outras" |
+| AC-06 | Dado um evento com restrições variadas, quando o admin abre a visão consolidada, então vê contagens por tipo |
 | AC-07 | Dado um evento com N participantes e restrições, quando abre as estimativas, então vê o resultado **na unidade de compra** (garrafas, sacos de 5 kg, unidades/jogos), sem total cru, com as premissas e o aviso de estimativa |
 | AC-08 | Dada a conta de admin, quando ele se cadastra por convite com outra conta, então participa normalmente e o painel continua restrito ao papel admin |
 
@@ -1790,6 +1791,7 @@ Nada mais é necessário: Docker, Cloudflare, cartão de crédito e domínio nã
 | 1.30 | 2026-11-14 | Header do participante mostra "Início" na tela de perfil; botão de relato movido para depois do card do amigo secreto, em terracota |
 | 1.31 | 2026-11-14 | Excluir convite vira ícone de lixeira, com a mesma altura do selo de status (Ativo/Inativo) |
 | 1.32 | 2026-11-14 | Lixeira em terracota e selo de status do convite maior, com alturas equivalentes (33 px) |
+| 1.33 | 2026-11-14 | Opção "Outra restrição" removida; cadastros existentes limpos e restrição no banco para impedir o valor antigo |
 
 ---
 

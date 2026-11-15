@@ -1,8 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { Button } from "@/design-system/button";
-import { Field, inputClassName } from "@/design-system/field";
 import { DIETARY_OPTIONS } from "@/modules/participants/domain/restrictions";
 import { updateProfile } from "./actions";
 import type { ProfileFormState } from "./types";
@@ -11,12 +10,10 @@ const initialState: ProfileFormState = {};
 
 interface ProfileFormProps {
   restrictions: string[];
-  other: string;
 }
 
-export function ProfileForm({ restrictions, other }: ProfileFormProps) {
+export function ProfileForm({ restrictions }: ProfileFormProps) {
   const [state, formAction, pending] = useActionState(updateProfile, initialState);
-  const [hasOther, setHasOther] = useState(restrictions.includes("outra"));
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
@@ -35,32 +32,11 @@ export function ProfileForm({ restrictions, other }: ProfileFormProps) {
                 value={option.value}
                 defaultChecked={restrictions.includes(option.value)}
                 className="h-5 w-5 accent-[var(--stamp)]"
-                onChange={
-                  option.value === "outra"
-                    ? (event) => setHasOther(event.currentTarget.checked)
-                    : undefined
-                }
               />
               {option.label}
             </label>
           ))}
         </div>
-
-        {hasOther ? (
-          <div className="mt-5">
-            <Field label="Qual outra restrição?" htmlFor="other">
-              <input
-                id="other"
-                name="other"
-                type="text"
-                maxLength={300}
-                defaultValue={other}
-                className={inputClassName}
-                placeholder="Ex.: alergia a camarão"
-              />
-            </Field>
-          </div>
-        ) : null}
       </fieldset>
 
       {state.error ? (

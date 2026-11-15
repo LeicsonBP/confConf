@@ -92,7 +92,7 @@ export default async function EventDetailPage({
 
   const { data: participants } = await supabase
     .from("event_participants")
-    .select("id,user_id,dietary_restrictions,dietary_other,joined_at")
+    .select("id,user_id,dietary_restrictions,joined_at")
     .eq("event_id", id)
     .is("removed_at", null)
     .order("joined_at", { ascending: true });
@@ -139,7 +139,6 @@ export default async function EventDetailPage({
     (participants ?? []).map((participant) => ({
       fullName: profileMap.get(participant.user_id)?.full_name ?? "Participante",
       restrictions: participant.dietary_restrictions ?? [],
-      other: participant.dietary_other ?? null,
     })),
     { selected: foodSelection },
   );
@@ -276,12 +275,6 @@ export default async function EventDetailPage({
                       ) : (
                         <p className="mt-2 text-sm text-ink-faint">Sem restrições informadas</p>
                       )}
-
-                      {participant.dietary_other ? (
-                        <p className="mt-1 text-sm text-ink-soft">
-                          Detalhe: {participant.dietary_other}
-                        </p>
-                      ) : null}
                     </div>
 
                     <RemoveParticipantForm
@@ -507,21 +500,6 @@ export default async function EventDetailPage({
                 </li>
               ))}
             </ul>
-
-            {foodPlan.others.length > 0 ? (
-              <div className="mt-4 border-2 border-ink bg-paper p-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
-                  Outras restrições
-                </p>
-                <ul className="mt-2 flex flex-col gap-1 text-sm">
-                  {foodPlan.others.map((item) => (
-                    <li key={`${item.name}-${item.detail}`}>
-                      <span className="font-medium">{item.name}:</span> {item.detail}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
           </div>
 
           <div>
